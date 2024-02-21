@@ -1,0 +1,10 @@
+%option noyywrap
+%option noinput
+%option nounput
+
+
+
+%%
+[a-zA-Z]  printf(“X”);
+%%
+
