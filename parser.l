@@ -88,7 +88,7 @@ tCOMMA ","
 
 {tID}   	  {printf( ": '%s'\n", yytext); yylval.var = strdup(yytext); return tID;}
 
-[ \t\n]+   	 /* Ignores whitespaces */
+[ \t\n]+    	 /* Ignores whitespaces */
 
-.  		 {printf( "tERROR\n");return tERROR;}
+.  	        	 {printf( "tERROR\n");return tERROR;}
 

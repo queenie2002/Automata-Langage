@@ -45,17 +45,17 @@ Grammar
    21 declaration: parameter_type identifiers_list tSEMI
 
    22 identifiers_list: tID
-   23                 | tID tASSIGN div_mul
+   23                 | tID tASSIGN add_sub
    24                 | identifiers_list tCOMMA tID
-   25                 | identifiers_list tCOMMA tID tASSIGN div_mul
+   25                 | identifiers_list tCOMMA tID tASSIGN add_sub
 
    26 instruction: assignment_list
    27            | ifblock
    28            | whileblock
    29            | printblock
 
-   30 assignment_list: tID tASSIGN div_mul tSEMI
-   31                | tID tASSIGN div_mul tCOMMA assignment_list
+   30 assignment_list: tID tASSIGN add_sub tSEMI
+   31                | tID tASSIGN add_sub tCOMMA assignment_list
 
    32 ifblock: tIF tLPAR condition tRPAR tLBRACE body tRBRACE
    33        | tIF tLPAR condition tRPAR tLBRACE body tRBRACE tELSE tLBRACE body tRBRACE
@@ -190,12 +190,12 @@ Nonterminals, with rules where they appear
     compare (53)
         on left: 44 45 46 47 48
         on right: 41 42 43 45 46 47 48
-    add_sub (54)
+    add_sub <nb> (54)
         on left: 49 50 51
-        on right: 44 45 46 47 48 50 51
+        on right: 23 25 30 31 44 45 46 47 48 50 51
     div_mul <nb> (55)
         on left: 52 53 54
-        on right: 23 25 30 31 49 50 51 53 54
+        on right: 49 50 51 53 54
     term <nb> (56)
         on left: 55 56
         on right: 52 53 54
@@ -413,8 +413,8 @@ State 22
 
 State 23
 
-   30 assignment_list: tID • tASSIGN div_mul tSEMI
-   31                | tID • tASSIGN div_mul tCOMMA assignment_list
+   30 assignment_list: tID • tASSIGN add_sub tSEMI
+   31                | tID • tASSIGN add_sub tCOMMA assignment_list
 
     tASSIGN  shift, and go to state 44
 
@@ -624,20 +624,21 @@ State 43
 
 State 44
 
-   30 assignment_list: tID tASSIGN • div_mul tSEMI
-   31                | tID tASSIGN • div_mul tCOMMA assignment_list
+   30 assignment_list: tID tASSIGN • add_sub tSEMI
+   31                | tID tASSIGN • add_sub tCOMMA assignment_list
 
     tNB  shift, and go to state 34
     tID  shift, and go to state 35
 
-    div_mul  go to state 66
+    add_sub  go to state 66
+    div_mul  go to state 39
     term     go to state 40
 
 
 State 45
 
    22 identifiers_list: tID •
-   23                 | tID • tASSIGN div_mul
+   23                 | tID • tASSIGN add_sub
 
     tASSIGN  shift, and go to state 67
 
@@ -648,7 +649,7 @@ State 46
 
    21 declaration: parameter_type identifiers_list • tSEMI
    24 identifiers_list: identifiers_list • tCOMMA tID
-   25                 | identifiers_list • tCOMMA tID tASSIGN div_mul
+   25                 | identifiers_list • tCOMMA tID tASSIGN add_sub
 
     tSEMI   shift, and go to state 68
     tCOMMA  shift, and go to state 69
@@ -867,25 +868,26 @@ State 65
 
 State 66
 
-   30 assignment_list: tID tASSIGN div_mul • tSEMI
-   31                | tID tASSIGN div_mul • tCOMMA assignment_list
-   53 div_mul: div_mul • tMUL term
-   54        | div_mul • tDIV term
+   30 assignment_list: tID tASSIGN add_sub • tSEMI
+   31                | tID tASSIGN add_sub • tCOMMA assignment_list
+   50 add_sub: add_sub • tADD div_mul
+   51        | add_sub • tSUB div_mul
 
-    tMUL    shift, and go to state 59
-    tDIV    shift, and go to state 60
+    tADD    shift, and go to state 57
+    tSUB    shift, and go to state 58
     tSEMI   shift, and go to state 87
     tCOMMA  shift, and go to state 88
 
 
 State 67
 
-   23 identifiers_list: tID tASSIGN • div_mul
+   23 identifiers_list: tID tASSIGN • add_sub
 
     tNB  shift, and go to state 34
     tID  shift, and go to state 35
 
-    div_mul  go to state 89
+    add_sub  go to state 89
+    div_mul  go to state 39
     term     go to state 40
 
 
@@ -899,7 +901,7 @@ State 68
 State 69
 
    24 identifiers_list: identifiers_list tCOMMA • tID
-   25                 | identifiers_list tCOMMA • tID tASSIGN div_mul
+   25                 | identifiers_list tCOMMA • tID tASSIGN add_sub
 
     tID  shift, and go to state 90
 
@@ -1092,14 +1094,14 @@ State 86
 
 State 87
 
-   30 assignment_list: tID tASSIGN div_mul tSEMI •
+   30 assignment_list: tID tASSIGN add_sub tSEMI •
 
     $default  reduce using rule 30 (assignment_list)
 
 
 State 88
 
-   31 assignment_list: tID tASSIGN div_mul tCOMMA • assignment_list
+   31 assignment_list: tID tASSIGN add_sub tCOMMA • assignment_list
 
     tID  shift, and go to state 23
 
@@ -1108,12 +1110,12 @@ State 88
 
 State 89
 
-   23 identifiers_list: tID tASSIGN div_mul •
-   53 div_mul: div_mul • tMUL term
-   54        | div_mul • tDIV term
+   23 identifiers_list: tID tASSIGN add_sub •
+   50 add_sub: add_sub • tADD div_mul
+   51        | add_sub • tSUB div_mul
 
-    tMUL  shift, and go to state 59
-    tDIV  shift, and go to state 60
+    tADD  shift, and go to state 57
+    tSUB  shift, and go to state 58
 
     $default  reduce using rule 23 (identifiers_list)
 
@@ -1121,7 +1123,7 @@ State 89
 State 90
 
    24 identifiers_list: identifiers_list tCOMMA tID •
-   25                 | identifiers_list tCOMMA tID • tASSIGN div_mul
+   25                 | identifiers_list tCOMMA tID • tASSIGN add_sub
 
     tASSIGN  shift, and go to state 98
 
@@ -1222,19 +1224,20 @@ State 96
 
 State 97
 
-   31 assignment_list: tID tASSIGN div_mul tCOMMA assignment_list •
+   31 assignment_list: tID tASSIGN add_sub tCOMMA assignment_list •
 
     $default  reduce using rule 31 (assignment_list)
 
 
 State 98
 
-   25 identifiers_list: identifiers_list tCOMMA tID tASSIGN • div_mul
+   25 identifiers_list: identifiers_list tCOMMA tID tASSIGN • add_sub
 
     tNB  shift, and go to state 34
     tID  shift, and go to state 35
 
-    div_mul  go to state 101
+    add_sub  go to state 101
+    div_mul  go to state 39
     term     go to state 40
 
 
@@ -1256,12 +1259,12 @@ State 100
 
 State 101
 
-   25 identifiers_list: identifiers_list tCOMMA tID tASSIGN div_mul •
-   53 div_mul: div_mul • tMUL term
-   54        | div_mul • tDIV term
+   25 identifiers_list: identifiers_list tCOMMA tID tASSIGN add_sub •
+   50 add_sub: add_sub • tADD div_mul
+   51        | add_sub • tSUB div_mul
 
-    tMUL  shift, and go to state 59
-    tDIV  shift, and go to state 60
+    tADD  shift, and go to state 57
+    tSUB  shift, and go to state 58
 
     $default  reduce using rule 25 (identifiers_list)
 

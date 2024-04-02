@@ -1,1 +1,4 @@
-void main(void) { int a = 2, b, c=5; }
+void main(void
+) {int b;b=5;}
+
+

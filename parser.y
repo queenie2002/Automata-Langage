@@ -5,9 +5,7 @@
 #include <stdlib.h>
 #include "table_of_symbols.h"
 
-
 struct SymbolTable mySymbolsTable;
-
 %}
 
 %code provides {
@@ -21,7 +19,7 @@ struct SymbolTable mySymbolsTable;
 %token <nb> tNB
 %token <var> tID
 
-%type <nb> div_mul term
+%type <nb> add_sub div_mul term
 
 
 %%
@@ -111,7 +109,7 @@ identifiers_list:
   { mySymbolsTable = add_symb(mySymbolsTable, $1); 
     printf("identifier: '%s'\n\n", $1); }
 
-  |tID tASSIGN div_mul /*equality_expression */                                                
+  |tID tASSIGN add_sub /*equality_expression */                                                
   { mySymbolsTable = add_symb(mySymbolsTable, $1); 
 
     int address_nb = get_symb(mySymbolsTable,$1);
@@ -124,7 +122,7 @@ identifiers_list:
   { mySymbolsTable = add_symb(mySymbolsTable, $3); 
     printf("several identifiers: '%s'\n\n", $3); }
     
-  |identifiers_list tCOMMA tID tASSIGN div_mul /*equality_expression */                      
+  |identifiers_list tCOMMA tID tASSIGN add_sub /*equality_expression */                      
   { mySymbolsTable = add_symb(mySymbolsTable, $3); 
 
     int address_nb = get_symb(mySymbolsTable,$3);
@@ -145,16 +143,23 @@ instruction:
 
 
 assignment_list:
-  tID tASSIGN div_mul tSEMI                                           
-  { get_symb(mySymbolsTable,$1); //me renvoie l'addresse de id
-
+  tID tASSIGN add_sub tSEMI                                           
+  { get_symb(mySymbolsTable,$1);
+    int address_nb = get_symb(mySymbolsTable,$1);
+    printf("COP %d %d\n\n", address_nb, $3);   
+    mySymbolsTable = free_tmp(mySymbolsTable);
     printf("assignment: '%s'\n\n", $1); }
 
 
-  |tID tASSIGN div_mul tCOMMA assignment_list
-  { 
-    printf("assignment: '%s'\n\n", $1); }
 
+
+
+  |tID tASSIGN add_sub tCOMMA assignment_list
+  { get_symb(mySymbolsTable,$1);
+    int address_nb = get_symb(mySymbolsTable,$1);
+    printf("COP %d %d\n\n", address_nb, $3);   
+    mySymbolsTable = free_tmp(mySymbolsTable);
+    printf("assignment: '%s'\n\n", $1); }
 
 
 
