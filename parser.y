@@ -21,6 +21,8 @@ struct SymbolTable mySymbolsTable;
 
 %type <nb> add_sub div_mul term
 
+%start program
+
 
 %%
 
@@ -150,10 +152,6 @@ assignment_list:
     mySymbolsTable = free_tmp(mySymbolsTable);
     printf("assignment: '%s'\n\n", $1); }
 
-
-
-
-
   |tID tASSIGN add_sub tCOMMA assignment_list
   { get_symb(mySymbolsTable,$1);
     int address_nb = get_symb(mySymbolsTable,$1);
@@ -224,6 +222,11 @@ div_mul:
   | div_mul tMUL term                                                             
   { mySymbolsTable = add_tmp(mySymbolsTable);
     int address_nb = get_last_tmp(mySymbolsTable);
+
+    printf("COP %d %d\n\n", address_nb, res);   
+
+
+
     int res = $1*$3;
     printf("AFC %d %d\n\n", address_nb, res);   
     $$ = address_nb;
