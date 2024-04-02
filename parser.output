@@ -54,8 +54,8 @@ Grammar
    28            | whileblock
    29            | printblock
 
-   30 assignment_list: tID tASSIGN equality_expression tSEMI
-   31                | tID tASSIGN equality_expression tCOMMA assignment_list
+   30 assignment_list: tID tASSIGN div_mul tSEMI
+   31                | tID tASSIGN div_mul tCOMMA assignment_list
 
    32 ifblock: tIF tLPAR condition tRPAR tLBRACE body tRBRACE
    33        | tIF tLPAR condition tRPAR tLBRACE body tRBRACE tELSE tLBRACE body tRBRACE
@@ -186,7 +186,7 @@ Nonterminals, with rules where they appear
         on right: 32 33 34 35 38 39 40
     equality_expression (52)
         on left: 41 42 43
-        on right: 11 30 31 37 42 43
+        on right: 11 37 42 43
     compare (53)
         on left: 44 45 46 47 48
         on right: 41 42 43 45 46 47 48
@@ -195,7 +195,7 @@ Nonterminals, with rules where they appear
         on right: 44 45 46 47 48 50 51
     div_mul <nb> (55)
         on left: 52 53 54
-        on right: 23 25 49 50 51 53 54
+        on right: 23 25 30 31 49 50 51 53 54
     term <nb> (56)
         on left: 55 56
         on right: 52 53 54
@@ -413,8 +413,8 @@ State 22
 
 State 23
 
-   30 assignment_list: tID • tASSIGN equality_expression tSEMI
-   31                | tID • tASSIGN equality_expression tCOMMA assignment_list
+   30 assignment_list: tID • tASSIGN div_mul tSEMI
+   31                | tID • tASSIGN div_mul tCOMMA assignment_list
 
     tASSIGN  shift, and go to state 44
 
@@ -624,17 +624,14 @@ State 43
 
 State 44
 
-   30 assignment_list: tID tASSIGN • equality_expression tSEMI
-   31                | tID tASSIGN • equality_expression tCOMMA assignment_list
+   30 assignment_list: tID tASSIGN • div_mul tSEMI
+   31                | tID tASSIGN • div_mul tCOMMA assignment_list
 
     tNB  shift, and go to state 34
     tID  shift, and go to state 35
 
-    equality_expression  go to state 66
-    compare              go to state 37
-    add_sub              go to state 38
-    div_mul              go to state 39
-    term                 go to state 40
+    div_mul  go to state 66
+    term     go to state 40
 
 
 State 45
@@ -870,13 +867,13 @@ State 65
 
 State 66
 
-   30 assignment_list: tID tASSIGN equality_expression • tSEMI
-   31                | tID tASSIGN equality_expression • tCOMMA assignment_list
-   42 equality_expression: equality_expression • tEQ compare
-   43                    | equality_expression • tNE compare
+   30 assignment_list: tID tASSIGN div_mul • tSEMI
+   31                | tID tASSIGN div_mul • tCOMMA assignment_list
+   53 div_mul: div_mul • tMUL term
+   54        | div_mul • tDIV term
 
-    tNE     shift, and go to state 51
-    tEQ     shift, and go to state 52
+    tMUL    shift, and go to state 59
+    tDIV    shift, and go to state 60
     tSEMI   shift, and go to state 87
     tCOMMA  shift, and go to state 88
 
@@ -1095,14 +1092,14 @@ State 86
 
 State 87
 
-   30 assignment_list: tID tASSIGN equality_expression tSEMI •
+   30 assignment_list: tID tASSIGN div_mul tSEMI •
 
     $default  reduce using rule 30 (assignment_list)
 
 
 State 88
 
-   31 assignment_list: tID tASSIGN equality_expression tCOMMA • assignment_list
+   31 assignment_list: tID tASSIGN div_mul tCOMMA • assignment_list
 
     tID  shift, and go to state 23
 
@@ -1225,7 +1222,7 @@ State 96
 
 State 97
 
-   31 assignment_list: tID tASSIGN equality_expression tCOMMA assignment_list •
+   31 assignment_list: tID tASSIGN div_mul tCOMMA assignment_list •
 
     $default  reduce using rule 31 (assignment_list)
 

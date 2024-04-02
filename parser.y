@@ -78,7 +78,13 @@ parameter_type:
 body:
   %empty                                                                            { printf("body: empty\n\n"); }
   |declaration_list                                                                 { printf("body: declaration_list\n\n"); }
-  |instruction_list                                                                 { printf("body: instruction_list\n\n"); }
+  
+  |instruction_list                                                                 
+  { 
+    printf("NOP\n\n");   
+
+    printf("body: instruction_list\n\n"); }
+  
   |declaration_list instruction_list                                                { printf("body: declaration&instruction list\n\n"); }
 ;
 
@@ -100,26 +106,28 @@ declaration:
 ;
 
 identifiers_list:
+
   tID                                                                             
-  { add_symb(mySymbolsTable, $1); 
+  { mySymbolsTable = add_symb(mySymbolsTable, $1); 
     printf("identifier: '%s'\n\n", $1); }
 
   |tID tASSIGN div_mul /*equality_expression */                                                
-  { add_symb(mySymbolsTable, $1); 
+  { mySymbolsTable = add_symb(mySymbolsTable, $1); 
 
-    int address_nb = get_last_tmp(mySymbolsTable);
+    int address_nb = get_symb(mySymbolsTable,$1);
     printf("COP %d %d\n\n", address_nb, $3);   
+    mySymbolsTable = free_tmp(mySymbolsTable);
     printf("declaration and initialization: '%s'\n\n", $1); }
 
 
   |identifiers_list tCOMMA tID                                                   
-  { add_symb(mySymbolsTable, $3); 
+  { mySymbolsTable = add_symb(mySymbolsTable, $3); 
     printf("several identifiers: '%s'\n\n", $3); }
     
   |identifiers_list tCOMMA tID tASSIGN div_mul /*equality_expression */                      
-  { add_symb(mySymbolsTable, $3); 
+  { mySymbolsTable = add_symb(mySymbolsTable, $3); 
 
-    int address_nb = get_last_tmp(mySymbolsTable);
+    int address_nb = get_symb(mySymbolsTable,$3);
     printf("COP %d %d\n\n", address_nb, $5);   
     
     printf("several identifiers: '%s'\n\n", $3); }
@@ -137,10 +145,15 @@ instruction:
 
 
 assignment_list:
-  tID tASSIGN equality_expression tSEMI                                           
+  tID tASSIGN div_mul tSEMI                                           
+  { get_symb(mySymbolsTable,$1); //me renvoie l'addresse de id
+
+    printf("assignment: '%s'\n\n", $1); }
+
+
+  |tID tASSIGN div_mul tCOMMA assignment_list
   { 
-     printf("assignment: '%s'\n\n", $1); }
-  |tID tASSIGN equality_expression tCOMMA assignment_list
+    printf("assignment: '%s'\n\n", $1); }
 
 
 
@@ -204,7 +217,7 @@ div_mul:
     printf("div_mul: term %d\n\n", $1); } 
 
   | div_mul tMUL term                                                             
-  { add_tmp(mySymbolsTable);
+  { mySymbolsTable = add_tmp(mySymbolsTable);
     int address_nb = get_last_tmp(mySymbolsTable);
     int res = $1*$3;
     printf("AFC %d %d\n\n", address_nb, res);   
@@ -212,7 +225,7 @@ div_mul:
     printf("div_mul: multiplication\n\n"); } 
 
 	| div_mul tDIV term                                                             
-  { add_tmp(mySymbolsTable);
+  { mySymbolsTable = add_tmp(mySymbolsTable);
     int address_nb = get_last_tmp(mySymbolsTable);
     int res = $1/$3;
     printf("AFC %d %d\n\n", address_nb, res);   
@@ -228,15 +241,13 @@ term:
     printf("term: identifier '%s'\n\n", $1); } 
 
 	| tNB                                                                           
-  { add_tmp(mySymbolsTable);
+  { mySymbolsTable = add_tmp(mySymbolsTable);
     int address_nb = get_last_tmp(mySymbolsTable);
     printf("AFC %d %d\n\n", address_nb, $1);   
     $$ = address_nb;
 
 
-    printf("printing table \n\n");
-    PrintTable(mySymbolsTable);
-
+    PrintTable(mySymbolsTable);  
 
     printf("term: number '%d'\n\n", $1); } 
 ;
