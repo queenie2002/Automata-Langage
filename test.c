@@ -1,0 +1,1 @@
+void main(void) { int a = 2, b, c=5; }
