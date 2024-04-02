@@ -18,7 +18,7 @@ struct SymbolTable mySymbolsTable;
 %token tADD tSUB tMUL tDIV tLT tGT tNE tEQ tGE tLE tASSIGN tAND tOR tNOT tLBRACE tRBRACE tLPAR tRPAR tSEMI tCOMMA tIF tELSE tWHILE  tPRINT tRETURN tINT tVOID tMAIN tERROR
 %token <nb> tNB
 %token <var> tID
-
+%token tEND
 %type <nb> add_sub div_mul term
 
 %start program
@@ -28,7 +28,7 @@ struct SymbolTable mySymbolsTable;
 
 program:
   %empty                                                                           { printf("program: empty\n\n"); }
-  |main_function                                                                   { printf("program: main\n\n"); }
+  |main_function                                                                  { printf("program: main\n\n"); }
   /*|function_list main_function                                                     { printf("program: main and functions\n\n"); }*/
 ;
 
@@ -220,24 +220,13 @@ div_mul:
     printf("div_mul: term %d\n\n", $1); } 
 
   | div_mul tMUL term                                                             
-  { mySymbolsTable = add_tmp(mySymbolsTable);
-    int address_nb = get_last_tmp(mySymbolsTable);
-
-    printf("COP %d %d\n\n", address_nb, res);   
-
-
-
-    int res = $1*$3;
-    printf("AFC %d %d\n\n", address_nb, res);   
-    $$ = address_nb;
+  { printf("MUL %d %d %d\n\n", $1, $1, $3);   
+    $$ = $1;
     printf("div_mul: multiplication\n\n"); } 
 
 	| div_mul tDIV term                                                             
-  { mySymbolsTable = add_tmp(mySymbolsTable);
-    int address_nb = get_last_tmp(mySymbolsTable);
-    int res = $1/$3;
-    printf("AFC %d %d\n\n", address_nb, res);   
-    $$ = address_nb;
+  { printf("DIV %d %d %d\n\n", $1, $1, $3);   
+    $$ = $1;
     printf("div_mul: division\n\n"); } 
 ;
 
@@ -272,7 +261,7 @@ void yyerror(const char *msg) {
 
 int main(void) {
   mySymbolsTable = initialize_table(mySymbolsTable);
-
+  //yydebug=1;
   yyparse();
   return 0;
 }

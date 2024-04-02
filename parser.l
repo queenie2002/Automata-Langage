@@ -53,8 +53,8 @@ tCOMMA ","
 ([0-9][0-9]*)      	                  {printf( "tNB: '%s[0x%x]'\n", yytext,atoi(yytext)); yylval.nb = atoi(yytext); return tNB;}
 (0x([0-9]|[a-f]|[A-F])([0-9]|[a-f])*)    	  {printf( "tNB: '%ld[%s]'\n", strtol(yytext, NULL, 16) ,yytext); yylval.nb = strtol(yytext, NULL, 16) ; return tNB;}
 
-{tSINGLELINECOMMENT}  
-{tMULTILINECOMMENT}
+{tSINGLELINECOMMENT}  ;
+{tMULTILINECOMMENT} ;
 
 {tVOID}   		 {printf("tVOID\n");return tVOID;}
 {tIF}      	{printf("tIF\n");return tIF;}
@@ -88,7 +88,10 @@ tCOMMA ","
 
 {tID}   	  {printf( ": '%s'\n", yytext); yylval.var = strdup(yytext); return tID;}
 
-[ \t\n]+    	 /* Ignores whitespaces */
+\n              {printf("sxss\n");}
+[ \r\t\n]+    	 {/* Ignores whitespaces */}
 
-.  	        	 {printf( "tERROR\n");return tERROR;}
+.  	        	 {printf( "aaaaxxx tERROR '%s'\n", yytext);
+printf( "aaaaxxx tERROR '%s'\n", yytext);
+printf( "aaaaxxx tERROR '%s'\n", yytext);return tERROR;}
 
