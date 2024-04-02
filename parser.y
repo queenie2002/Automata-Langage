@@ -18,8 +18,7 @@ struct SymbolTable mySymbolsTable;
 %token tADD tSUB tMUL tDIV tLT tGT tNE tEQ tGE tLE tASSIGN tAND tOR tNOT tLBRACE tRBRACE tLPAR tRPAR tSEMI tCOMMA tIF tELSE tWHILE  tPRINT tRETURN tINT tVOID tMAIN tERROR
 %token <nb> tNB
 %token <var> tID
-%token tEND
-%type <nb> add_sub div_mul term
+%type <nb> add_sub div_mul single_value
 
 %start program
 
@@ -81,7 +80,7 @@ body:
   
   |instruction_list                                                                 
   { 
-    printf("NOP\n\n");   
+    printf("\t\t\t\tNOP\n\n");   
 
     printf("body: instruction_list\n\n"); }
   
@@ -102,7 +101,12 @@ declaration_list:
 
 
 declaration:
-  parameter_type identifiers_list tSEMI                                           { printf("declaration\n\n"); }
+  declaration_type identifiers_list tSEMI                                           { printf("declaration\n\n"); }
+;
+
+
+declaration_type:
+  tINT                                                                             { printf("declaration_type: int\n\n"); }
 ;
 
 identifiers_list:
@@ -115,7 +119,7 @@ identifiers_list:
   { mySymbolsTable = add_symb(mySymbolsTable, $1); 
 
     int address_nb = get_symb(mySymbolsTable,$1);
-    printf("COP %d %d\n\n", address_nb, $3);   
+    printf("\t\t\t\tCOP %d %d\n\n", address_nb, $3);   
     mySymbolsTable = free_tmp(mySymbolsTable);
     printf("declaration and initialization: '%s'\n\n", $1); }
 
@@ -128,7 +132,7 @@ identifiers_list:
   { mySymbolsTable = add_symb(mySymbolsTable, $3); 
 
     int address_nb = get_symb(mySymbolsTable,$3);
-    printf("COP %d %d\n\n", address_nb, $5);   
+    printf("\t\t\t\tCOP %d %d\n\n", address_nb, $5);   
     
     printf("several identifiers: '%s'\n\n", $3); }
 ;
@@ -148,14 +152,14 @@ assignment_list:
   tID tASSIGN add_sub tSEMI                                           
   { get_symb(mySymbolsTable,$1);
     int address_nb = get_symb(mySymbolsTable,$1);
-    printf("COP %d %d\n\n", address_nb, $3);   
+    printf("\t\t\t\tCOP %d %d\n\n", address_nb, $3);   
     mySymbolsTable = free_tmp(mySymbolsTable);
     printf("assignment: '%s'\n\n", $1); }
 
   |tID tASSIGN add_sub tCOMMA assignment_list
   { get_symb(mySymbolsTable,$1);
     int address_nb = get_symb(mySymbolsTable,$1);
-    printf("COP %d %d\n\n", address_nb, $3);   
+    printf("\t\t\t\tCOP %d %d\n\n", address_nb, $3);   
     mySymbolsTable = free_tmp(mySymbolsTable);
     printf("assignment: '%s'\n\n", $1); }
 
@@ -206,7 +210,7 @@ compare:
 
 
 add_sub:
-	  div_mul                                                                       { printf("add_sub: div_mul\n\n"); }   
+   div_mul                                                                       { printf("add_sub: div_mul\n\n"); }   
 	| add_sub tADD div_mul                                                          { printf("add_sub: addition\n\n"); }   
 	| add_sub tSUB div_mul                                                          { printf("add_sub: substraction\n\n"); }         
 ;
@@ -215,38 +219,56 @@ add_sub:
 
 
 div_mul:
-   term                                                                           
-   { $$ = $1;
-    printf("div_mul: term %d\n\n", $1); } 
+  single_value                                                                           
+  { //we add a tmp to ST
+    mySymbolsTable = add_tmp(mySymbolsTable); 
 
-  | div_mul tMUL term                                                             
-  { printf("MUL %d %d %d\n\n", $1, $1, $3);   
+    //we assign the value of @single_value to the @tmp
+    int address_nb = get_last_tmp(mySymbolsTable);
+    printf("\t\t\t\tCOP %d %d\n\n", address_nb, $1);  
+
+    //we return the @tmp with the new value
+    $$ = address_nb;
+    printf("div_mul: single_value %d\n\n", $1); } 
+
+  | div_mul tMUL single_value                                                             
+  { //we assign the value of @single_value * @div_mul to @div_mul
+    printf("\t\t\t\tMUL %d %d %d\n\n", $1, $1, $3);  
+
+    //we free the tmp @single_value
+    mySymbolsTable = free_tmp(mySymbolsTable);
     $$ = $1;
     printf("div_mul: multiplication\n\n"); } 
 
-	| div_mul tDIV term                                                             
-  { printf("DIV %d %d %d\n\n", $1, $1, $3);   
+	| div_mul tDIV single_value                                                             
+  { //we assign the value of @single_value / @div_mul to @div_mul
+    printf("\t\t\t\tDIV %d %d %d\n\n", $1, $1, $3);   
+
+    //we free the tmp @single_value
+    mySymbolsTable = free_tmp(mySymbolsTable);
     $$ = $1;
     printf("div_mul: division\n\n"); } 
 ;
 
 
 
-term:
+single_value:
     tID                                                                           
-  { $$ = get_symb(mySymbolsTable,$1);
-    printf("term: identifier '%s'\n\n", $1); } 
+  { //we return the @ID
+    $$ = get_symb(mySymbolsTable,$1);
+    printf("single_value: identifier '%s'\n\n", $1); } 
 
 	| tNB                                                                           
-  { mySymbolsTable = add_tmp(mySymbolsTable);
+  { //we add a tmp to ST
+    mySymbolsTable = add_tmp(mySymbolsTable);
+
+    //we assign the value to the @NB
     int address_nb = get_last_tmp(mySymbolsTable);
-    printf("AFC %d %d\n\n", address_nb, $1);   
+    printf("\t\t\t\tAFC %d %d\n\n", address_nb, $1);   
+
+    //we return the @NB
     $$ = address_nb;
-
-
-    PrintTable(mySymbolsTable);  
-
-    printf("term: number '%d'\n\n", $1); } 
+    printf("single_value: number '%d'\n\n", $1); } 
 ;
 
 
@@ -261,7 +283,6 @@ void yyerror(const char *msg) {
 
 int main(void) {
   mySymbolsTable = initialize_table(mySymbolsTable);
-  //yydebug=1;
   yyparse();
   return 0;
 }
