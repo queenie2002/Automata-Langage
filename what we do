@@ -8,3 +8,8 @@ changer declaration pour que ca prenne une liste de assignment et pas défini bi
 
 
 table des symboles tmp
+table des symboles : quand on add un symbol il faut que l'addresse soit implémentée automatiquement
+
+
+
+
