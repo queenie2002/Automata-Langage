@@ -6,7 +6,8 @@ changer declaration pour que ca prenne une liste de assignment et pas défini bi
 
 
 
-
+TABLE DES SYMBOLES
+add symbol et add temp devraient retourner des addresses et non la table en entier ?
 table des symboles tmp quelles données tmp doit stocker ?
 table des symboles : est ce que le type de donnée des symboles doit être renseigné dans la table ?
 
