@@ -82,9 +82,10 @@ extern int yydebug;
     tINT = 283,                    /* tINT  */
     tVOID = 284,                   /* tVOID  */
     tMAIN = 285,                   /* tMAIN  */
-    tERROR = 286,                  /* tERROR  */
-    tNB = 287,                     /* tNB  */
-    tID = 288                      /* tID  */
+    tCONST = 286,                  /* tCONST  */
+    tERROR = 287,                  /* tERROR  */
+    tNB = 288,                     /* tNB  */
+    tID = 289                      /* tID  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -96,7 +97,7 @@ union YYSTYPE
 #line 16 "parser.y"
 int nb;char* var;
 
-#line 100 "parser.tab.h"
+#line 101 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -116,6 +117,6 @@ int yyparse (void);
   int yylex (void);
   void yyerror (const char *);
 
-#line 120 "parser.tab.h"
+#line 121 "parser.tab.h"
 
 #endif /* !YY_YY_PARSER_TAB_H_INCLUDED  */

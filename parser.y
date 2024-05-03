@@ -15,20 +15,24 @@ struct SymbolTable mySymbolsTable;
 
 %union {int nb;char* var;}
 
-%token tADD tSUB tMUL tDIV tLT tGT tNE tEQ tGE tLE tASSIGN tAND tOR tNOT tLBRACE tRBRACE tLPAR tRPAR tSEMI tCOMMA tIF tELSE tWHILE  tPRINT tRETURN tINT tVOID tMAIN tERROR
+%token tADD tSUB tMUL tDIV tLT tGT tNE tEQ tGE tLE tASSIGN tAND tOR tNOT tLBRACE tRBRACE tLPAR tRPAR tSEMI tCOMMA tIF tELSE tWHILE  tPRINT tRETURN tINT tVOID tMAIN tCONST tERROR
 %token <nb> tNB
 %token <var> tID
 %type <nb> add_sub div_mul single_value
-
 %start program
-
-
 %%
 
+
+
+
+
+
+
+
 program:
-  %empty                                                                           { printf("program: empty\n\n"); }
+  %empty                                                                          { printf("program: empty\n\n"); }
   |main_function                                                                  { printf("program: main\n\n"); }
-  /*|function_list main_function                                                     { printf("program: main and functions\n\n"); }*/
+  /*|function_list main_function                                                  { printf("program: main and functions\n\n"); }*/
 ;
 
 
@@ -210,9 +214,31 @@ compare:
 
 
 add_sub:
-   div_mul                                                                       { printf("add_sub: div_mul\n\n"); }   
-	| add_sub tADD div_mul                                                          { printf("add_sub: addition\n\n"); }   
-	| add_sub tSUB div_mul                                                          { printf("add_sub: substraction\n\n"); }         
+   div_mul                                                                       
+   { //we get the address of @div_mul in tmp
+    int address_nb = get_last_tmp(mySymbolsTable);
+
+    //we return the @div_mul
+    $$ = address_nb;
+    printf("add_sub: div_mul\n\n"); }   
+
+	| add_sub tADD div_mul                                                          
+  { //we assign the value of @div_mul * @add_sub to @add_sub
+    printf("\t\t\t\tADD %d %d %d\n\n", $1, $1, $3);  
+
+    //we free the tmp @div_mul
+    mySymbolsTable = free_tmp(mySymbolsTable);
+    $$ = $1;
+    printf("add_sub: addition\n\n"); }  
+
+	| add_sub tSUB div_mul                                                          
+  { //we assign the value of @div_mul * @add_sub to @add_sub
+    printf("\t\t\t\tSOU %d %d %d\n\n", $1, $1, $3);  
+
+    //we free the tmp @div_mul
+    mySymbolsTable = free_tmp(mySymbolsTable);
+    $$ = $1;
+    printf("add_sub: substraction\n\n"); }         
 ;
 
 
