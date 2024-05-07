@@ -7,16 +7,16 @@
 
 
 
-struct SymbolTable initialize_table(struct SymbolTable table) {
+void initialize_table(struct SymbolTable table) {
    table.ptr=-1;
    table.ptr_tmp=MAX_SYMBOLS;
-   return table;
+
 }
 
 
 
 
-struct SymbolTable add_symb(struct SymbolTable table, char* id){
+void add_symb(struct SymbolTable table, char* id){
     if (table.ptr < MAX_SYMBOLS - 1) { // Check if there is space in the table
         table.ptr++;
         struct Symbol symb;
@@ -26,21 +26,19 @@ struct SymbolTable add_symb(struct SymbolTable table, char* id){
     } else {
         printf("Error: Symbol table is full!\n");
     }
-    return table;
 }
 
 
 
 
-struct SymbolTable add_tmp(struct SymbolTable table) {
+void add_tmp(struct SymbolTable table) {
    table.ptr_tmp--;
    struct Symbol symb;
    symb.address = table.ptr_tmp;
    table.symbols[table.ptr_tmp] = symb;
-   return table;
 }
 
-
+//return addr of symbol in table of symbol
 int get_symb(struct SymbolTable table, char* id) {
    for (int i = 0; i <= table.ptr; i++) {
       if (strcmp(table.symbols[i].id, id) == 0) {
@@ -59,9 +57,8 @@ int get_last_tmp(struct SymbolTable table) {
 
 
 
-struct SymbolTable free_tmp(struct SymbolTable table) {
+voidfree_tmp(struct SymbolTable table) {
    table.ptr_tmp++;
-   return table;
 }
 
 
