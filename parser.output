@@ -1,15 +1,15 @@
-Terminals unused in grammar
+Terminaux inutilisés dans la grammaire
 
     tRETURN
     tERROR
 
 
-State 80 conflicts: 2 shift/reduce
-State 92 conflicts: 2 shift/reduce
-State 93 conflicts: 2 shift/reduce
+État 81 conflits: 2 décalage/réduction
+État 93 conflits: 2 décalage/réduction
+État 94 conflits: 2 décalage/réduction
 
 
-Grammar
+Grammaire
 
     0 $accept: program $end
 
@@ -42,1302 +42,1314 @@ Grammar
    19 declaration_list: declaration
    20                 | declaration_list declaration
 
-   21 declaration: parameter_type identifiers_list tSEMI
+   21 declaration: declaration_type identifiers_list tSEMI
 
-   22 identifiers_list: tID
-   23                 | tID tASSIGN add_sub
-   24                 | identifiers_list tCOMMA tID
-   25                 | identifiers_list tCOMMA tID tASSIGN add_sub
+   22 declaration_type: tINT
 
-   26 instruction: assignment_list
-   27            | ifblock
-   28            | whileblock
-   29            | printblock
+   23 identifiers_list: tID
+   24                 | tID tASSIGN add_sub
+   25                 | identifiers_list tCOMMA tID
+   26                 | identifiers_list tCOMMA tID tASSIGN add_sub
 
-   30 assignment_list: tID tASSIGN add_sub tSEMI
-   31                | tID tASSIGN add_sub tCOMMA assignment_list
+   27 instruction: assignment_list
+   28            | ifblock
+   29            | whileblock
+   30            | printblock
 
-   32 ifblock: tIF tLPAR condition tRPAR tLBRACE body tRBRACE
-   33        | tIF tLPAR condition tRPAR tLBRACE body tRBRACE tELSE tLBRACE body tRBRACE
-   34        | tIF tLPAR condition tRPAR tLBRACE body tRBRACE tELSE ifblock
+   31 assignment_list: tID tASSIGN add_sub tSEMI
+   32                | tID tASSIGN add_sub tCOMMA assignment_list
 
-   35 whileblock: tWHILE tLPAR condition tRPAR tLBRACE body tRBRACE
+   33 ifblock: tIF tLPAR condition tRPAR tLBRACE body tRBRACE
+   34        | tIF tLPAR condition tRPAR tLBRACE body tRBRACE tELSE tLBRACE body tRBRACE
+   35        | tIF tLPAR condition tRPAR tLBRACE body tRBRACE tELSE ifblock
 
-   36 printblock: tPRINT tLPAR tID tRPAR tSEMI
+   36 whileblock: tWHILE tLPAR condition tRPAR tLBRACE body tRBRACE
 
-   37 condition: tLPAR equality_expression tRPAR
-   38          | condition tAND condition
-   39          | condition tOR condition
-   40          | tNOT condition
+   37 printblock: tPRINT tLPAR tID tRPAR tSEMI
 
-   41 equality_expression: compare
-   42                    | equality_expression tEQ compare
-   43                    | equality_expression tNE compare
+   38 condition: tLPAR equality_expression tRPAR
+   39          | condition tAND condition
+   40          | condition tOR condition
+   41          | tNOT condition
 
-   44 compare: add_sub
-   45        | compare tLT add_sub
-   46        | compare tGT add_sub
-   47        | compare tLE add_sub
-   48        | compare tGE add_sub
+   42 equality_expression: compare
+   43                    | equality_expression tEQ compare
+   44                    | equality_expression tNE compare
 
-   49 add_sub: div_mul
-   50        | add_sub tADD div_mul
-   51        | add_sub tSUB div_mul
+   45 compare: add_sub
+   46        | compare tLT add_sub
+   47        | compare tGT add_sub
+   48        | compare tLE add_sub
+   49        | compare tGE add_sub
 
-   52 div_mul: term
-   53        | div_mul tMUL term
-   54        | div_mul tDIV term
+   50 add_sub: div_mul
+   51        | add_sub tADD div_mul
+   52        | add_sub tSUB div_mul
 
-   55 term: tID
-   56     | tNB
+   53 div_mul: single_value
+   54        | div_mul tMUL single_value
+   55        | div_mul tDIV single_value
+
+   56 single_value: tID
+   57             | tNB
 
 
-Terminals, with rules where they appear
+Terminaux, suivis des règles où ils apparaissent
 
     $end (0) 0
     error (256)
-    tADD (258) 50
-    tSUB (259) 51
-    tMUL (260) 53
-    tDIV (261) 54
-    tLT (262) 45
-    tGT (263) 46
-    tNE (264) 43
-    tEQ (265) 42
-    tGE (266) 48
-    tLE (267) 47
-    tASSIGN (268) 11 23 25 30 31
-    tAND (269) 38
-    tOR (270) 39
-    tNOT (271) 40
-    tLBRACE (272) 3 32 33 34 35
-    tRBRACE (273) 3 32 33 34 35
-    tLPAR (274) 3 32 33 34 35 36 37
-    tRPAR (275) 3 32 33 34 35 36 37
-    tSEMI (276) 21 30 36
-    tCOMMA (277) 9 24 25 31
-    tIF (278) 32 33 34
-    tELSE (279) 33 34
-    tWHILE (280) 35
-    tPRINT (281) 36
+    tADD (258) 51
+    tSUB (259) 52
+    tMUL (260) 54
+    tDIV (261) 55
+    tLT (262) 46
+    tGT (263) 47
+    tNE (264) 44
+    tEQ (265) 43
+    tGE (266) 49
+    tLE (267) 48
+    tASSIGN (268) 11 24 26 31 32
+    tAND (269) 39
+    tOR (270) 40
+    tNOT (271) 41
+    tLBRACE (272) 3 33 34 35 36
+    tRBRACE (273) 3 33 34 35 36
+    tLPAR (274) 3 33 34 35 36 37 38
+    tRPAR (275) 3 33 34 35 36 37 38
+    tSEMI (276) 21 31 37
+    tCOMMA (277) 9 25 26 32
+    tIF (278) 33 34 35
+    tELSE (279) 34 35
+    tWHILE (280) 36
+    tPRINT (281) 37
     tRETURN (282)
-    tINT (283) 5 12
+    tINT (283) 5 12 22
     tVOID (284) 4 7
     tMAIN (285) 3
     tERROR (286)
-    tNB <nb> (287) 56
-    tID <var> (288) 10 11 22 23 24 25 30 31 36 55
+    tNB <nb> (287) 57
+    tID <var> (288) 10 11 23 24 25 26 31 32 37 56
 
 
-Nonterminals, with rules where they appear
+Non-terminaux, suivis des règles où ils apparaissent
 
     $accept (34)
-        on left: 0
+        à gauche: 0
     program (35)
-        on left: 1 2
-        on right: 0
+        à gauche: 1 2
+        à droite: 0
     main_function (36)
-        on left: 3
-        on right: 2
+        à gauche: 3
+        à droite: 2
     function_type (37)
-        on left: 4 5
-        on right: 3
+        à gauche: 4 5
+        à droite: 3
     parameter_list (38)
-        on left: 6 7 8 9
-        on right: 3 9
+        à gauche: 6 7 8 9
+        à droite: 3 9
     parameter (39)
-        on left: 10 11
-        on right: 8 9
+        à gauche: 10 11
+        à droite: 8 9
     parameter_type (40)
-        on left: 12
-        on right: 10 11 21
+        à gauche: 12
+        à droite: 10 11
     body (41)
-        on left: 13 14 15 16
-        on right: 3 32 33 34 35
+        à gauche: 13 14 15 16
+        à droite: 3 33 34 35 36
     instruction_list (42)
-        on left: 17 18
-        on right: 15 16 18
+        à gauche: 17 18
+        à droite: 15 16 18
     declaration_list (43)
-        on left: 19 20
-        on right: 14 16 20
+        à gauche: 19 20
+        à droite: 14 16 20
     declaration (44)
-        on left: 21
-        on right: 19 20
-    identifiers_list (45)
-        on left: 22 23 24 25
-        on right: 21 24 25
-    instruction (46)
-        on left: 26 27 28 29
-        on right: 17 18
-    assignment_list (47)
-        on left: 30 31
-        on right: 26 31
-    ifblock (48)
-        on left: 32 33 34
-        on right: 27 34
-    whileblock (49)
-        on left: 35
-        on right: 28
-    printblock (50)
-        on left: 36
-        on right: 29
-    condition (51)
-        on left: 37 38 39 40
-        on right: 32 33 34 35 38 39 40
-    equality_expression (52)
-        on left: 41 42 43
-        on right: 11 37 42 43
-    compare (53)
-        on left: 44 45 46 47 48
-        on right: 41 42 43 45 46 47 48
-    add_sub <nb> (54)
-        on left: 49 50 51
-        on right: 23 25 30 31 44 45 46 47 48 50 51
-    div_mul <nb> (55)
-        on left: 52 53 54
-        on right: 49 50 51 53 54
-    term <nb> (56)
-        on left: 55 56
-        on right: 52 53 54
+        à gauche: 21
+        à droite: 19 20
+    declaration_type (45)
+        à gauche: 22
+        à droite: 21
+    identifiers_list (46)
+        à gauche: 23 24 25 26
+        à droite: 21 25 26
+    instruction (47)
+        à gauche: 27 28 29 30
+        à droite: 17 18
+    assignment_list (48)
+        à gauche: 31 32
+        à droite: 27 32
+    ifblock (49)
+        à gauche: 33 34 35
+        à droite: 28 35
+    whileblock (50)
+        à gauche: 36
+        à droite: 29
+    printblock (51)
+        à gauche: 37
+        à droite: 30
+    condition (52)
+        à gauche: 38 39 40 41
+        à droite: 33 34 35 36 39 40 41
+    equality_expression (53)
+        à gauche: 42 43 44
+        à droite: 11 38 43 44
+    compare (54)
+        à gauche: 45 46 47 48 49
+        à droite: 42 43 44 46 47 48 49
+    add_sub <nb> (55)
+        à gauche: 50 51 52
+        à droite: 24 26 31 32 45 46 47 48 49 51 52
+    div_mul <nb> (56)
+        à gauche: 53 54 55
+        à droite: 50 51 52 54 55
+    single_value <nb> (57)
+        à gauche: 56 57
+        à droite: 53 54 55
 
 
-State 0
+État 0
 
     0 $accept: • program $end
 
-    tINT   shift, and go to state 1
-    tVOID  shift, and go to state 2
+    tINT   décalage et aller à l'état 1
+    tVOID  décalage et aller à l'état 2
 
-    $default  reduce using rule 1 (program)
+    $défaut  réduction par utilisation de la règle 1 (program)
 
-    program        go to state 3
-    main_function  go to state 4
-    function_type  go to state 5
+    program        aller à l'état 3
+    main_function  aller à l'état 4
+    function_type  aller à l'état 5
 
 
-State 1
+État 1
 
     5 function_type: tINT •
 
-    $default  reduce using rule 5 (function_type)
+    $défaut  réduction par utilisation de la règle 5 (function_type)
 
 
-State 2
+État 2
 
     4 function_type: tVOID •
 
-    $default  reduce using rule 4 (function_type)
+    $défaut  réduction par utilisation de la règle 4 (function_type)
 
 
-State 3
+État 3
 
     0 $accept: program • $end
 
-    $end  shift, and go to state 6
+    $end  décalage et aller à l'état 6
 
 
-State 4
+État 4
 
     2 program: main_function •
 
-    $default  reduce using rule 2 (program)
+    $défaut  réduction par utilisation de la règle 2 (program)
 
 
-State 5
+État 5
 
     3 main_function: function_type • tMAIN tLPAR parameter_list tRPAR tLBRACE body tRBRACE
 
-    tMAIN  shift, and go to state 7
+    tMAIN  décalage et aller à l'état 7
 
 
-State 6
+État 6
 
     0 $accept: program $end •
 
-    $default  accept
+    $défaut  accepter
 
 
-State 7
+État 7
 
     3 main_function: function_type tMAIN • tLPAR parameter_list tRPAR tLBRACE body tRBRACE
 
-    tLPAR  shift, and go to state 8
+    tLPAR  décalage et aller à l'état 8
 
 
-State 8
+État 8
 
     3 main_function: function_type tMAIN tLPAR • parameter_list tRPAR tLBRACE body tRBRACE
 
-    tINT   shift, and go to state 9
-    tVOID  shift, and go to state 10
+    tINT   décalage et aller à l'état 9
+    tVOID  décalage et aller à l'état 10
 
-    $default  reduce using rule 6 (parameter_list)
+    $défaut  réduction par utilisation de la règle 6 (parameter_list)
 
-    parameter_list  go to state 11
-    parameter       go to state 12
-    parameter_type  go to state 13
+    parameter_list  aller à l'état 11
+    parameter       aller à l'état 12
+    parameter_type  aller à l'état 13
 
 
-State 9
+État 9
 
    12 parameter_type: tINT •
 
-    $default  reduce using rule 12 (parameter_type)
+    $défaut  réduction par utilisation de la règle 12 (parameter_type)
 
 
-State 10
+État 10
 
     7 parameter_list: tVOID •
 
-    $default  reduce using rule 7 (parameter_list)
+    $défaut  réduction par utilisation de la règle 7 (parameter_list)
 
 
-State 11
+État 11
 
     3 main_function: function_type tMAIN tLPAR parameter_list • tRPAR tLBRACE body tRBRACE
     9 parameter_list: parameter_list • tCOMMA parameter
 
-    tRPAR   shift, and go to state 14
-    tCOMMA  shift, and go to state 15
+    tRPAR   décalage et aller à l'état 14
+    tCOMMA  décalage et aller à l'état 15
 
 
-State 12
+État 12
 
     8 parameter_list: parameter •
 
-    $default  reduce using rule 8 (parameter_list)
+    $défaut  réduction par utilisation de la règle 8 (parameter_list)
 
 
-State 13
+État 13
 
    10 parameter: parameter_type • tID
    11          | parameter_type • tID tASSIGN equality_expression
 
-    tID  shift, and go to state 16
+    tID  décalage et aller à l'état 16
 
 
-State 14
+État 14
 
     3 main_function: function_type tMAIN tLPAR parameter_list tRPAR • tLBRACE body tRBRACE
 
-    tLBRACE  shift, and go to state 17
+    tLBRACE  décalage et aller à l'état 17
 
 
-State 15
+État 15
 
     9 parameter_list: parameter_list tCOMMA • parameter
 
-    tINT  shift, and go to state 9
+    tINT  décalage et aller à l'état 9
 
-    parameter       go to state 18
-    parameter_type  go to state 13
+    parameter       aller à l'état 18
+    parameter_type  aller à l'état 13
 
 
-State 16
+État 16
 
    10 parameter: parameter_type tID •
    11          | parameter_type tID • tASSIGN equality_expression
 
-    tASSIGN  shift, and go to state 19
+    tASSIGN  décalage et aller à l'état 19
 
-    $default  reduce using rule 10 (parameter)
+    $défaut  réduction par utilisation de la règle 10 (parameter)
 
 
-State 17
+État 17
 
     3 main_function: function_type tMAIN tLPAR parameter_list tRPAR tLBRACE • body tRBRACE
 
-    tIF     shift, and go to state 20
-    tWHILE  shift, and go to state 21
-    tPRINT  shift, and go to state 22
-    tINT    shift, and go to state 9
-    tID     shift, and go to state 23
+    tIF     décalage et aller à l'état 20
+    tWHILE  décalage et aller à l'état 21
+    tPRINT  décalage et aller à l'état 22
+    tINT    décalage et aller à l'état 23
+    tID     décalage et aller à l'état 24
 
-    $default  reduce using rule 13 (body)
+    $défaut  réduction par utilisation de la règle 13 (body)
 
-    parameter_type    go to state 24
-    body              go to state 25
-    instruction_list  go to state 26
-    declaration_list  go to state 27
-    declaration       go to state 28
-    instruction       go to state 29
-    assignment_list   go to state 30
-    ifblock           go to state 31
-    whileblock        go to state 32
-    printblock        go to state 33
+    body              aller à l'état 25
+    instruction_list  aller à l'état 26
+    declaration_list  aller à l'état 27
+    declaration       aller à l'état 28
+    declaration_type  aller à l'état 29
+    instruction       aller à l'état 30
+    assignment_list   aller à l'état 31
+    ifblock           aller à l'état 32
+    whileblock        aller à l'état 33
+    printblock        aller à l'état 34
 
 
-State 18
+État 18
 
     9 parameter_list: parameter_list tCOMMA parameter •
 
-    $default  reduce using rule 9 (parameter_list)
+    $défaut  réduction par utilisation de la règle 9 (parameter_list)
 
 
-State 19
+État 19
 
    11 parameter: parameter_type tID tASSIGN • equality_expression
 
-    tNB  shift, and go to state 34
-    tID  shift, and go to state 35
+    tNB  décalage et aller à l'état 35
+    tID  décalage et aller à l'état 36
 
-    equality_expression  go to state 36
-    compare              go to state 37
-    add_sub              go to state 38
-    div_mul              go to state 39
-    term                 go to state 40
-
-
-State 20
-
-   32 ifblock: tIF • tLPAR condition tRPAR tLBRACE body tRBRACE
-   33        | tIF • tLPAR condition tRPAR tLBRACE body tRBRACE tELSE tLBRACE body tRBRACE
-   34        | tIF • tLPAR condition tRPAR tLBRACE body tRBRACE tELSE ifblock
-
-    tLPAR  shift, and go to state 41
+    equality_expression  aller à l'état 37
+    compare              aller à l'état 38
+    add_sub              aller à l'état 39
+    div_mul              aller à l'état 40
+    single_value         aller à l'état 41
 
 
-State 21
+État 20
 
-   35 whileblock: tWHILE • tLPAR condition tRPAR tLBRACE body tRBRACE
+   33 ifblock: tIF • tLPAR condition tRPAR tLBRACE body tRBRACE
+   34        | tIF • tLPAR condition tRPAR tLBRACE body tRBRACE tELSE tLBRACE body tRBRACE
+   35        | tIF • tLPAR condition tRPAR tLBRACE body tRBRACE tELSE ifblock
 
-    tLPAR  shift, and go to state 42
-
-
-State 22
-
-   36 printblock: tPRINT • tLPAR tID tRPAR tSEMI
-
-    tLPAR  shift, and go to state 43
+    tLPAR  décalage et aller à l'état 42
 
 
-State 23
+État 21
 
-   30 assignment_list: tID • tASSIGN add_sub tSEMI
-   31                | tID • tASSIGN add_sub tCOMMA assignment_list
+   36 whileblock: tWHILE • tLPAR condition tRPAR tLBRACE body tRBRACE
 
-    tASSIGN  shift, and go to state 44
-
-
-State 24
-
-   21 declaration: parameter_type • identifiers_list tSEMI
-
-    tID  shift, and go to state 45
-
-    identifiers_list  go to state 46
+    tLPAR  décalage et aller à l'état 43
 
 
-State 25
+État 22
+
+   37 printblock: tPRINT • tLPAR tID tRPAR tSEMI
+
+    tLPAR  décalage et aller à l'état 44
+
+
+État 23
+
+   22 declaration_type: tINT •
+
+    $défaut  réduction par utilisation de la règle 22 (declaration_type)
+
+
+État 24
+
+   31 assignment_list: tID • tASSIGN add_sub tSEMI
+   32                | tID • tASSIGN add_sub tCOMMA assignment_list
+
+    tASSIGN  décalage et aller à l'état 45
+
+
+État 25
 
     3 main_function: function_type tMAIN tLPAR parameter_list tRPAR tLBRACE body • tRBRACE
 
-    tRBRACE  shift, and go to state 47
+    tRBRACE  décalage et aller à l'état 46
 
 
-State 26
+État 26
 
    15 body: instruction_list •
    18 instruction_list: instruction_list • instruction
 
-    tIF     shift, and go to state 20
-    tWHILE  shift, and go to state 21
-    tPRINT  shift, and go to state 22
-    tID     shift, and go to state 23
+    tIF     décalage et aller à l'état 20
+    tWHILE  décalage et aller à l'état 21
+    tPRINT  décalage et aller à l'état 22
+    tID     décalage et aller à l'état 24
 
-    $default  reduce using rule 15 (body)
+    $défaut  réduction par utilisation de la règle 15 (body)
 
-    instruction      go to state 48
-    assignment_list  go to state 30
-    ifblock          go to state 31
-    whileblock       go to state 32
-    printblock       go to state 33
+    instruction      aller à l'état 47
+    assignment_list  aller à l'état 31
+    ifblock          aller à l'état 32
+    whileblock       aller à l'état 33
+    printblock       aller à l'état 34
 
 
-State 27
+État 27
 
    14 body: declaration_list •
    16     | declaration_list • instruction_list
    20 declaration_list: declaration_list • declaration
 
-    tIF     shift, and go to state 20
-    tWHILE  shift, and go to state 21
-    tPRINT  shift, and go to state 22
-    tINT    shift, and go to state 9
-    tID     shift, and go to state 23
+    tIF     décalage et aller à l'état 20
+    tWHILE  décalage et aller à l'état 21
+    tPRINT  décalage et aller à l'état 22
+    tINT    décalage et aller à l'état 23
+    tID     décalage et aller à l'état 24
 
-    $default  reduce using rule 14 (body)
+    $défaut  réduction par utilisation de la règle 14 (body)
 
-    parameter_type    go to state 24
-    instruction_list  go to state 49
-    declaration       go to state 50
-    instruction       go to state 29
-    assignment_list   go to state 30
-    ifblock           go to state 31
-    whileblock        go to state 32
-    printblock        go to state 33
+    instruction_list  aller à l'état 48
+    declaration       aller à l'état 49
+    declaration_type  aller à l'état 29
+    instruction       aller à l'état 30
+    assignment_list   aller à l'état 31
+    ifblock           aller à l'état 32
+    whileblock        aller à l'état 33
+    printblock        aller à l'état 34
 
 
-State 28
+État 28
 
    19 declaration_list: declaration •
 
-    $default  reduce using rule 19 (declaration_list)
+    $défaut  réduction par utilisation de la règle 19 (declaration_list)
 
 
-State 29
+État 29
+
+   21 declaration: declaration_type • identifiers_list tSEMI
+
+    tID  décalage et aller à l'état 50
+
+    identifiers_list  aller à l'état 51
+
+
+État 30
 
    17 instruction_list: instruction •
 
-    $default  reduce using rule 17 (instruction_list)
+    $défaut  réduction par utilisation de la règle 17 (instruction_list)
 
 
-State 30
+État 31
 
-   26 instruction: assignment_list •
+   27 instruction: assignment_list •
 
-    $default  reduce using rule 26 (instruction)
-
-
-State 31
-
-   27 instruction: ifblock •
-
-    $default  reduce using rule 27 (instruction)
+    $défaut  réduction par utilisation de la règle 27 (instruction)
 
 
-State 32
+État 32
 
-   28 instruction: whileblock •
+   28 instruction: ifblock •
 
-    $default  reduce using rule 28 (instruction)
-
-
-State 33
-
-   29 instruction: printblock •
-
-    $default  reduce using rule 29 (instruction)
+    $défaut  réduction par utilisation de la règle 28 (instruction)
 
 
-State 34
+État 33
 
-   56 term: tNB •
+   29 instruction: whileblock •
 
-    $default  reduce using rule 56 (term)
-
-
-State 35
-
-   55 term: tID •
-
-    $default  reduce using rule 55 (term)
+    $défaut  réduction par utilisation de la règle 29 (instruction)
 
 
-State 36
+État 34
+
+   30 instruction: printblock •
+
+    $défaut  réduction par utilisation de la règle 30 (instruction)
+
+
+État 35
+
+   57 single_value: tNB •
+
+    $défaut  réduction par utilisation de la règle 57 (single_value)
+
+
+État 36
+
+   56 single_value: tID •
+
+    $défaut  réduction par utilisation de la règle 56 (single_value)
+
+
+État 37
 
    11 parameter: parameter_type tID tASSIGN equality_expression •
-   42 equality_expression: equality_expression • tEQ compare
-   43                    | equality_expression • tNE compare
+   43 equality_expression: equality_expression • tEQ compare
+   44                    | equality_expression • tNE compare
 
-    tNE  shift, and go to state 51
-    tEQ  shift, and go to state 52
+    tNE  décalage et aller à l'état 52
+    tEQ  décalage et aller à l'état 53
 
-    $default  reduce using rule 11 (parameter)
-
-
-State 37
-
-   41 equality_expression: compare •
-   45 compare: compare • tLT add_sub
-   46        | compare • tGT add_sub
-   47        | compare • tLE add_sub
-   48        | compare • tGE add_sub
-
-    tLT  shift, and go to state 53
-    tGT  shift, and go to state 54
-    tGE  shift, and go to state 55
-    tLE  shift, and go to state 56
-
-    $default  reduce using rule 41 (equality_expression)
+    $défaut  réduction par utilisation de la règle 11 (parameter)
 
 
-State 38
+État 38
 
-   44 compare: add_sub •
-   50 add_sub: add_sub • tADD div_mul
-   51        | add_sub • tSUB div_mul
+   42 equality_expression: compare •
+   46 compare: compare • tLT add_sub
+   47        | compare • tGT add_sub
+   48        | compare • tLE add_sub
+   49        | compare • tGE add_sub
 
-    tADD  shift, and go to state 57
-    tSUB  shift, and go to state 58
+    tLT  décalage et aller à l'état 54
+    tGT  décalage et aller à l'état 55
+    tGE  décalage et aller à l'état 56
+    tLE  décalage et aller à l'état 57
 
-    $default  reduce using rule 44 (compare)
-
-
-State 39
-
-   49 add_sub: div_mul •
-   53 div_mul: div_mul • tMUL term
-   54        | div_mul • tDIV term
-
-    tMUL  shift, and go to state 59
-    tDIV  shift, and go to state 60
-
-    $default  reduce using rule 49 (add_sub)
+    $défaut  réduction par utilisation de la règle 42 (equality_expression)
 
 
-State 40
+État 39
 
-   52 div_mul: term •
+   45 compare: add_sub •
+   51 add_sub: add_sub • tADD div_mul
+   52        | add_sub • tSUB div_mul
 
-    $default  reduce using rule 52 (div_mul)
+    tADD  décalage et aller à l'état 58
+    tSUB  décalage et aller à l'état 59
 
-
-State 41
-
-   32 ifblock: tIF tLPAR • condition tRPAR tLBRACE body tRBRACE
-   33        | tIF tLPAR • condition tRPAR tLBRACE body tRBRACE tELSE tLBRACE body tRBRACE
-   34        | tIF tLPAR • condition tRPAR tLBRACE body tRBRACE tELSE ifblock
-
-    tNOT   shift, and go to state 61
-    tLPAR  shift, and go to state 62
-
-    condition  go to state 63
+    $défaut  réduction par utilisation de la règle 45 (compare)
 
 
-State 42
+État 40
 
-   35 whileblock: tWHILE tLPAR • condition tRPAR tLBRACE body tRBRACE
+   50 add_sub: div_mul •
+   54 div_mul: div_mul • tMUL single_value
+   55        | div_mul • tDIV single_value
 
-    tNOT   shift, and go to state 61
-    tLPAR  shift, and go to state 62
+    tMUL  décalage et aller à l'état 60
+    tDIV  décalage et aller à l'état 61
 
-    condition  go to state 64
-
-
-State 43
-
-   36 printblock: tPRINT tLPAR • tID tRPAR tSEMI
-
-    tID  shift, and go to state 65
+    $défaut  réduction par utilisation de la règle 50 (add_sub)
 
 
-State 44
+État 41
 
-   30 assignment_list: tID tASSIGN • add_sub tSEMI
-   31                | tID tASSIGN • add_sub tCOMMA assignment_list
+   53 div_mul: single_value •
 
-    tNB  shift, and go to state 34
-    tID  shift, and go to state 35
-
-    add_sub  go to state 66
-    div_mul  go to state 39
-    term     go to state 40
+    $défaut  réduction par utilisation de la règle 53 (div_mul)
 
 
-State 45
+État 42
 
-   22 identifiers_list: tID •
-   23                 | tID • tASSIGN add_sub
+   33 ifblock: tIF tLPAR • condition tRPAR tLBRACE body tRBRACE
+   34        | tIF tLPAR • condition tRPAR tLBRACE body tRBRACE tELSE tLBRACE body tRBRACE
+   35        | tIF tLPAR • condition tRPAR tLBRACE body tRBRACE tELSE ifblock
 
-    tASSIGN  shift, and go to state 67
+    tNOT   décalage et aller à l'état 62
+    tLPAR  décalage et aller à l'état 63
 
-    $default  reduce using rule 22 (identifiers_list)
-
-
-State 46
-
-   21 declaration: parameter_type identifiers_list • tSEMI
-   24 identifiers_list: identifiers_list • tCOMMA tID
-   25                 | identifiers_list • tCOMMA tID tASSIGN add_sub
-
-    tSEMI   shift, and go to state 68
-    tCOMMA  shift, and go to state 69
+    condition  aller à l'état 64
 
 
-State 47
+État 43
+
+   36 whileblock: tWHILE tLPAR • condition tRPAR tLBRACE body tRBRACE
+
+    tNOT   décalage et aller à l'état 62
+    tLPAR  décalage et aller à l'état 63
+
+    condition  aller à l'état 65
+
+
+État 44
+
+   37 printblock: tPRINT tLPAR • tID tRPAR tSEMI
+
+    tID  décalage et aller à l'état 66
+
+
+État 45
+
+   31 assignment_list: tID tASSIGN • add_sub tSEMI
+   32                | tID tASSIGN • add_sub tCOMMA assignment_list
+
+    tNB  décalage et aller à l'état 35
+    tID  décalage et aller à l'état 36
+
+    add_sub       aller à l'état 67
+    div_mul       aller à l'état 40
+    single_value  aller à l'état 41
+
+
+État 46
 
     3 main_function: function_type tMAIN tLPAR parameter_list tRPAR tLBRACE body tRBRACE •
 
-    $default  reduce using rule 3 (main_function)
+    $défaut  réduction par utilisation de la règle 3 (main_function)
 
 
-State 48
+État 47
 
    18 instruction_list: instruction_list instruction •
 
-    $default  reduce using rule 18 (instruction_list)
+    $défaut  réduction par utilisation de la règle 18 (instruction_list)
 
 
-State 49
+État 48
 
    16 body: declaration_list instruction_list •
    18 instruction_list: instruction_list • instruction
 
-    tIF     shift, and go to state 20
-    tWHILE  shift, and go to state 21
-    tPRINT  shift, and go to state 22
-    tID     shift, and go to state 23
+    tIF     décalage et aller à l'état 20
+    tWHILE  décalage et aller à l'état 21
+    tPRINT  décalage et aller à l'état 22
+    tID     décalage et aller à l'état 24
 
-    $default  reduce using rule 16 (body)
+    $défaut  réduction par utilisation de la règle 16 (body)
 
-    instruction      go to state 48
-    assignment_list  go to state 30
-    ifblock          go to state 31
-    whileblock       go to state 32
-    printblock       go to state 33
+    instruction      aller à l'état 47
+    assignment_list  aller à l'état 31
+    ifblock          aller à l'état 32
+    whileblock       aller à l'état 33
+    printblock       aller à l'état 34
 
 
-State 50
+État 49
 
    20 declaration_list: declaration_list declaration •
 
-    $default  reduce using rule 20 (declaration_list)
+    $défaut  réduction par utilisation de la règle 20 (declaration_list)
 
 
-State 51
+État 50
 
-   43 equality_expression: equality_expression tNE • compare
+   23 identifiers_list: tID •
+   24                 | tID • tASSIGN add_sub
 
-    tNB  shift, and go to state 34
-    tID  shift, and go to state 35
+    tASSIGN  décalage et aller à l'état 68
 
-    compare  go to state 70
-    add_sub  go to state 38
-    div_mul  go to state 39
-    term     go to state 40
+    $défaut  réduction par utilisation de la règle 23 (identifiers_list)
 
 
-State 52
+État 51
 
-   42 equality_expression: equality_expression tEQ • compare
+   21 declaration: declaration_type identifiers_list • tSEMI
+   25 identifiers_list: identifiers_list • tCOMMA tID
+   26                 | identifiers_list • tCOMMA tID tASSIGN add_sub
 
-    tNB  shift, and go to state 34
-    tID  shift, and go to state 35
+    tSEMI   décalage et aller à l'état 69
+    tCOMMA  décalage et aller à l'état 70
 
-    compare  go to state 71
-    add_sub  go to state 38
-    div_mul  go to state 39
-    term     go to state 40
 
+État 52
 
-State 53
+   44 equality_expression: equality_expression tNE • compare
 
-   45 compare: compare tLT • add_sub
+    tNB  décalage et aller à l'état 35
+    tID  décalage et aller à l'état 36
 
-    tNB  shift, and go to state 34
-    tID  shift, and go to state 35
+    compare       aller à l'état 71
+    add_sub       aller à l'état 39
+    div_mul       aller à l'état 40
+    single_value  aller à l'état 41
 
-    add_sub  go to state 72
-    div_mul  go to state 39
-    term     go to state 40
 
+État 53
 
-State 54
+   43 equality_expression: equality_expression tEQ • compare
 
-   46 compare: compare tGT • add_sub
+    tNB  décalage et aller à l'état 35
+    tID  décalage et aller à l'état 36
 
-    tNB  shift, and go to state 34
-    tID  shift, and go to state 35
+    compare       aller à l'état 72
+    add_sub       aller à l'état 39
+    div_mul       aller à l'état 40
+    single_value  aller à l'état 41
 
-    add_sub  go to state 73
-    div_mul  go to state 39
-    term     go to state 40
 
+État 54
 
-State 55
+   46 compare: compare tLT • add_sub
 
-   48 compare: compare tGE • add_sub
+    tNB  décalage et aller à l'état 35
+    tID  décalage et aller à l'état 36
 
-    tNB  shift, and go to state 34
-    tID  shift, and go to state 35
+    add_sub       aller à l'état 73
+    div_mul       aller à l'état 40
+    single_value  aller à l'état 41
 
-    add_sub  go to state 74
-    div_mul  go to state 39
-    term     go to state 40
 
+État 55
 
-State 56
+   47 compare: compare tGT • add_sub
 
-   47 compare: compare tLE • add_sub
+    tNB  décalage et aller à l'état 35
+    tID  décalage et aller à l'état 36
 
-    tNB  shift, and go to state 34
-    tID  shift, and go to state 35
+    add_sub       aller à l'état 74
+    div_mul       aller à l'état 40
+    single_value  aller à l'état 41
 
-    add_sub  go to state 75
-    div_mul  go to state 39
-    term     go to state 40
 
+État 56
 
-State 57
+   49 compare: compare tGE • add_sub
 
-   50 add_sub: add_sub tADD • div_mul
+    tNB  décalage et aller à l'état 35
+    tID  décalage et aller à l'état 36
 
-    tNB  shift, and go to state 34
-    tID  shift, and go to state 35
+    add_sub       aller à l'état 75
+    div_mul       aller à l'état 40
+    single_value  aller à l'état 41
 
-    div_mul  go to state 76
-    term     go to state 40
 
+État 57
 
-State 58
+   48 compare: compare tLE • add_sub
 
-   51 add_sub: add_sub tSUB • div_mul
+    tNB  décalage et aller à l'état 35
+    tID  décalage et aller à l'état 36
 
-    tNB  shift, and go to state 34
-    tID  shift, and go to state 35
+    add_sub       aller à l'état 76
+    div_mul       aller à l'état 40
+    single_value  aller à l'état 41
 
-    div_mul  go to state 77
-    term     go to state 40
 
+État 58
 
-State 59
+   51 add_sub: add_sub tADD • div_mul
 
-   53 div_mul: div_mul tMUL • term
+    tNB  décalage et aller à l'état 35
+    tID  décalage et aller à l'état 36
 
-    tNB  shift, and go to state 34
-    tID  shift, and go to state 35
+    div_mul       aller à l'état 77
+    single_value  aller à l'état 41
 
-    term  go to state 78
 
+État 59
 
-State 60
+   52 add_sub: add_sub tSUB • div_mul
 
-   54 div_mul: div_mul tDIV • term
+    tNB  décalage et aller à l'état 35
+    tID  décalage et aller à l'état 36
 
-    tNB  shift, and go to state 34
-    tID  shift, and go to state 35
+    div_mul       aller à l'état 78
+    single_value  aller à l'état 41
 
-    term  go to state 79
 
+État 60
 
-State 61
+   54 div_mul: div_mul tMUL • single_value
 
-   40 condition: tNOT • condition
+    tNB  décalage et aller à l'état 35
+    tID  décalage et aller à l'état 36
 
-    tNOT   shift, and go to state 61
-    tLPAR  shift, and go to state 62
+    single_value  aller à l'état 79
 
-    condition  go to state 80
 
+État 61
 
-State 62
+   55 div_mul: div_mul tDIV • single_value
 
-   37 condition: tLPAR • equality_expression tRPAR
+    tNB  décalage et aller à l'état 35
+    tID  décalage et aller à l'état 36
 
-    tNB  shift, and go to state 34
-    tID  shift, and go to state 35
+    single_value  aller à l'état 80
 
-    equality_expression  go to state 81
-    compare              go to state 37
-    add_sub              go to state 38
-    div_mul              go to state 39
-    term                 go to state 40
 
+État 62
 
-State 63
+   41 condition: tNOT • condition
 
-   32 ifblock: tIF tLPAR condition • tRPAR tLBRACE body tRBRACE
-   33        | tIF tLPAR condition • tRPAR tLBRACE body tRBRACE tELSE tLBRACE body tRBRACE
-   34        | tIF tLPAR condition • tRPAR tLBRACE body tRBRACE tELSE ifblock
-   38 condition: condition • tAND condition
-   39          | condition • tOR condition
+    tNOT   décalage et aller à l'état 62
+    tLPAR  décalage et aller à l'état 63
 
-    tAND   shift, and go to state 82
-    tOR    shift, and go to state 83
-    tRPAR  shift, and go to state 84
+    condition  aller à l'état 81
 
 
-State 64
+État 63
 
-   35 whileblock: tWHILE tLPAR condition • tRPAR tLBRACE body tRBRACE
-   38 condition: condition • tAND condition
-   39          | condition • tOR condition
+   38 condition: tLPAR • equality_expression tRPAR
 
-    tAND   shift, and go to state 82
-    tOR    shift, and go to state 83
-    tRPAR  shift, and go to state 85
+    tNB  décalage et aller à l'état 35
+    tID  décalage et aller à l'état 36
 
+    equality_expression  aller à l'état 82
+    compare              aller à l'état 38
+    add_sub              aller à l'état 39
+    div_mul              aller à l'état 40
+    single_value         aller à l'état 41
 
-State 65
 
-   36 printblock: tPRINT tLPAR tID • tRPAR tSEMI
+État 64
 
-    tRPAR  shift, and go to state 86
+   33 ifblock: tIF tLPAR condition • tRPAR tLBRACE body tRBRACE
+   34        | tIF tLPAR condition • tRPAR tLBRACE body tRBRACE tELSE tLBRACE body tRBRACE
+   35        | tIF tLPAR condition • tRPAR tLBRACE body tRBRACE tELSE ifblock
+   39 condition: condition • tAND condition
+   40          | condition • tOR condition
 
+    tAND   décalage et aller à l'état 83
+    tOR    décalage et aller à l'état 84
+    tRPAR  décalage et aller à l'état 85
 
-State 66
 
-   30 assignment_list: tID tASSIGN add_sub • tSEMI
-   31                | tID tASSIGN add_sub • tCOMMA assignment_list
-   50 add_sub: add_sub • tADD div_mul
-   51        | add_sub • tSUB div_mul
+État 65
 
-    tADD    shift, and go to state 57
-    tSUB    shift, and go to state 58
-    tSEMI   shift, and go to state 87
-    tCOMMA  shift, and go to state 88
+   36 whileblock: tWHILE tLPAR condition • tRPAR tLBRACE body tRBRACE
+   39 condition: condition • tAND condition
+   40          | condition • tOR condition
 
+    tAND   décalage et aller à l'état 83
+    tOR    décalage et aller à l'état 84
+    tRPAR  décalage et aller à l'état 86
 
-State 67
 
-   23 identifiers_list: tID tASSIGN • add_sub
+État 66
 
-    tNB  shift, and go to state 34
-    tID  shift, and go to state 35
+   37 printblock: tPRINT tLPAR tID • tRPAR tSEMI
 
-    add_sub  go to state 89
-    div_mul  go to state 39
-    term     go to state 40
+    tRPAR  décalage et aller à l'état 87
 
 
-State 68
+État 67
 
-   21 declaration: parameter_type identifiers_list tSEMI •
+   31 assignment_list: tID tASSIGN add_sub • tSEMI
+   32                | tID tASSIGN add_sub • tCOMMA assignment_list
+   51 add_sub: add_sub • tADD div_mul
+   52        | add_sub • tSUB div_mul
 
-    $default  reduce using rule 21 (declaration)
+    tADD    décalage et aller à l'état 58
+    tSUB    décalage et aller à l'état 59
+    tSEMI   décalage et aller à l'état 88
+    tCOMMA  décalage et aller à l'état 89
 
 
-State 69
+État 68
 
-   24 identifiers_list: identifiers_list tCOMMA • tID
-   25                 | identifiers_list tCOMMA • tID tASSIGN add_sub
+   24 identifiers_list: tID tASSIGN • add_sub
 
-    tID  shift, and go to state 90
+    tNB  décalage et aller à l'état 35
+    tID  décalage et aller à l'état 36
 
+    add_sub       aller à l'état 90
+    div_mul       aller à l'état 40
+    single_value  aller à l'état 41
 
-State 70
 
-   43 equality_expression: equality_expression tNE compare •
-   45 compare: compare • tLT add_sub
-   46        | compare • tGT add_sub
-   47        | compare • tLE add_sub
-   48        | compare • tGE add_sub
+État 69
 
-    tLT  shift, and go to state 53
-    tGT  shift, and go to state 54
-    tGE  shift, and go to state 55
-    tLE  shift, and go to state 56
+   21 declaration: declaration_type identifiers_list tSEMI •
 
-    $default  reduce using rule 43 (equality_expression)
+    $défaut  réduction par utilisation de la règle 21 (declaration)
 
 
-State 71
+État 70
 
-   42 equality_expression: equality_expression tEQ compare •
-   45 compare: compare • tLT add_sub
-   46        | compare • tGT add_sub
-   47        | compare • tLE add_sub
-   48        | compare • tGE add_sub
+   25 identifiers_list: identifiers_list tCOMMA • tID
+   26                 | identifiers_list tCOMMA • tID tASSIGN add_sub
 
-    tLT  shift, and go to state 53
-    tGT  shift, and go to state 54
-    tGE  shift, and go to state 55
-    tLE  shift, and go to state 56
+    tID  décalage et aller à l'état 91
 
-    $default  reduce using rule 42 (equality_expression)
 
+État 71
 
-State 72
+   44 equality_expression: equality_expression tNE compare •
+   46 compare: compare • tLT add_sub
+   47        | compare • tGT add_sub
+   48        | compare • tLE add_sub
+   49        | compare • tGE add_sub
 
-   45 compare: compare tLT add_sub •
-   50 add_sub: add_sub • tADD div_mul
-   51        | add_sub • tSUB div_mul
+    tLT  décalage et aller à l'état 54
+    tGT  décalage et aller à l'état 55
+    tGE  décalage et aller à l'état 56
+    tLE  décalage et aller à l'état 57
 
-    tADD  shift, and go to state 57
-    tSUB  shift, and go to state 58
+    $défaut  réduction par utilisation de la règle 44 (equality_expression)
 
-    $default  reduce using rule 45 (compare)
 
+État 72
 
-State 73
+   43 equality_expression: equality_expression tEQ compare •
+   46 compare: compare • tLT add_sub
+   47        | compare • tGT add_sub
+   48        | compare • tLE add_sub
+   49        | compare • tGE add_sub
 
-   46 compare: compare tGT add_sub •
-   50 add_sub: add_sub • tADD div_mul
-   51        | add_sub • tSUB div_mul
+    tLT  décalage et aller à l'état 54
+    tGT  décalage et aller à l'état 55
+    tGE  décalage et aller à l'état 56
+    tLE  décalage et aller à l'état 57
 
-    tADD  shift, and go to state 57
-    tSUB  shift, and go to state 58
+    $défaut  réduction par utilisation de la règle 43 (equality_expression)
 
-    $default  reduce using rule 46 (compare)
 
+État 73
 
-State 74
+   46 compare: compare tLT add_sub •
+   51 add_sub: add_sub • tADD div_mul
+   52        | add_sub • tSUB div_mul
 
-   48 compare: compare tGE add_sub •
-   50 add_sub: add_sub • tADD div_mul
-   51        | add_sub • tSUB div_mul
+    tADD  décalage et aller à l'état 58
+    tSUB  décalage et aller à l'état 59
 
-    tADD  shift, and go to state 57
-    tSUB  shift, and go to state 58
+    $défaut  réduction par utilisation de la règle 46 (compare)
 
-    $default  reduce using rule 48 (compare)
 
+État 74
 
-State 75
+   47 compare: compare tGT add_sub •
+   51 add_sub: add_sub • tADD div_mul
+   52        | add_sub • tSUB div_mul
 
-   47 compare: compare tLE add_sub •
-   50 add_sub: add_sub • tADD div_mul
-   51        | add_sub • tSUB div_mul
+    tADD  décalage et aller à l'état 58
+    tSUB  décalage et aller à l'état 59
 
-    tADD  shift, and go to state 57
-    tSUB  shift, and go to state 58
+    $défaut  réduction par utilisation de la règle 47 (compare)
 
-    $default  reduce using rule 47 (compare)
 
+État 75
 
-State 76
+   49 compare: compare tGE add_sub •
+   51 add_sub: add_sub • tADD div_mul
+   52        | add_sub • tSUB div_mul
 
-   50 add_sub: add_sub tADD div_mul •
-   53 div_mul: div_mul • tMUL term
-   54        | div_mul • tDIV term
+    tADD  décalage et aller à l'état 58
+    tSUB  décalage et aller à l'état 59
 
-    tMUL  shift, and go to state 59
-    tDIV  shift, and go to state 60
+    $défaut  réduction par utilisation de la règle 49 (compare)
 
-    $default  reduce using rule 50 (add_sub)
 
+État 76
 
-State 77
+   48 compare: compare tLE add_sub •
+   51 add_sub: add_sub • tADD div_mul
+   52        | add_sub • tSUB div_mul
 
-   51 add_sub: add_sub tSUB div_mul •
-   53 div_mul: div_mul • tMUL term
-   54        | div_mul • tDIV term
+    tADD  décalage et aller à l'état 58
+    tSUB  décalage et aller à l'état 59
 
-    tMUL  shift, and go to state 59
-    tDIV  shift, and go to state 60
+    $défaut  réduction par utilisation de la règle 48 (compare)
 
-    $default  reduce using rule 51 (add_sub)
 
+État 77
 
-State 78
+   51 add_sub: add_sub tADD div_mul •
+   54 div_mul: div_mul • tMUL single_value
+   55        | div_mul • tDIV single_value
 
-   53 div_mul: div_mul tMUL term •
+    tMUL  décalage et aller à l'état 60
+    tDIV  décalage et aller à l'état 61
 
-    $default  reduce using rule 53 (div_mul)
+    $défaut  réduction par utilisation de la règle 51 (add_sub)
 
 
-State 79
+État 78
 
-   54 div_mul: div_mul tDIV term •
+   52 add_sub: add_sub tSUB div_mul •
+   54 div_mul: div_mul • tMUL single_value
+   55        | div_mul • tDIV single_value
 
-    $default  reduce using rule 54 (div_mul)
+    tMUL  décalage et aller à l'état 60
+    tDIV  décalage et aller à l'état 61
 
+    $défaut  réduction par utilisation de la règle 52 (add_sub)
 
-State 80
 
-   38 condition: condition • tAND condition
-   39          | condition • tOR condition
-   40          | tNOT condition •
+État 79
 
-    tAND  shift, and go to state 82
-    tOR   shift, and go to state 83
+   54 div_mul: div_mul tMUL single_value •
 
-    tAND      [reduce using rule 40 (condition)]
-    tOR       [reduce using rule 40 (condition)]
-    $default  reduce using rule 40 (condition)
+    $défaut  réduction par utilisation de la règle 54 (div_mul)
 
 
-State 81
+État 80
 
-   37 condition: tLPAR equality_expression • tRPAR
-   42 equality_expression: equality_expression • tEQ compare
-   43                    | equality_expression • tNE compare
+   55 div_mul: div_mul tDIV single_value •
 
-    tNE    shift, and go to state 51
-    tEQ    shift, and go to state 52
-    tRPAR  shift, and go to state 91
+    $défaut  réduction par utilisation de la règle 55 (div_mul)
 
 
-State 82
+État 81
 
-   38 condition: condition tAND • condition
+   39 condition: condition • tAND condition
+   40          | condition • tOR condition
+   41          | tNOT condition •
 
-    tNOT   shift, and go to state 61
-    tLPAR  shift, and go to state 62
+    tAND  décalage et aller à l'état 83
+    tOR   décalage et aller à l'état 84
 
-    condition  go to state 92
+    tAND     [réduction par utilisation de la règle 41 (condition)]
+    tOR      [réduction par utilisation de la règle 41 (condition)]
+    $défaut  réduction par utilisation de la règle 41 (condition)
 
 
-State 83
+État 82
 
-   39 condition: condition tOR • condition
+   38 condition: tLPAR equality_expression • tRPAR
+   43 equality_expression: equality_expression • tEQ compare
+   44                    | equality_expression • tNE compare
 
-    tNOT   shift, and go to state 61
-    tLPAR  shift, and go to state 62
+    tNE    décalage et aller à l'état 52
+    tEQ    décalage et aller à l'état 53
+    tRPAR  décalage et aller à l'état 92
 
-    condition  go to state 93
 
+État 83
 
-State 84
+   39 condition: condition tAND • condition
 
-   32 ifblock: tIF tLPAR condition tRPAR • tLBRACE body tRBRACE
-   33        | tIF tLPAR condition tRPAR • tLBRACE body tRBRACE tELSE tLBRACE body tRBRACE
-   34        | tIF tLPAR condition tRPAR • tLBRACE body tRBRACE tELSE ifblock
+    tNOT   décalage et aller à l'état 62
+    tLPAR  décalage et aller à l'état 63
 
-    tLBRACE  shift, and go to state 94
+    condition  aller à l'état 93
 
 
-State 85
+État 84
 
-   35 whileblock: tWHILE tLPAR condition tRPAR • tLBRACE body tRBRACE
+   40 condition: condition tOR • condition
 
-    tLBRACE  shift, and go to state 95
+    tNOT   décalage et aller à l'état 62
+    tLPAR  décalage et aller à l'état 63
 
+    condition  aller à l'état 94
 
-State 86
 
-   36 printblock: tPRINT tLPAR tID tRPAR • tSEMI
+État 85
 
-    tSEMI  shift, and go to state 96
+   33 ifblock: tIF tLPAR condition tRPAR • tLBRACE body tRBRACE
+   34        | tIF tLPAR condition tRPAR • tLBRACE body tRBRACE tELSE tLBRACE body tRBRACE
+   35        | tIF tLPAR condition tRPAR • tLBRACE body tRBRACE tELSE ifblock
 
+    tLBRACE  décalage et aller à l'état 95
 
-State 87
 
-   30 assignment_list: tID tASSIGN add_sub tSEMI •
+État 86
 
-    $default  reduce using rule 30 (assignment_list)
+   36 whileblock: tWHILE tLPAR condition tRPAR • tLBRACE body tRBRACE
 
+    tLBRACE  décalage et aller à l'état 96
 
-State 88
 
-   31 assignment_list: tID tASSIGN add_sub tCOMMA • assignment_list
+État 87
 
-    tID  shift, and go to state 23
+   37 printblock: tPRINT tLPAR tID tRPAR • tSEMI
 
-    assignment_list  go to state 97
+    tSEMI  décalage et aller à l'état 97
 
 
-State 89
+État 88
 
-   23 identifiers_list: tID tASSIGN add_sub •
-   50 add_sub: add_sub • tADD div_mul
-   51        | add_sub • tSUB div_mul
+   31 assignment_list: tID tASSIGN add_sub tSEMI •
 
-    tADD  shift, and go to state 57
-    tSUB  shift, and go to state 58
+    $défaut  réduction par utilisation de la règle 31 (assignment_list)
 
-    $default  reduce using rule 23 (identifiers_list)
 
+État 89
 
-State 90
+   32 assignment_list: tID tASSIGN add_sub tCOMMA • assignment_list
 
-   24 identifiers_list: identifiers_list tCOMMA tID •
-   25                 | identifiers_list tCOMMA tID • tASSIGN add_sub
+    tID  décalage et aller à l'état 24
 
-    tASSIGN  shift, and go to state 98
+    assignment_list  aller à l'état 98
 
-    $default  reduce using rule 24 (identifiers_list)
 
+État 90
 
-State 91
+   24 identifiers_list: tID tASSIGN add_sub •
+   51 add_sub: add_sub • tADD div_mul
+   52        | add_sub • tSUB div_mul
 
-   37 condition: tLPAR equality_expression tRPAR •
+    tADD  décalage et aller à l'état 58
+    tSUB  décalage et aller à l'état 59
 
-    $default  reduce using rule 37 (condition)
+    $défaut  réduction par utilisation de la règle 24 (identifiers_list)
 
 
-State 92
+État 91
 
-   38 condition: condition • tAND condition
-   38          | condition tAND condition •
-   39          | condition • tOR condition
+   25 identifiers_list: identifiers_list tCOMMA tID •
+   26                 | identifiers_list tCOMMA tID • tASSIGN add_sub
 
-    tAND  shift, and go to state 82
-    tOR   shift, and go to state 83
+    tASSIGN  décalage et aller à l'état 99
 
-    tAND      [reduce using rule 38 (condition)]
-    tOR       [reduce using rule 38 (condition)]
-    $default  reduce using rule 38 (condition)
+    $défaut  réduction par utilisation de la règle 25 (identifiers_list)
 
 
-State 93
+État 92
 
-   38 condition: condition • tAND condition
-   39          | condition • tOR condition
-   39          | condition tOR condition •
+   38 condition: tLPAR equality_expression tRPAR •
 
-    tAND  shift, and go to state 82
-    tOR   shift, and go to state 83
+    $défaut  réduction par utilisation de la règle 38 (condition)
 
-    tAND      [reduce using rule 39 (condition)]
-    tOR       [reduce using rule 39 (condition)]
-    $default  reduce using rule 39 (condition)
 
+État 93
 
-State 94
+   39 condition: condition • tAND condition
+   39          | condition tAND condition •
+   40          | condition • tOR condition
 
-   32 ifblock: tIF tLPAR condition tRPAR tLBRACE • body tRBRACE
-   33        | tIF tLPAR condition tRPAR tLBRACE • body tRBRACE tELSE tLBRACE body tRBRACE
-   34        | tIF tLPAR condition tRPAR tLBRACE • body tRBRACE tELSE ifblock
+    tAND  décalage et aller à l'état 83
+    tOR   décalage et aller à l'état 84
 
-    tIF     shift, and go to state 20
-    tWHILE  shift, and go to state 21
-    tPRINT  shift, and go to state 22
-    tINT    shift, and go to state 9
-    tID     shift, and go to state 23
+    tAND     [réduction par utilisation de la règle 39 (condition)]
+    tOR      [réduction par utilisation de la règle 39 (condition)]
+    $défaut  réduction par utilisation de la règle 39 (condition)
 
-    $default  reduce using rule 13 (body)
 
-    parameter_type    go to state 24
-    body              go to state 99
-    instruction_list  go to state 26
-    declaration_list  go to state 27
-    declaration       go to state 28
-    instruction       go to state 29
-    assignment_list   go to state 30
-    ifblock           go to state 31
-    whileblock        go to state 32
-    printblock        go to state 33
+État 94
 
+   39 condition: condition • tAND condition
+   40          | condition • tOR condition
+   40          | condition tOR condition •
 
-State 95
+    tAND  décalage et aller à l'état 83
+    tOR   décalage et aller à l'état 84
 
-   35 whileblock: tWHILE tLPAR condition tRPAR tLBRACE • body tRBRACE
+    tAND     [réduction par utilisation de la règle 40 (condition)]
+    tOR      [réduction par utilisation de la règle 40 (condition)]
+    $défaut  réduction par utilisation de la règle 40 (condition)
 
-    tIF     shift, and go to state 20
-    tWHILE  shift, and go to state 21
-    tPRINT  shift, and go to state 22
-    tINT    shift, and go to state 9
-    tID     shift, and go to state 23
 
-    $default  reduce using rule 13 (body)
+État 95
 
-    parameter_type    go to state 24
-    body              go to state 100
-    instruction_list  go to state 26
-    declaration_list  go to state 27
-    declaration       go to state 28
-    instruction       go to state 29
-    assignment_list   go to state 30
-    ifblock           go to state 31
-    whileblock        go to state 32
-    printblock        go to state 33
+   33 ifblock: tIF tLPAR condition tRPAR tLBRACE • body tRBRACE
+   34        | tIF tLPAR condition tRPAR tLBRACE • body tRBRACE tELSE tLBRACE body tRBRACE
+   35        | tIF tLPAR condition tRPAR tLBRACE • body tRBRACE tELSE ifblock
 
+    tIF     décalage et aller à l'état 20
+    tWHILE  décalage et aller à l'état 21
+    tPRINT  décalage et aller à l'état 22
+    tINT    décalage et aller à l'état 23
+    tID     décalage et aller à l'état 24
 
-State 96
+    $défaut  réduction par utilisation de la règle 13 (body)
 
-   36 printblock: tPRINT tLPAR tID tRPAR tSEMI •
+    body              aller à l'état 100
+    instruction_list  aller à l'état 26
+    declaration_list  aller à l'état 27
+    declaration       aller à l'état 28
+    declaration_type  aller à l'état 29
+    instruction       aller à l'état 30
+    assignment_list   aller à l'état 31
+    ifblock           aller à l'état 32
+    whileblock        aller à l'état 33
+    printblock        aller à l'état 34
 
-    $default  reduce using rule 36 (printblock)
 
+État 96
 
-State 97
+   36 whileblock: tWHILE tLPAR condition tRPAR tLBRACE • body tRBRACE
 
-   31 assignment_list: tID tASSIGN add_sub tCOMMA assignment_list •
+    tIF     décalage et aller à l'état 20
+    tWHILE  décalage et aller à l'état 21
+    tPRINT  décalage et aller à l'état 22
+    tINT    décalage et aller à l'état 23
+    tID     décalage et aller à l'état 24
 
-    $default  reduce using rule 31 (assignment_list)
+    $défaut  réduction par utilisation de la règle 13 (body)
 
+    body              aller à l'état 101
+    instruction_list  aller à l'état 26
+    declaration_list  aller à l'état 27
+    declaration       aller à l'état 28
+    declaration_type  aller à l'état 29
+    instruction       aller à l'état 30
+    assignment_list   aller à l'état 31
+    ifblock           aller à l'état 32
+    whileblock        aller à l'état 33
+    printblock        aller à l'état 34
 
-State 98
 
-   25 identifiers_list: identifiers_list tCOMMA tID tASSIGN • add_sub
+État 97
 
-    tNB  shift, and go to state 34
-    tID  shift, and go to state 35
+   37 printblock: tPRINT tLPAR tID tRPAR tSEMI •
 
-    add_sub  go to state 101
-    div_mul  go to state 39
-    term     go to state 40
+    $défaut  réduction par utilisation de la règle 37 (printblock)
 
 
-State 99
+État 98
 
-   32 ifblock: tIF tLPAR condition tRPAR tLBRACE body • tRBRACE
-   33        | tIF tLPAR condition tRPAR tLBRACE body • tRBRACE tELSE tLBRACE body tRBRACE
-   34        | tIF tLPAR condition tRPAR tLBRACE body • tRBRACE tELSE ifblock
+   32 assignment_list: tID tASSIGN add_sub tCOMMA assignment_list •
 
-    tRBRACE  shift, and go to state 102
+    $défaut  réduction par utilisation de la règle 32 (assignment_list)
 
 
-State 100
+État 99
 
-   35 whileblock: tWHILE tLPAR condition tRPAR tLBRACE body • tRBRACE
+   26 identifiers_list: identifiers_list tCOMMA tID tASSIGN • add_sub
 
-    tRBRACE  shift, and go to state 103
+    tNB  décalage et aller à l'état 35
+    tID  décalage et aller à l'état 36
 
+    add_sub       aller à l'état 102
+    div_mul       aller à l'état 40
+    single_value  aller à l'état 41
 
-State 101
 
-   25 identifiers_list: identifiers_list tCOMMA tID tASSIGN add_sub •
-   50 add_sub: add_sub • tADD div_mul
-   51        | add_sub • tSUB div_mul
+État 100
 
-    tADD  shift, and go to state 57
-    tSUB  shift, and go to state 58
+   33 ifblock: tIF tLPAR condition tRPAR tLBRACE body • tRBRACE
+   34        | tIF tLPAR condition tRPAR tLBRACE body • tRBRACE tELSE tLBRACE body tRBRACE
+   35        | tIF tLPAR condition tRPAR tLBRACE body • tRBRACE tELSE ifblock
 
-    $default  reduce using rule 25 (identifiers_list)
+    tRBRACE  décalage et aller à l'état 103
 
 
-State 102
+État 101
 
-   32 ifblock: tIF tLPAR condition tRPAR tLBRACE body tRBRACE •
-   33        | tIF tLPAR condition tRPAR tLBRACE body tRBRACE • tELSE tLBRACE body tRBRACE
-   34        | tIF tLPAR condition tRPAR tLBRACE body tRBRACE • tELSE ifblock
+   36 whileblock: tWHILE tLPAR condition tRPAR tLBRACE body • tRBRACE
 
-    tELSE  shift, and go to state 104
+    tRBRACE  décalage et aller à l'état 104
 
-    $default  reduce using rule 32 (ifblock)
 
+État 102
 
-State 103
+   26 identifiers_list: identifiers_list tCOMMA tID tASSIGN add_sub •
+   51 add_sub: add_sub • tADD div_mul
+   52        | add_sub • tSUB div_mul
 
-   35 whileblock: tWHILE tLPAR condition tRPAR tLBRACE body tRBRACE •
+    tADD  décalage et aller à l'état 58
+    tSUB  décalage et aller à l'état 59
 
-    $default  reduce using rule 35 (whileblock)
+    $défaut  réduction par utilisation de la règle 26 (identifiers_list)
 
 
-State 104
+État 103
 
-   33 ifblock: tIF tLPAR condition tRPAR tLBRACE body tRBRACE tELSE • tLBRACE body tRBRACE
-   34        | tIF tLPAR condition tRPAR tLBRACE body tRBRACE tELSE • ifblock
+   33 ifblock: tIF tLPAR condition tRPAR tLBRACE body tRBRACE •
+   34        | tIF tLPAR condition tRPAR tLBRACE body tRBRACE • tELSE tLBRACE body tRBRACE
+   35        | tIF tLPAR condition tRPAR tLBRACE body tRBRACE • tELSE ifblock
 
-    tLBRACE  shift, and go to state 105
-    tIF      shift, and go to state 20
+    tELSE  décalage et aller à l'état 105
 
-    ifblock  go to state 106
+    $défaut  réduction par utilisation de la règle 33 (ifblock)
 
 
-State 105
+État 104
 
-   33 ifblock: tIF tLPAR condition tRPAR tLBRACE body tRBRACE tELSE tLBRACE • body tRBRACE
+   36 whileblock: tWHILE tLPAR condition tRPAR tLBRACE body tRBRACE •
 
-    tIF     shift, and go to state 20
-    tWHILE  shift, and go to state 21
-    tPRINT  shift, and go to state 22
-    tINT    shift, and go to state 9
-    tID     shift, and go to state 23
+    $défaut  réduction par utilisation de la règle 36 (whileblock)
 
-    $default  reduce using rule 13 (body)
 
-    parameter_type    go to state 24
-    body              go to state 107
-    instruction_list  go to state 26
-    declaration_list  go to state 27
-    declaration       go to state 28
-    instruction       go to state 29
-    assignment_list   go to state 30
-    ifblock           go to state 31
-    whileblock        go to state 32
-    printblock        go to state 33
+État 105
 
+   34 ifblock: tIF tLPAR condition tRPAR tLBRACE body tRBRACE tELSE • tLBRACE body tRBRACE
+   35        | tIF tLPAR condition tRPAR tLBRACE body tRBRACE tELSE • ifblock
 
-State 106
+    tLBRACE  décalage et aller à l'état 106
+    tIF      décalage et aller à l'état 20
 
-   34 ifblock: tIF tLPAR condition tRPAR tLBRACE body tRBRACE tELSE ifblock •
+    ifblock  aller à l'état 107
 
-    $default  reduce using rule 34 (ifblock)
 
+État 106
 
-State 107
+   34 ifblock: tIF tLPAR condition tRPAR tLBRACE body tRBRACE tELSE tLBRACE • body tRBRACE
 
-   33 ifblock: tIF tLPAR condition tRPAR tLBRACE body tRBRACE tELSE tLBRACE body • tRBRACE
+    tIF     décalage et aller à l'état 20
+    tWHILE  décalage et aller à l'état 21
+    tPRINT  décalage et aller à l'état 22
+    tINT    décalage et aller à l'état 23
+    tID     décalage et aller à l'état 24
 
-    tRBRACE  shift, and go to state 108
+    $défaut  réduction par utilisation de la règle 13 (body)
 
+    body              aller à l'état 108
+    instruction_list  aller à l'état 26
+    declaration_list  aller à l'état 27
+    declaration       aller à l'état 28
+    declaration_type  aller à l'état 29
+    instruction       aller à l'état 30
+    assignment_list   aller à l'état 31
+    ifblock           aller à l'état 32
+    whileblock        aller à l'état 33
+    printblock        aller à l'état 34
 
-State 108
 
-   33 ifblock: tIF tLPAR condition tRPAR tLBRACE body tRBRACE tELSE tLBRACE body tRBRACE •
+État 107
 
-    $default  reduce using rule 33 (ifblock)
+   35 ifblock: tIF tLPAR condition tRPAR tLBRACE body tRBRACE tELSE ifblock •
+
+    $défaut  réduction par utilisation de la règle 35 (ifblock)
+
+
+État 108
+
+   34 ifblock: tIF tLPAR condition tRPAR tLBRACE body tRBRACE tELSE tLBRACE body • tRBRACE
+
+    tRBRACE  décalage et aller à l'état 109
+
+
+État 109
+
+   34 ifblock: tIF tLPAR condition tRPAR tLBRACE body tRBRACE tELSE tLBRACE body tRBRACE •
+
+    $défaut  réduction par utilisation de la règle 34 (ifblock)

@@ -352,8 +352,8 @@ static void yynoreturn yy_fatal_error ( const char* msg  );
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
-#define YY_NUM_RULES 36
-#define YY_END_OF_BUFFER 37
+#define YY_NUM_RULES 37
+#define YY_END_OF_BUFFER 38
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -363,10 +363,10 @@ struct yy_trans_info
 	};
 static const flex_int16_t yy_accept[79] =
     {   0,
-        0,    0,   37,   35,   34,   34,   26,   35,   29,   30,
+        0,    0,   38,   36,   35,   34,   26,   36,   29,   30,
        15,   13,   32,   14,   16,    1,    1,   31,   17,   23,
        18,   33,   33,   33,   33,   33,   33,   33,   33,   27,
-       35,   28,   34,   19,   24,    0,    3,    1,    0,   22,
+       36,   28,   35,   19,   24,    0,    3,    1,    0,   22,
        20,   21,   33,   33,    6,   33,   33,   33,   33,   33,
        33,   25,    0,    0,    3,    2,   33,   11,   33,   33,
        33,   33,   33,    0,    0,    4,    2,    7,   12,   33,
@@ -376,7 +376,7 @@ static const flex_int16_t yy_accept[79] =
 static const YY_CHAR yy_ec[256] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    2,    3,
-        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
+        1,    1,    2,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    2,    4,    1,    1,    1,    1,    5,    1,    6,
         7,    8,    9,   10,   11,    1,   12,   13,   14,   14,
@@ -496,9 +496,9 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "parser.l"
+#line 1 "lexer.l"
 #define YY_NO_INPUT 1
-#line 6 "parser.l"
+#line 6 "lexer.l"
 #include "parser.tab.h"
 #line 504 "lex.yy.c"
 /* Regular Definitions */
@@ -721,7 +721,7 @@ YY_DECL
 		}
 
 	{
-#line 51 "parser.l"
+#line 51 "lexer.l"
 
 
 #line 728 "lex.yy.c"
@@ -783,187 +783,193 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 53 "parser.l"
+#line 53 "lexer.l"
 {printf( "tNB: '%s[0x%x]'\n", yytext,atoi(yytext)); yylval.nb = atoi(yytext); return tNB;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 54 "parser.l"
+#line 54 "lexer.l"
 {printf( "tNB: '%ld[%s]'\n", strtol(yytext, NULL, 16) ,yytext); yylval.nb = strtol(yytext, NULL, 16) ; return tNB;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 56 "parser.l"
+#line 56 "lexer.l"
 
 	YY_BREAK
 case 4:
 /* rule 4 can match eol */
 YY_RULE_SETUP
-#line 57 "parser.l"
+#line 57 "lexer.l"
 
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 59 "parser.l"
+#line 59 "lexer.l"
 {printf("tVOID\n");return tVOID;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 60 "parser.l"
+#line 60 "lexer.l"
 {printf("tIF\n");return tIF;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 61 "parser.l"
+#line 61 "lexer.l"
 {printf("tELSE\n");return tELSE;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 62 "parser.l"
+#line 62 "lexer.l"
 {printf("tWHILE\n");return tWHILE;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 63 "parser.l"
+#line 63 "lexer.l"
 {printf("tPRINT\n");return tPRINT;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 64 "parser.l"
+#line 64 "lexer.l"
 {printf("tRETURN\n");return tRETURN;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 65 "parser.l"
+#line 65 "lexer.l"
 {printf("tINT\n");return tINT;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 66 "parser.l"
+#line 66 "lexer.l"
 {printf("tMAIN\n");return tMAIN;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 68 "parser.l"
+#line 68 "lexer.l"
 {printf("tADD\n");return tADD;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 69 "parser.l"
+#line 69 "lexer.l"
 {printf("tSUB\n");return tSUB;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 70 "parser.l"
+#line 70 "lexer.l"
 {printf("tMUL\n");return tMUL;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 71 "parser.l"
+#line 71 "lexer.l"
 {printf("tDIV\n");return tDIV;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 72 "parser.l"
+#line 72 "lexer.l"
 {printf("tLT\n");return tLT;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 73 "parser.l"
+#line 73 "lexer.l"
 {printf("tGT\n");return tGT;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 74 "parser.l"
+#line 74 "lexer.l"
 {printf("tNE\n");return tNE;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 75 "parser.l"
+#line 75 "lexer.l"
 {printf("tEQ\n");return tEQ;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 76 "parser.l"
+#line 76 "lexer.l"
 {printf("tGE\n");return tGE;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 77 "parser.l"
+#line 77 "lexer.l"
 {printf("tLE\n");return tLE;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 78 "parser.l"
+#line 78 "lexer.l"
 {printf("tASSIGN\n");return tASSIGN;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 79 "parser.l"
+#line 79 "lexer.l"
 {printf("tAND\n");return tAND;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 80 "parser.l"
+#line 80 "lexer.l"
 {printf("tOR\n");return tOR;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 81 "parser.l"
+#line 81 "lexer.l"
 {printf("tNOT\n");return tNOT;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 82 "parser.l"
+#line 82 "lexer.l"
 {printf("tLBRACE\n");return tLBRACE;}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 83 "parser.l"
+#line 83 "lexer.l"
 {printf("tRBRACE\n");return tRBRACE;}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 84 "parser.l"
+#line 84 "lexer.l"
 {printf("tLPAR\n");return tLPAR;}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 85 "parser.l"
+#line 85 "lexer.l"
 {printf("tRPAR\n");return tRPAR;}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 86 "parser.l"
+#line 86 "lexer.l"
 {printf("tSEMI\n");return tSEMI;}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 87 "parser.l"
+#line 87 "lexer.l"
 {printf("tCOMMA\n");return tCOMMA;}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 89 "parser.l"
+#line 89 "lexer.l"
 {printf( ": '%s'\n", yytext); yylval.var = strdup(yytext); return tID;}
 	YY_BREAK
 case 34:
 /* rule 34 can match eol */
 YY_RULE_SETUP
-#line 91 "parser.l"
-/* Ignores whitespaces */
+#line 91 "lexer.l"
+{printf("sxss\n");}
 	YY_BREAK
 case 35:
+/* rule 35 can match eol */
 YY_RULE_SETUP
-#line 93 "parser.l"
-{printf( "tERROR\n");return tERROR;}
+#line 92 "lexer.l"
+{/* Ignores whitespaces */}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 95 "parser.l"
+#line 94 "lexer.l"
+{printf("tERROR\n");};
+	YY_BREAK
+case 37:
+YY_RULE_SETUP
+#line 96 "lexer.l"
 ECHO;
 	YY_BREAK
-#line 967 "lex.yy.c"
+#line 973 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1931,4 +1937,4 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 95 "parser.l"
+#line 96 "lexer.l"

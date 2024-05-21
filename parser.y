@@ -24,7 +24,6 @@ struct SymbolTable mySymbolsTable;
 
 
 %%
-
 program:
   %empty                                                                           { printf("program: empty\n\n"); }
   | main_function                                                                  { printf("program: main\n\n"); }
@@ -64,7 +63,7 @@ body:
 ;
 
 instruction_list:
-  instruction                                                                       { printf("an instruction\n\n"); }
+  instruction                                                                       { printf("an instruction"); }
   | instruction_list instruction                                                     { printf("several instructions\n\n"); }
 ;
 
@@ -84,16 +83,20 @@ declaration_type:
 identifiers_list:
   tID                                                                             
   { add_symb(&mySymbolsTable, $1); 
-    printf("identifier: '%s'\n\n", $1); }
+    printf("identifier: '%s'\n\n", $1); 
+    PrintTable(&mySymbolsTable);}
   | tID tASSIGN add_sub /*equality_expression */                                                
   { add_symb(&mySymbolsTable, $1); 
-    printf("declaration and initialization: '%s'\n\n", $1); }
+    printf("declaration and initialization: '%s'\n\n", $1); 
+    PrintTable(&mySymbolsTable);}
   | identifiers_list tCOMMA tID                                                   
   { add_symb(&mySymbolsTable, $3); 
-    printf("several identifiers: '%s'\n\n", $3); }
+    printf("several identifiers: '%s'\n\n", $3); 
+    PrintTable(&mySymbolsTable);}
   | identifiers_list tCOMMA tID tASSIGN add_sub /*equality_expression */                      
   { add_symb(&mySymbolsTable, $3); 
-    printf("several identifiers: '%s'\n\n", $3); }
+    printf("several identifiers: '%s'\n\n", $3); 
+    PrintTable(&mySymbolsTable);}
 ;
 
 instruction:
@@ -167,6 +170,9 @@ single_value:
 	| tNB                                                                           
   { printf("single_value: number '%d'\n\n", $1); } 
 ;
+
+
+
 
 
 
