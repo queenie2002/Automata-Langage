@@ -17,14 +17,18 @@ struct SymbolTable initialize_table(struct SymbolTable table) {
 
 
 struct SymbolTable add_symb(struct SymbolTable table, char* id){
-   table.ptr++;
-   struct Symbol symb;
-   strcpy(symb.id, id);
-   symb.address = table.ptr;
-   //symb.initialized = true;
-   table.symbols[table.ptr] = symb;
-   return table;
+    if (table.ptr < MAX_SYMBOLS - 1) { // Check if there is space in the table
+        table.ptr++;
+        struct Symbol symb;
+        strcpy(symb.id, id);
+        symb.address = table.ptr; // Assign the next available address
+        table.symbols[table.ptr] = symb;
+    } else {
+        printf("Error: Symbol table is full!\n");
+    }
+    return table;
 }
+
 
 
 
@@ -64,7 +68,7 @@ struct SymbolTable free_tmp(struct SymbolTable table) {
 void PrintTable(struct SymbolTable table){
    printf("--------Declared variables and constants------\n");
    for (int i=0;i<=table.ptr;i++){
-      printf("address :%c   id :%s\n",table.symbols[i].address, table.symbols[i].id);
+      printf("address :%d   id :%s\n",table.symbols[i].address, table.symbols[i].id);
    }
    printf("------temporary variables--------\n");
    printf("nb temporary variables :%d\n\n\n",MAX_SYMBOLS-table.ptr_tmp);
