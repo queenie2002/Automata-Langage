@@ -1,0 +1,17 @@
+
+//affectation
+{add_tmp(mySymbolsTable);
+int temp = get_last_tmp(mySymbolsTable);
+int val = $2;
+printf("AFC %d %d %d", temp, val, 0);}
+
+
+//test
+int main() {
+    int a;
+    int b, c;
+    b= 6;
+    c = 8;
+    a = b + c * 2;
+
+}

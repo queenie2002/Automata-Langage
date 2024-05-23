@@ -51,6 +51,7 @@ parameter:
   | parameter_type tID tASSIGN equality_expression                                 { printf("parameter and initialization: id '%s'\n\n", $2); }
 ;
 
+
 parameter_type:
   tINT                                                                             { printf("parameter_type: int\n\n"); }
 ;
@@ -85,17 +86,28 @@ identifiers_list:
   { add_symb(&mySymbolsTable, $1); 
     printf("identifier: '%s'\n\n", $1); 
     PrintTable(&mySymbolsTable);}
+
   | tID tASSIGN add_sub /*equality_expression */                                                
-  { add_symb(&mySymbolsTable, $1); 
+  { add_symb(&mySymbolsTable, $1);
+    add_tmp(&mySymbolsTable); 
+    int temp = get_last_tmp(&mySymbolsTable);
+    printf("-----------AFC %d %d\n", temp, $3); 
+    free_last_tmp(&mySymbolsTable);
     printf("declaration and initialization: '%s'\n\n", $1); 
     PrintTable(&mySymbolsTable);}
+
   | identifiers_list tCOMMA tID                                                   
   { add_symb(&mySymbolsTable, $3); 
     printf("several identifiers: '%s'\n\n", $3); 
     PrintTable(&mySymbolsTable);}
+
   | identifiers_list tCOMMA tID tASSIGN add_sub /*equality_expression */                      
   { add_symb(&mySymbolsTable, $3); 
     printf("several identifiers: '%s'\n\n", $3); 
+    add_tmp(&mySymbolsTable); 
+    int temp = get_last_tmp(&mySymbolsTable);
+    printf("-------------AFC %d %d\n", temp, $5);
+    free_last_tmp(&mySymbolsTable); 
     PrintTable(&mySymbolsTable);}
 ;
 
@@ -108,10 +120,21 @@ instruction:
 
 assignment_list:
   tID tASSIGN add_sub tSEMI                                           
-  { printf("assignment: '%s'\n\n", $1); }
+  { printf("assignment: '%s'\n\n", $1); 
+  int temp = get_last_tmp(&mySymbolsTable);
+  int symb = get_symb(&mySymbolsTable,$1);
+  printf("-----------COP %d %d\n", symb, temp);
+  free_last_tmp(&mySymbolsTable);}
+
 
   | tID tASSIGN add_sub tCOMMA assignment_list
-  { printf("assignment: '%s'\n\n", $1); }
+  { printf("assignment: '%s'\n\n", $1); 
+  //add_tmp(&mySymbolsTable);
+  //int temp = get_last_tmp(&mySymbolsTable);
+  //int val = $3;
+  //printf("------------AFC %d %d\n", temp, val);
+  free_last_tmp(&mySymbolsTable);
+  }
 ;
 
 ifblock:
@@ -165,10 +188,19 @@ div_mul:
 ;
 
 single_value:
-    tID                                                                           
-  { printf("single_value: identifier '%s'\n\n", $1); } 
+    tID                                                                      
+  { printf("single_value: identifier '%s'\n\n", $1); 
+    add_tmp(&mySymbolsTable);
+    int temp = get_last_tmp(&mySymbolsTable);
+    int symb = get_symb(&mySymbolsTable,$1);
+    printf("------------COP %d %d\n", temp, symb);
+    }
 	| tNB                                                                           
-  { printf("single_value: number '%d'\n\n", $1); } 
+  { printf("single_value: number '%d'\n\n", $1); 
+  add_tmp(&mySymbolsTable);
+  int temp = get_last_tmp(&mySymbolsTable);
+  int val = $1;
+  printf("-----------------AFC %d %d\n", temp, val);}
 ;
 
 

@@ -26,6 +26,7 @@ void add_tmp(struct SymbolTable *table) {
     struct Symbol symb;
     symb.address = table->ptr_tmp;
     table->symbols[table->ptr_tmp] = symb;
+    printf("Number of temporary variables: %d\n", MAX_SYMBOLS - table->ptr_tmp);
 }
 
 // Return address of symbol in symbol table
@@ -42,40 +43,18 @@ int get_last_tmp(struct SymbolTable *table) {
     return table->symbols[table->ptr_tmp].address;
 }
 
-void free_tmp(struct SymbolTable *table) {
-    table->ptr_tmp = MAX_SYMBOLS;
+void free_last_tmp(struct SymbolTable *table) {
+    table->ptr_tmp++;
+    printf("Number of temporary variables: %d\n", MAX_SYMBOLS - table->ptr_tmp);
 }
 
 void PrintTable(struct SymbolTable *table) {
-    printf("--------Declared variables and constants------\n");
+    printf("--------SYMBOL TABLE------\n");
+    printf("--------SYMBOLS------\n");
     for (int i = 0; i <= table->ptr; i++) {
         printf("address: %d   id: %s\n", table->symbols[i].address, table->symbols[i].id);
     }
-    printf("------Temporary variables--------\n");
-    printf("Number of temporary variables: %d\n\n\n", MAX_SYMBOLS - table->ptr_tmp);
+    printf("------TEMPS--------\n");
+    printf("Number of temporary variables: %d\n", MAX_SYMBOLS - table->ptr_tmp);
+    printf("-----------------------------\n\n\n");
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

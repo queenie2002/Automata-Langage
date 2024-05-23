@@ -25,7 +25,7 @@ void add_tmp(struct SymbolTable *table);
 int get_symb(struct SymbolTable *table, char *id);
 int get_last_tmp(struct SymbolTable *table);
 
-void free_tmp(struct SymbolTable *table);
+void free_last_tmp(struct SymbolTable *table);
 
 void PrintTable(struct SymbolTable *table);
 
