@@ -4,7 +4,7 @@
 #include <stdbool.h>
 
 
-void initialize_symbol_table(struct SymbolTable *table) {
+void initialize_table(struct SymbolTable *table) {
     table->ptr = -1;
     table->ptr_tmp = MAX_SYMBOLS;
 }

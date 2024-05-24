@@ -17,7 +17,7 @@ struct SymbolTable {
     int ptr_tmp;
 };
 
-void initialize_symbol_table(struct SymbolTable *table);
+void initialize_table(struct SymbolTable *table);
 
 void add_symb(struct SymbolTable *table, char *id);
 void add_tmp(struct SymbolTable *table);

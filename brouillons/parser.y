@@ -36,7 +36,6 @@ program:
   %empty                                                                          { printf("program: empty\n\n"); }
   |main_function                                                                  { printf("program: main\n\n"); 
   printf("\t\t\t\tNOP\n\n");
-  add_instruction(&myInstructionTable, "NOP", 0, 0); 
   // we also print the symbol table and the instruction table at the end of the program
   PrintTable(&mySymbolsTable);
   print_instruction_table(&myInstructionTable);}
