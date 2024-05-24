@@ -188,10 +188,11 @@ assignment_list:
 
 
 ifblock:
-	  tIF tLPAR condition tRPAR tLBRACE body tRBRACE                               { printf("if block: if\n\n"); }
+	  tIF tLPAR condition tRPAR tLBRACE body tRBRACE                             { printf("if block: if\n\n"); }
 	| tIF tLPAR condition tRPAR tLBRACE body tRBRACE tELSE tLBRACE body tRBRACE    { printf("if block: if else \n\n"); }
 	| tIF tLPAR condition tRPAR tLBRACE body tRBRACE tELSE ifblock                 { printf("if block: if else if\n\n"); }
 ;
+
 
 whileblock:
 	tWHILE tLPAR condition tRPAR tLBRACE body tRBRACE                              { printf("while block\n\n"); }         
@@ -204,7 +205,7 @@ printblock:
 
 
 condition:
-	  tLPAR equality_expression tRPAR                                               { printf("condition\n\n"); }   
+	equality_expression                                            { printf("condition\n\n"); }   
 	| condition tAND condition                                                      { printf("condition: and\n\n"); }   
 	| condition tOR condition                                                       { printf("condition: or\n\n"); }   
 	| tNOT condition                                                                { printf("condition: not\n\n"); }   
@@ -251,7 +252,7 @@ add_sub:
 
 	| add_sub tSUB div_mul                                                          
   { //we assign the value of @div_mul - @add_sub to @add_sub
-    printf("\t\t\t\tSOU %d %d %d\n\n", $1, $1, $3); 
+    printf("\t\t\t\tSUB %d %d %d\n\n", $1, $1, $3); 
     add_instruction(&myInstructionTable, "SOU", $1, $3); 
 
     //we free the tmp @div_mul
