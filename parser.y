@@ -6,9 +6,11 @@
 #include <stdlib.h>
 #include "table_of_symbols.h"
 #include "table_of_instructions.h"
+#include "table_of_functions.h"
 
 struct SymbolTable mySymbolsTable;
 struct InstructionTable myInstructionTable;
+struct FunctionTable myFunctionTable;
 %}
 
 %code provides {
@@ -35,12 +37,14 @@ struct InstructionTable myInstructionTable;
 
 program:
   %empty                                                                          { printf("program: empty\n\n"); }
-  |main_function                                                                  { printf("program: main\n\n"); 
+  |main_function                                                                  
+  { printf("program: main\n\n"); 
   printf("\t\t\t\tNOP\n\n");
   add_instruction(&myInstructionTable, "NOP", 0, 0); 
-  // we also print the symbol table and the instruction table at the end of the program
+  // we also print the symbol table and the instruction table and the function table at the end of the program
   PrintTable(&mySymbolsTable);
-  print_instruction_table(&myInstructionTable);}
+  print_instruction_table(&myInstructionTable);
+  print_function_table(&myFunctionTable);}
   /*|function_list main_function                                                  { printf("program: main and functions\n\n"); }*/
 ;
 
@@ -54,7 +58,7 @@ program:
 ;
 
 function:
-  function_type tID tLPAR parameter_list tRPAR tLBRACE body tRBRACE           	{ printf("function: %s\n\n", $2); }
+  function_type tID {increment_scope(&mySymbolsTable);add_function(&myFunctionsTable,tID,startADDR);} tLPAR parameter_list tRPAR tLBRACE body tRBRACE {decrement_scope(&mySymbolsTable);}            	{ printf("function: %s\n\n", $2); }
 ;*/
 
 
@@ -366,6 +370,7 @@ void yyerror(const char *msg) {
 int main(void) {
   initialize_symbol_table(&mySymbolsTable);
   initialize_instruction_table(&myInstructionTable);
+  initialize_function_table(&myFunctionTable);
   yyparse();
   return 0;
 }
