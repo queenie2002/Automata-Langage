@@ -22,6 +22,7 @@ struct InstructionTable myInstructionTable;
 %token <nb> tNB
 %token <var> tID
 %type <nb> add_sub div_mul single_value
+%type <nb> action-if
 %start program
 %%
 
@@ -188,10 +189,40 @@ assignment_list:
 
 
 ifblock:
-	  tIF tLPAR condition tRPAR tLBRACE body tRBRACE                             { printf("if block: if\n\n"); }
-	| tIF tLPAR condition tRPAR tLBRACE body tRBRACE tELSE tLBRACE body tRBRACE    { printf("if block: if else \n\n"); }
-	| tIF tLPAR condition tRPAR tLBRACE body tRBRACE tELSE ifblock                 { printf("if block: if else if\n\n"); }
+	  tIF tLPAR condition tRPAR action-if tLBRACE body 
+    { 
+    patch_instruction_arg2(&myInstructionTable,$5,get_index_actuel_instructions(&myInstructionTable));
+    decrement_scope(&mySymbolsTable);
+     }  
+    tRBRACE 
+    { printf("if block: if\n\n"); }
+	| tIF tLPAR condition tRPAR action-if tLBRACE body 
+    { 
+    patch_instruction_arg2(&myInstructionTable,$5,get_index_actuel_instructions(&myInstructionTable));
+    decrement_scope(&mySymbolsTable);
+    }  
+    tRBRACE tELSE tLBRACE body tRBRACE
+    { printf("if block: if else \n\n"); }
+	| tIF tLPAR condition tRPAR action-if tLBRACE body
+    { 
+    patch_instruction_arg2(&myInstructionTable,$5,get_index_actuel_instructions(&myInstructionTable));
+    decrement_scope(&mySymbolsTable);
+    }  
+    tRBRACE tELSE ifblock
+    { printf("if block: if else if\n\n"); }
 ;
+
+action-if:
+{ printf("jmf instruction"); 
+//arg1 à 1 mais jsp ce que ça représente
+add_instruction(&myInstructionTable,"JMF",1,-1);
+$$ = get_index_actuel_instructions(&myInstructionTable)-1;
+increment_scope(&mySymbolsTable);
+} 
+;
+
+
+
 
 
 whileblock:
@@ -253,7 +284,7 @@ add_sub:
 	| add_sub tSUB div_mul                                                          
   { //we assign the value of @div_mul - @add_sub to @add_sub
     printf("\t\t\t\tSUB %d %d %d\n\n", $1, $1, $3); 
-    add_instruction(&myInstructionTable, "SOU", $1, $3); 
+    add_instruction(&myInstructionTable, "SUB", $1, $3); 
 
     //we free the tmp @div_mul
     free_last_tmp(&mySymbolsTable);

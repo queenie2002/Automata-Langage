@@ -16,8 +16,15 @@ struct InstructionTable {
 };
 
 void initialize_instruction_table(struct InstructionTable *table);
+
+
 void add_instruction(struct InstructionTable *table, char *instruction, int arg1, int arg2);
 struct Instruction read_instruction(struct InstructionTable *table, int index);
+
+void patch_instruction_arg2(struct InstructionTable *table,int index,int arg2);
+int get_index_actuel_instructions(struct InstructionTable *table);
+
+
 void print_instruction_table(struct InstructionTable *table);
 
 #endif
