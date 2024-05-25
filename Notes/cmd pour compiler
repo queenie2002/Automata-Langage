@@ -1,0 +1,3 @@
+cmd pour compiler test : 
+gcc -o table_of_symbols_TEST table_of_symbols_TEST.c table_of_symbols.c
+./table_of_symbols_TEST 

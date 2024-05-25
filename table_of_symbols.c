@@ -56,6 +56,13 @@ void increment_scope(struct SymbolTable *table){
 }  
 void decrement_scope(struct SymbolTable *table){
         table->scope_general--;
+        //on enleve les variable avec un scope trop grand
+        for (int i = 0; i <= table->ptr; i++) {
+        if (table->symbols[i].scope == table->scope_general+1) {
+            printf("Remove symbol %s with scope %d\n", table->symbols[i].id, table->symbols[i].scope);
+            table->ptr--;
+        }
+    }
 } 
 
 int get_last_tmp(struct SymbolTable *table) {

@@ -1,10 +1,9 @@
 void main(void) {
-int a;
-int b,c;
-b = 6;
-c=8;
-a = b + c * 2;}
-
-
-
-
+    int a = 0;
+    if (a == 0) {
+        int b;
+        if(b == 0){
+            int c = 4;
+        } 
+    } 
+}
