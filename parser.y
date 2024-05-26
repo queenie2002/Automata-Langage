@@ -47,8 +47,7 @@ program:
   // we also print the symbol table and the instruction table and the function table at the end of the program
   PrintTable(&mySymbolsTable);
   print_instruction_table(&myInstructionTable);
-  print_function_table(&myFunctionTable);
-    printf("oooooooooooooouuuuuuuuuuuuggggggggggaaaaaaa");}
+  print_function_table(&myFunctionTable);}
   |function_list main_function                                                  
   { printf("program: main and functions\n\n"); 
     add_instruction(&myInstructionTable, "NOP", 0, 0,0); 
