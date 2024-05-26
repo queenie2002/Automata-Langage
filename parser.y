@@ -23,8 +23,11 @@ struct FunctionTable myFunctionTable;
 %token tADD tSUB tMUL tDIV tLT tGT tNE tEQ tGE tLE tASSIGN tAND tOR tNOT tLBRACE tRBRACE tLPAR tRPAR tSEMI tCOMMA tIF tELSE tWHILE  tPRINT tRETURN tINT tVOID tMAIN tCONST tERROR
 %token <nb> tNB
 %token <var> tID
+
 %type <nb> add_sub div_mul single_value condition
-%type <nb> action-if action-while action-getIndex action-else 
+%type <nb> action-if action-while action-getIndex action-else
+%left tOR
+%left tAND
 %start program
 %%
 
@@ -386,5 +389,7 @@ int main(void) {
   initialize_instruction_table(&myInstructionTable);
   initialize_function_table(&myFunctionTable);
   yyparse();
+  write_instructions_to_file(myInstructionTable);
+
   return 0;
 }
