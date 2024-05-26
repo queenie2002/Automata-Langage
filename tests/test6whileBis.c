@@ -1,6 +1,6 @@
 void main(void) {
     int a = 0;
-    while (a <=5) {
+    while (a) {
         a = a + 1;
     }
 }
