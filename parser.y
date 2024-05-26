@@ -237,8 +237,8 @@ action-getIndex:%empty
 whileblock:
 	tWHILE tLPAR condition tRPAR action-while tLBRACE body tRBRACE 
   {add_instruction(&myInstructionTable,"JMP",$5,0,0); //backward jump
-  }
-  {patch_instruction_arg2(&myInstructionTable,$5,get_index_actuel_instructions(&myInstructionTable));
+    patch_instruction_arg1(&myInstructionTable,$5,$3);
+    patch_instruction_arg2(&myInstructionTable,$5,get_index_actuel_instructions(&myInstructionTable));
     decrement_scope(&mySymbolsTable);}
   { printf("while block\n\n"); }         
 ;
