@@ -24,7 +24,7 @@ struct FunctionTable myFunctionTable;
 %token <nb> tNB
 %token <var> tID
 %type <nb> add_sub div_mul single_value
-%type <nb> action-if
+%type <nb> action-if action-while
 %start program
 %%
 
@@ -229,7 +229,12 @@ increment_scope(&mySymbolsTable);
 
 
 whileblock:
-	tWHILE tLPAR condition tRPAR tLBRACE body tRBRACE                              { printf("while block\n\n"); }         
+	tWHILE tLPAR condition tRPAR action-while tLBRACE body tRBRACE 
+  {add_instruction(&myInstructionTable,"JMF",-1,$5,0); //backward jump
+  }
+  {patch_instruction_arg2(&myInstructionTable,$5,get_index_actuel_instructions(&myInstructionTable));
+    decrement_scope(&mySymbolsTable);}
+  { printf("while block\n\n"); }         
 ;
 
 action-while:
