@@ -24,7 +24,8 @@ struct FunctionTable myFunctionTable;
 %token <nb> tNB
 %token <var> tID
 
-%type <nb> add_sub div_mul single_value condition
+%type <nb> add_sub div_mul single_value 
+%type <nb> condition equality_expression compare
 %type <nb> action-if action-while action-getIndex action-else
 %left tOR
 %left tAND
@@ -194,12 +195,14 @@ assignment_list:
 ifblock:
 	  tIF tLPAR condition tRPAR action-if tLBRACE body tRBRACE action-getIndex
     {patch_instruction_arg1(&myInstructionTable,$5,$3);
+    free_last_tmp(&mySymbolsTable); // free temp of condition
       patch_instruction_arg2(&myInstructionTable,$5,$9);
     decrement_scope(&mySymbolsTable);
      } 
     { printf("if block: if\n\n"); }
 	| tIF tLPAR condition tRPAR action-if tLBRACE body tRBRACE action-getIndex tELSE action-else tLBRACE body tRBRACE action-getIndex
     {patch_instruction_arg1(&myInstructionTable,$5,$3); //patch jump of if
+      free_last_tmp(&mySymbolsTable); // free temp of condition
       patch_instruction_arg2(&myInstructionTable,$5,$9+1);  
       patch_instruction_arg1(&myInstructionTable,$11,$15);  //patch jump    
     decrement_scope(&mySymbolsTable);
@@ -207,6 +210,7 @@ ifblock:
     { printf("if block: if else\n\n"); }
 	| tIF tLPAR condition tRPAR action-if tLBRACE body tRBRACE action-getIndex tELSE ifblock
     {patch_instruction_arg1(&myInstructionTable,$5,$3);
+    free_last_tmp(&mySymbolsTable); // free temp of condition
       patch_instruction_arg2(&myInstructionTable,$5,$9);
     decrement_scope(&mySymbolsTable);
      } 
@@ -236,6 +240,7 @@ whileblock:
 	tWHILE tLPAR condition tRPAR action-while tLBRACE body tRBRACE 
   {add_instruction(&myInstructionTable,"JMP",$5,0,0); //backward jump
     patch_instruction_arg1(&myInstructionTable,$5,$3);
+    free_last_tmp(&mySymbolsTable); // free temp of condition
     patch_instruction_arg2(&myInstructionTable,$5,get_index_actuel_instructions(&myInstructionTable));
     decrement_scope(&mySymbolsTable);}
   { printf("while block\n\n"); }         
@@ -257,28 +262,61 @@ printblock:
 
 
 condition:
-  tID {$$ = get_symb(&mySymbolsTable,$1);}
-	|equality_expression                                            { printf("condition\n\n"); }   
-	| condition tAND condition                                                      { printf("condition: and\n\n"); }   
-	| condition tOR condition                                                       { printf("condition: or\n\n"); }   
-	| tNOT condition                                                                { printf("condition: not\n\n"); }   
+  tID {
+    add_tmp(&mySymbolsTable);
+    int temp = get_last_tmp(&mySymbolsTable);
+    int addr = get_symb(&mySymbolsTable,$1);
+    $$ = temp;
+    add_instruction(&myInstructionTable, "COP", temp, addr,0); }
+	|equality_expression
+  { $$ = $1;
+    printf("condition\n\n"); }   
+	| condition tAND condition
+  { printf("condition: and\n\n");
+  printf("WARNING This is not implemented"); }   
+	| condition tOR condition
+  { printf("condition: or\n\n"); 
+  printf("WARNING This is not implemented");}   
+	| tNOT condition
+  { printf("condition: not\n\n");
+  printf("WARNING This is not implemented"); }   
 ;
 
 
 equality_expression : 
-  compare                                                                         { printf("equality_expression: compare\n\n"); }   
-  | equality_expression tEQ compare                                               { printf("equality_expression: equal\n\n"); }   
-  | equality_expression tNE compare                                               { printf("equality_expression: not equal\n\n"); }   
+  compare  {$$ = $1;    
+  printf("equality_expression: compare\n\n"); }   
+  | equality_expression tEQ compare   
+  {add_instruction(&myInstructionTable,"EQU",$1,$1,$3);
+  free_last_tmp(&mySymbolsTable);
+  $$ = $1;
+  printf("equality_expression: equal\n\n"); }   
+  | equality_expression tNE compare
+  { printf("equality_expression: not equal\n\n"); 
+  printf("WARNING This is not implemented");}   
 ;
 
 
 
 compare:
-	  add_sub                                                                       { printf("compare: add_sub\n\n"); }   
-	| compare tLT add_sub                                                           { printf("compare: less than\n\n"); }   
-	| compare tGT add_sub                                                           { printf("compare: greater than\n\n"); }   
-	| compare tLE add_sub                                                           { printf("compare: less or equal\n\n"); }   
-	| compare tGE add_sub                                                           { printf("compare: greater or equal\n\n"); }   
+	  add_sub   {$$ = $1;
+    printf("compare: add_sub\n\n"); }   
+	| compare tLT add_sub     
+  {add_instruction(&myInstructionTable,"INF",$1,$1,$3);
+  free_last_tmp(&mySymbolsTable);
+  $$ = $1;
+  printf("compare: less than\n\n"); }   
+	| compare tGT add_sub     
+  {add_instruction(&myInstructionTable,"SUP",$1,$1,$3);
+  free_last_tmp(&mySymbolsTable);
+  $$ = $1;
+  printf("compare: greater than\n\n"); }   
+	| compare tLE add_sub
+  { printf("compare: less or equal\n\n");
+   printf("WARNING This is not implemented");}   
+	| compare tGE add_sub
+  { printf("compare: greater or equal\n\n");
+  printf("WARNING This is not implemented"); }   
 ;
 
 
@@ -311,7 +349,7 @@ add_sub:
 
 
 div_mul:
-  single_value                                                                           
+  single_value {$$ = $1;}                                                                          
 
   | div_mul tMUL single_value                                                             
   { //we assign the value of @single_value * @div_mul to @div_mul

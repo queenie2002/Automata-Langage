@@ -1,10 +1,6 @@
 void main(void) {
-int a;
-int f = 2;
-int b,c;
-int d,e = 5;
+    int a = 0;
+    while (a <5) {
+        a = a + 1;
+    }
 }
-
-
-
-
