@@ -1974,6 +1974,6 @@ int main(void) {
   initialize_function_table(&myFunctionTable);
   yyparse();
   write_instructions_to_file(myInstructionTable);
-
+  write_instructions_to_file_VHDL(myInstructionTable);
   return 0;
 }

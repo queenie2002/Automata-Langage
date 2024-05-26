@@ -63,11 +63,11 @@ void print_instruction_table(struct InstructionTable *table) {
 }
 
 
-// Writes the instructions in a file to be used at the end of the parsing
+// Writes the instructions in a file to be interpreted (format: ADD 01 01 01)
 void write_instructions_to_file(struct InstructionTable table) {
 
     // Open file to write in
-    FILE *file = fopen("output/instructions.txt", "w");
+    FILE *file = fopen("output_files/instructions.txt", "w");
     if (file == NULL) {
         perror("Couldn't open file");
     }
@@ -76,13 +76,31 @@ void write_instructions_to_file(struct InstructionTable table) {
     for (int i=0; i < table.current_index; i++) {
         struct Instruction anInstruction = table.instructions[i];
         fprintf(file, "%s %d %d %d\n",
-               table.instructions[i].instruction,
+               convert_instruction_name_into_number(table.instructions[i].instruction),
                table.instructions[i].arg1,
                table.instructions[i].arg2,
                table.instructions[i].arg3);
+    }
 
+    // Close file
+    if (fclose(file) != 0) {
+        perror("Couldn't to close file");
+    }
+}
+
+// Writes the instructions in a file for VHDL (format: 0a0a2a03)
+void write_instructions_to_file_VHDL(struct InstructionTable table) {
+
+    // Open file to write in
+    FILE *file = fopen("output_files/instructions_VHDL.txt", "w");
+    if (file == NULL) {
+        perror("Couldn't open file");
+    }
+
+    // Get and write the instructions in file
+    for (int i=0; i < table.current_index; i++) {
+        struct Instruction anInstruction = table.instructions[i];
         
-        //the hexa version
         fprintf(file, "%s\n",convert_instruction_into_hexa(anInstruction));
        
     }
@@ -94,7 +112,45 @@ void write_instructions_to_file(struct InstructionTable table) {
 }
 
 
-// Convert instruction into hexa instruction
+// Convert instruction name into hexadecimal number
+char * convert_instruction_name_into_number(char * instructionName) {
+
+    // Convert instruction into corresponding hexadecimal number
+
+    if (strcmp(instructionName, "NOP") == 0) {
+        return "00"; 
+    } else if (strcmp(instructionName, "ADD") == 0) {
+        return "01"; 
+    } else if (strcmp(instructionName, "MUL") == 0) {
+        return "02"; 
+    } else if (strcmp(instructionName, "SUB") == 0) {
+        return "03"; 
+    } else if (strcmp(instructionName, "DIV") == 0) {
+        return "04"; 
+    } else if (strcmp(instructionName, "COP") == 0) {
+        return "05"; 
+    } else if (strcmp(instructionName, "AFC") == 0) {
+        return "06"; 
+    } else if (strcmp(instructionName, "JMP") == 0) {
+        return "07"; 
+    } else if (strcmp(instructionName, "JMF") == 0) {
+        return "08"; 
+    } else if (strcmp(instructionName, "INF") == 0) {
+        return "09"; 
+    } else if (strcmp(instructionName, "SUP") == 0) {
+        return "0a"; 
+    } else if (strcmp(instructionName, "EQU") == 0) {
+        return "0b"; 
+    } else if (strcmp(instructionName, "PRI") == 0) {
+        return "0c"; 
+    } else {
+        return "ff"; 
+        printf("Didn't recognize a proper instruction: %s\n ", instructionName);
+    }
+}
+
+
+// Convert instruction into hexa instruction (format: eeffaabbcc)
 char * convert_instruction_into_hexa(struct Instruction anInstruction) {
 
     char hexInstruction[3];
@@ -107,37 +163,7 @@ char * convert_instruction_into_hexa(struct Instruction anInstruction) {
 
     // Convert instruction into corresponding hexadecimal number
 
-    if (strcmp(anInstruction.instruction, "NOP") == 0) {
-        strcpy(hexInstruction, "00");
-    } else if (strcmp(anInstruction.instruction, "ADD") == 0) {
-        strcpy(hexInstruction, "01");
-    } else if (strcmp(anInstruction.instruction, "MUL") == 0) {
-        strcpy(hexInstruction, "02");
-    } else if (strcmp(anInstruction.instruction, "SUB") == 0) {
-        strcpy(hexInstruction, "03");
-    } else if (strcmp(anInstruction.instruction, "DIV") == 0) {
-        strcpy(hexInstruction, "04");
-    } else if (strcmp(anInstruction.instruction, "COP") == 0) {
-        strcpy(hexInstruction, "05");
-    } else if (strcmp(anInstruction.instruction, "AFC") == 0) {
-        strcpy(hexInstruction, "06");
-    } else if (strcmp(anInstruction.instruction, "JMP") == 0) {
-        strcpy(hexInstruction, "07");
-    } else if (strcmp(anInstruction.instruction, "JMF") == 0) {
-        strcpy(hexInstruction, "08");
-    } else if (strcmp(anInstruction.instruction, "INF") == 0) {
-        strcpy(hexInstruction, "09");
-    } else if (strcmp(anInstruction.instruction, "SUP") == 0) {
-        strcpy(hexInstruction, "0a");
-    } else if (strcmp(anInstruction.instruction, "EQU") == 0) {
-        strcpy(hexInstruction, "0b");
-    } else if (strcmp(anInstruction.instruction, "PRI") == 0) {
-        strcpy(hexInstruction, "0c");
-    } else {
-        strcpy(hexInstruction, "ff");
-        printf("Didn't recognize a proper instruction: %s\n ", anInstruction.instruction);
-    }
-
+    strcpy(hexInstruction, convert_instruction_name_into_number(anInstruction.instruction));
     sprintf(hexArg1, "%02x", anInstruction.arg1);    
     sprintf(hexArg2, "%02x", anInstruction.arg2);
     sprintf(hexArg3, "%02x", anInstruction.arg3);
