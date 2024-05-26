@@ -23,7 +23,8 @@ struct FunctionTable myFunctionTable;
 %token tADD tSUB tMUL tDIV tLT tGT tNE tEQ tGE tLE tASSIGN tAND tOR tNOT tLBRACE tRBRACE tLPAR tRPAR tSEMI tCOMMA tIF tELSE tWHILE  tPRINT tRETURN tINT tVOID tMAIN tCONST tERROR
 %token <nb> tNB
 %token <var> tID
-%type <nb> add_sub div_mul single_value
+
+%type <nb> add_sub div_mul single_value condition
 %type <nb> action-if action-while action-getIndex action-else
 %left tOR
 %left tAND
@@ -157,6 +158,7 @@ identifiers_list:
 
     int address_nb = get_symb(&mySymbolsTable,$3);
     add_instruction(&myInstructionTable, "COP", address_nb, $5,0);
+    free_last_tmp(&mySymbolsTable);
     printf("several identifiers: '%s'\n\n", $3); }
 ;
 
@@ -176,13 +178,7 @@ assignment_list:
   { 
     int address_nb = get_symb(&mySymbolsTable,$1);
     add_instruction(&myInstructionTable, "COP", address_nb, $3,0);
-    /*c'est pas tres joli de free tous les temps a la fin d'une ligne d'assignation.
-    le problème est que dans @single_value, on crée un temp ou pas en fonction de si on a une variable ou un integer.
-    et apres avoir copié @single_value dans div_mul, on n'a pas moyen de savoir si on a crée un temp ou non.
-    Donc on ne sait pas si on doit libérer un temp, donc dans le doute on libère tout.
-    mais ça va peut etre poser probleme plus tard dans les boucles et les fonctions.
-    Une idée serait de COP dans un temp la variable de single_value*/
-    free_all_tmp(&mySymbolsTable);
+    free_last_tmp(&mySymbolsTable);
     printf("assignment: '%s'\n\n", $1); }
 
   |tID tASSIGN add_sub tCOMMA assignment_list
@@ -197,34 +193,36 @@ assignment_list:
 
 ifblock:
 	  tIF tLPAR condition tRPAR action-if tLBRACE body tRBRACE action-getIndex
-    {patch_instruction_arg2(&myInstructionTable,$5,$9);
+    {patch_instruction_arg1(&myInstructionTable,$5,$3);
+      patch_instruction_arg2(&myInstructionTable,$5,$9);
     decrement_scope(&mySymbolsTable);
      } 
     { printf("if block: if\n\n"); }
 	| tIF tLPAR condition tRPAR action-if tLBRACE body tRBRACE action-getIndex tELSE action-else tLBRACE body tRBRACE action-getIndex
-    {patch_instruction_arg2(&myInstructionTable,$5,$9);  //patch jump of if
-    patch_instruction_arg2(&myInstructionTable,$11,$15);    //patch jump of else
+    {patch_instruction_arg1(&myInstructionTable,$5,$3); //patch jump of if
+      patch_instruction_arg2(&myInstructionTable,$5,$9+1);  
+      patch_instruction_arg1(&myInstructionTable,$11,$15);  //patch jump    
     decrement_scope(&mySymbolsTable);
      } 
     { printf("if block: if else\n\n"); }
 	| tIF tLPAR condition tRPAR action-if tLBRACE body tRBRACE action-getIndex tELSE ifblock
-    {patch_instruction_arg2(&myInstructionTable,$5,$9);
+    {patch_instruction_arg1(&myInstructionTable,$5,$3);
+      patch_instruction_arg2(&myInstructionTable,$5,$9);
     decrement_scope(&mySymbolsTable);
      } 
     { printf("if block: if else if\n\n"); }
 ;
 
 action-if:%empty
-{add_instruction(&myInstructionTable,"JMF",-1,-1,0);    //arg1 ?
+{add_instruction(&myInstructionTable,"JMF",-1,-1,0);  
 $$ = get_index_actuel_instructions(&myInstructionTable)-1;
 increment_scope(&mySymbolsTable);
 } 
 ;
 
-action-else:%empty
-{add_instruction(&myInstructionTable,"JMF",-1,-1,0);    //arg1 ?
-$$ = get_index_actuel_instructions(&myInstructionTable)-1;
-} 
+action-else:%empty 
+{add_instruction(&myInstructionTable,"JMP",-1,0,0);    
+$$ = get_index_actuel_instructions(&myInstructionTable)-1;} 
 ;
 
 action-getIndex:%empty
@@ -236,9 +234,9 @@ action-getIndex:%empty
 
 whileblock:
 	tWHILE tLPAR condition tRPAR action-while tLBRACE body tRBRACE 
-  {add_instruction(&myInstructionTable,"JMF",-1,$5,0); //backward jump
-  }
-  {patch_instruction_arg2(&myInstructionTable,$5,get_index_actuel_instructions(&myInstructionTable));
+  {add_instruction(&myInstructionTable,"JMP",$5,0,0); //backward jump
+    patch_instruction_arg1(&myInstructionTable,$5,$3);
+    patch_instruction_arg2(&myInstructionTable,$5,get_index_actuel_instructions(&myInstructionTable));
     decrement_scope(&mySymbolsTable);}
   { printf("while block\n\n"); }         
 ;
@@ -259,7 +257,8 @@ printblock:
 
 
 condition:
-	equality_expression                                            { printf("condition\n\n"); }   
+  tID {$$ = get_symb(&mySymbolsTable,$1);}
+	|equality_expression                                            { printf("condition\n\n"); }   
 	| condition tAND condition                                                      { printf("condition: and\n\n"); }   
 	| condition tOR condition                                                       { printf("condition: or\n\n"); }   
 	| tNOT condition                                                                { printf("condition: not\n\n"); }   
@@ -287,12 +286,7 @@ compare:
 
 add_sub:
    div_mul                                                                       
-   { //we get the address of @div_mul in tmp
-    int address_nb = get_last_tmp(&mySymbolsTable);
-
-    //we return the @div_mul
-    $$ = address_nb;
-    printf("add_sub: div_mul\n\n"); }   
+     {$$ = $1;}
 
 	| add_sub tADD div_mul                                                          
   { //we assign the value of @div_mul + @add_sub to @add_sub
@@ -318,17 +312,6 @@ add_sub:
 
 div_mul:
   single_value                                                                           
-  { //we add a tmp to ST
-    add_tmp(&mySymbolsTable); 
-
-    //we assign the value of @single_value to the @tmp
-    int address_nb = get_last_tmp(&mySymbolsTable);
-    add_instruction(&myInstructionTable, "COP", address_nb, $1,0);
-
-
-    //we return the @tmp with the new value
-    $$ = address_nb;
-    printf("div_mul: single_value %d\n\n", $1); } 
 
   | div_mul tMUL single_value                                                             
   { //we assign the value of @single_value * @div_mul to @div_mul
@@ -354,7 +337,11 @@ div_mul:
 single_value:
     tID                                                                           
   { //we return the @ID
-    $$ = get_symb(&mySymbolsTable,$1);
+    add_tmp(&mySymbolsTable);
+    int temp = get_last_tmp(&mySymbolsTable);
+    int addr = get_symb(&mySymbolsTable,$1);
+    $$ = temp;
+    add_instruction(&myInstructionTable, "COP", temp, addr,0); 
     printf("single_value: identifier '%s'\n\n", $1); } 
 
 	| tNB                                                                           

@@ -1,9 +1,10 @@
 void main(void) {
-    int a = 2-5;
-    if (a == 0) {
-        int b;
-        if(b == 0){
-            int c = 4;
-        } 
-    } 
+int a;
+int f = 2;
+int b,c;
+int d,e = 5;
 }
+
+
+
+

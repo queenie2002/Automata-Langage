@@ -40,6 +40,13 @@ struct Instruction read_instruction(struct InstructionTable *table, int index) {
     
 }
 
+
+void patch_instruction_arg1(struct InstructionTable *table,int index,int arg1){
+    table->instructions[index].arg1 = arg1;
+    printf("Patch instruction at index %d\n",index);
+} 
+
+
 void patch_instruction_arg2(struct InstructionTable *table,int index,int arg2){
     table->instructions[index].arg2 = arg2;
     printf("Patch instruction at index %d\n",index);
