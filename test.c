@@ -4,5 +4,4 @@ int f (int a){
 
 void main (void){
     int a;
-    a = f(3);
 }

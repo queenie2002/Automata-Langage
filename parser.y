@@ -24,7 +24,7 @@ struct FunctionTable myFunctionTable;
 %token <nb> tNB
 %token <var> tID
 
-%type <nb> add_sub div_mul single_value 
+%type <nb> add_sub div_mul single_value functionCall
 %type <nb> condition equality_expression compare
 %type <nb> action-if action-while action-getIndex action-else
 %left tOR
@@ -47,7 +47,8 @@ program:
   // we also print the symbol table and the instruction table and the function table at the end of the program
   PrintTable(&mySymbolsTable);
   print_instruction_table(&myInstructionTable);
-  print_function_table(&myFunctionTable);}
+  print_function_table(&myFunctionTable);
+    printf("oooooooooooooouuuuuuuuuuuuggggggggggaaaaaaa");}
   |function_list main_function                                                  
   { printf("program: main and functions\n\n"); 
     add_instruction(&myInstructionTable, "NOP", 0, 0,0); 
@@ -67,7 +68,9 @@ function_list:
 ;
 
 function:
-  function_type tID {increment_scope(&mySymbolsTable);add_function(&myFunctionTable,$2,get_index_actuel_instructions(&myInstructionTable));} tLPAR parameter_list tRPAR tLBRACE body tRBRACE {decrement_scope(&mySymbolsTable);}            	{ printf("function: %s\n\n", $2); }
+  function_type tID 
+  {increment_scope(&mySymbolsTable);add_function(&myFunctionTable,$2,get_index_actuel_instructions(&myInstructionTable));} tLPAR parameter_list tRPAR tLBRACE body tRBRACE {decrement_scope(&mySymbolsTable);
+   printf("function: %s\n\n", $2); }
 ;
 
 
@@ -96,6 +99,21 @@ parameter:
 
 parameter_type:
   tINT                                                                             { printf("parameter_type: int\n\n"); }
+;
+
+functionCall:
+  tID tLPAR argument_list tRPAR 
+  {printf("function Call\n");
+  $$ = 66;}
+;
+
+argument_list:
+%empty
+|argument
+|argument_list argument;
+
+argument:
+add_sub
 ;
 
 
@@ -323,7 +341,8 @@ compare:
 
 
 add_sub:
-   div_mul                                                                       
+    functionCall {printf("reducing functionCall to add_sub\n");}
+   |div_mul                                                                       
      {$$ = $1;}
 
 	| add_sub tADD div_mul                                                          
