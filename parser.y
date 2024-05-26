@@ -24,7 +24,7 @@ struct FunctionTable myFunctionTable;
 %token <nb> tNB
 %token <var> tID
 %type <nb> add_sub div_mul single_value
-%type <nb> action-if action-while
+%type <nb> action-if action-while action-getIndex action-else
 %start program
 %%
 
@@ -102,7 +102,7 @@ body:
   
   |instruction_list                                                                 
   { 
-    printf("\t\t\t\tNOP\n\n");   
+
 
     printf("body: instruction_list\n\n"); }
   
@@ -194,35 +194,39 @@ assignment_list:
 
 
 ifblock:
-	  tIF tLPAR condition tRPAR action-if tLBRACE body 
-    { 
-    patch_instruction_arg2(&myInstructionTable,$5,get_index_actuel_instructions(&myInstructionTable));
+	  tIF tLPAR condition tRPAR action-if tLBRACE body tRBRACE action-getIndex
+    {patch_instruction_arg2(&myInstructionTable,$5,$9);
     decrement_scope(&mySymbolsTable);
-     }  
-    tRBRACE 
+     } 
     { printf("if block: if\n\n"); }
-	| tIF tLPAR condition tRPAR action-if tLBRACE body 
-    { 
-    patch_instruction_arg2(&myInstructionTable,$5,get_index_actuel_instructions(&myInstructionTable));
+	| tIF tLPAR condition tRPAR action-if tLBRACE body tRBRACE action-getIndex tELSE action-else tLBRACE body tRBRACE action-getIndex
+    {patch_instruction_arg2(&myInstructionTable,$5,$9);  //patch jump of if
+    patch_instruction_arg2(&myInstructionTable,$11,$15);    //patch jump of else
     decrement_scope(&mySymbolsTable);
-    }  
-    tRBRACE tELSE tLBRACE body tRBRACE
-    { printf("if block: if else \n\n"); }
-	| tIF tLPAR condition tRPAR action-if tLBRACE body
-    { 
-    patch_instruction_arg2(&myInstructionTable,$5,get_index_actuel_instructions(&myInstructionTable));
+     } 
+    { printf("if block: if else\n\n"); }
+	| tIF tLPAR condition tRPAR action-if tLBRACE body tRBRACE action-getIndex tELSE ifblock
+    {patch_instruction_arg2(&myInstructionTable,$5,$9);
     decrement_scope(&mySymbolsTable);
-    }  
-    tRBRACE tELSE ifblock
+     } 
     { printf("if block: if else if\n\n"); }
 ;
 
-action-if:
+action-if:%empty
 {add_instruction(&myInstructionTable,"JMF",-1,-1,0);    //arg1 ?
 $$ = get_index_actuel_instructions(&myInstructionTable)-1;
 increment_scope(&mySymbolsTable);
 } 
 ;
+
+action-else:%empty
+{add_instruction(&myInstructionTable,"JMF",-1,-1,0);    //arg1 ?
+$$ = get_index_actuel_instructions(&myInstructionTable)-1;
+} 
+;
+
+action-getIndex:%empty
+  {$$ = get_index_actuel_instructions(&myInstructionTable);};
 
 
 
@@ -237,7 +241,7 @@ whileblock:
   { printf("while block\n\n"); }         
 ;
 
-action-while:
+action-while:%empty
 {add_instruction(&myInstructionTable,"JMF",-1,-1,0);    //arg1 ?
 $$ = get_index_actuel_instructions(&myInstructionTable)-1;
 increment_scope(&mySymbolsTable);
