@@ -32,7 +32,7 @@ int get_function_address(struct FunctionTable* table, const char* id) {
 // Print the contents of the function table
 void print_function_table(struct FunctionTable* table) {
     printf("---------FUNCTION TABLE-----------");
-    printf("\nID\t\tStart Address\n");
+    printf("\nID\t\tStartAddress\n");
     printf("-----------------------------\n");
     for (int i = 0; i < table->size; i++) {
         printf("%s\t\t%d\n", table->functions[i].id, table->functions[i].startADDR);

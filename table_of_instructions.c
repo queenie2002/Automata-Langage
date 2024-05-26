@@ -7,18 +7,20 @@ void initialize_instruction_table(struct InstructionTable *table) {
     table->current_index = 0;
 }
 
-void add_instruction(struct InstructionTable *table, char *instruction, int arg1, int arg2) {
+void add_instruction(struct InstructionTable *table, char *instruction, int arg1, int arg2, int arg3) {
     if (table->current_index < MAX_INSTRUCTIONS) {
         table->instructions[table->current_index].instruction = strdup(instruction);
         table->instructions[table->current_index].arg1 = arg1;
         table->instructions[table->current_index].arg2 = arg2;
+        table->instructions[table->current_index].arg3 = arg3;
         table->instructions[table->current_index].index = table->current_index;
 
-        printf("\t\t\t%d - %s   %d  %d\n",
+        printf("\t\t\t%d - %s   %d  %d  %d\n",
         table->instructions[table->current_index].index,
         table->instructions[table->current_index].instruction,
         table->instructions[table->current_index].arg1,
-        table->instructions[table->current_index].arg2);
+        table->instructions[table->current_index].arg2,
+        table->instructions[table->current_index].arg3);
 
 
         table->current_index++;
@@ -50,11 +52,12 @@ int get_index_actuel_instructions(struct InstructionTable *table){
 void print_instruction_table(struct InstructionTable *table) {
     printf("-------INSTRUCTIONS TABLE--------\n");
     for (int i = 0; i < table->current_index; i++) {
-        printf("%d - %s   %d  %d\n",
+        printf("%d - %s   %d  %d  %d\n",
                table->instructions[i].index,
                table->instructions[i].instruction,
                table->instructions[i].arg1,
-               table->instructions[i].arg2);
+               table->instructions[i].arg2,
+               table->instructions[i].arg3);
     }
-    printf("-----------------------------\n");
+    printf("-----------------------------\n\n\n");
 }
