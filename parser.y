@@ -39,33 +39,38 @@ program:
   %empty                                                                          { printf("program: empty\n\n"); }
   |main_function                                                                  
   { printf("program: main\n\n"); 
-  printf("\t\t\t\tNOP\n\n");
-  add_instruction(&myInstructionTable, "NOP", 0, 0); 
+  add_instruction(&myInstructionTable, "NOP", 0, 0,0); 
   // we also print the symbol table and the instruction table and the function table at the end of the program
   PrintTable(&mySymbolsTable);
   print_instruction_table(&myInstructionTable);
   print_function_table(&myFunctionTable);}
-  /*|function_list main_function                                                  { printf("program: main and functions\n\n"); }*/
+  |function_list main_function                                                  
+  { printf("program: main and functions\n\n"); 
+    add_instruction(&myInstructionTable, "NOP", 0, 0,0); 
+  // we also print the symbol table and the instruction table and the function table at the end of the program
+  PrintTable(&mySymbolsTable);
+  print_instruction_table(&myInstructionTable);
+  print_function_table(&myFunctionTable);}
 ;
 
 
 
 
-/*function_list:
+function_list:
   function                                                                        { printf("function_list: a function\n\n"); }
   |function_list function                                                         { printf("function_list: functions\n\n"); }
 
 ;
 
 function:
-  function_type tID {increment_scope(&mySymbolsTable);add_function(&myFunctionsTable,tID,startADDR);} tLPAR parameter_list tRPAR tLBRACE body tRBRACE {decrement_scope(&mySymbolsTable);}            	{ printf("function: %s\n\n", $2); }
-;*/
+  function_type tID {increment_scope(&mySymbolsTable);add_function(&myFunctionTable,$2,get_index_actuel_instructions(&myInstructionTable));} tLPAR parameter_list tRPAR tLBRACE body tRBRACE {decrement_scope(&mySymbolsTable);}            	{ printf("function: %s\n\n", $2); }
+;
 
 
 
 
 main_function: 
-  function_type tMAIN tLPAR parameter_list tRPAR tLBRACE body tRBRACE           	{ printf("main function\n\n"); }
+  function_type tMAIN {add_function(&myFunctionTable,"main",get_index_actuel_instructions(&myInstructionTable));} tLPAR parameter_list tRPAR tLBRACE body tRBRACE         	{ printf("main function\n\n"); }
 ;
        
 function_type:
@@ -136,8 +141,7 @@ identifiers_list:
   { add_symb(&mySymbolsTable, $1); 
 
     int address_nb = get_symb(&mySymbolsTable,$1);
-    printf("\t\t\t\tCOP %d %d\n\n", address_nb, $3);
-    add_instruction(&myInstructionTable, "COP", address_nb, $3);   
+    add_instruction(&myInstructionTable, "COP", address_nb, $3,0);   
     free_last_tmp(&mySymbolsTable);
     printf("declaration and initialization: '%s'\n\n", $1); }
 
@@ -150,8 +154,7 @@ identifiers_list:
   { add_symb(&mySymbolsTable, $3); 
 
     int address_nb = get_symb(&mySymbolsTable,$3);
-    printf("\t\t\t\tCOP %d %d\n\n", address_nb, $5);   
-    add_instruction(&myInstructionTable, "COP", address_nb, $5);
+    add_instruction(&myInstructionTable, "COP", address_nb, $5,0);
     printf("several identifiers: '%s'\n\n", $3); }
 ;
 
@@ -170,8 +173,7 @@ assignment_list:
   tID tASSIGN add_sub tSEMI                                           
   { 
     int address_nb = get_symb(&mySymbolsTable,$1);
-    printf("\t\t\t\tCOP %d %d\n\n", address_nb, $3);
-    add_instruction(&myInstructionTable, "COP", address_nb, $3);
+    add_instruction(&myInstructionTable, "COP", address_nb, $3,0);
     /*c'est pas tres joli de free tous les temps a la fin d'une ligne d'assignation.
     le problème est que dans @single_value, on crée un temp ou pas en fonction de si on a une variable ou un integer.
     et apres avoir copié @single_value dans div_mul, on n'a pas moyen de savoir si on a crée un temp ou non.
@@ -184,8 +186,7 @@ assignment_list:
   |tID tASSIGN add_sub tCOMMA assignment_list
   { get_symb(&mySymbolsTable,$1);
     int address_nb = get_symb(&mySymbolsTable,$1);
-    printf("\t\t\t\tCOP %d %d\n\n", address_nb, $3); 
-    add_instruction(&myInstructionTable, "COP", address_nb, $3);  
+    add_instruction(&myInstructionTable, "COP", address_nb, $3,0);  
     free_last_tmp(&mySymbolsTable);
     printf("assignment: '%s'\n\n", $1); }
 
@@ -217,9 +218,7 @@ ifblock:
 ;
 
 action-if:
-{ printf("jmf instruction"); 
-//arg1 à 1 mais jsp ce que ça représente
-add_instruction(&myInstructionTable,"JMF",1,-1);
+{add_instruction(&myInstructionTable,"JMF",-1,-1,0);    //arg1 ?
 $$ = get_index_actuel_instructions(&myInstructionTable)-1;
 increment_scope(&mySymbolsTable);
 } 
@@ -232,6 +231,15 @@ increment_scope(&mySymbolsTable);
 whileblock:
 	tWHILE tLPAR condition tRPAR tLBRACE body tRBRACE                              { printf("while block\n\n"); }         
 ;
+
+action-while:
+{add_instruction(&myInstructionTable,"JMF",-1,-1,0);    //arg1 ?
+$$ = get_index_actuel_instructions(&myInstructionTable)-1;
+increment_scope(&mySymbolsTable);
+} 
+;
+
+
 
 printblock:
 	tPRINT tLPAR tID tRPAR tSEMI	                                                 { printf("print block: '%s'\n\n", $3); }      
@@ -277,8 +285,7 @@ add_sub:
 
 	| add_sub tADD div_mul                                                          
   { //we assign the value of @div_mul + @add_sub to @add_sub
-    printf("\t\t\t\tADD %d %d %d\n\n", $1, $1, $3);  
-    add_instruction(&myInstructionTable, "ADD", $1, $3);
+    add_instruction(&myInstructionTable, "ADD", $1,$1, $3);
 
     //we free the tmp @div_mul
     free_last_tmp(&mySymbolsTable);
@@ -287,8 +294,7 @@ add_sub:
 
 	| add_sub tSUB div_mul                                                          
   { //we assign the value of @div_mul - @add_sub to @add_sub
-    printf("\t\t\t\tSUB %d %d %d\n\n", $1, $1, $3); 
-    add_instruction(&myInstructionTable, "SUB", $1, $3); 
+    add_instruction(&myInstructionTable, "SUB", $1,$1, $3); 
 
     //we free the tmp @div_mul
     free_last_tmp(&mySymbolsTable);
@@ -306,8 +312,7 @@ div_mul:
 
     //we assign the value of @single_value to the @tmp
     int address_nb = get_last_tmp(&mySymbolsTable);
-    printf("\t\t\t\tCOP %d %d\n\n", address_nb, $1);  
-    add_instruction(&myInstructionTable, "COP", address_nb, $1);
+    add_instruction(&myInstructionTable, "COP", address_nb, $1,0);
 
 
     //we return the @tmp with the new value
@@ -316,8 +321,7 @@ div_mul:
 
   | div_mul tMUL single_value                                                             
   { //we assign the value of @single_value * @div_mul to @div_mul
-    printf("\t\t\t\tMUL %d %d %d\n\n", $1, $1, $3);  
-    add_instruction(&myInstructionTable, "MUL", $1, $3);
+    add_instruction(&myInstructionTable, "MUL", $1,$1, $3);
 
     //we free the tmp @single_value
     free_last_tmp(&mySymbolsTable);
@@ -326,8 +330,7 @@ div_mul:
 
 	| div_mul tDIV single_value                                                             
   { //we assign the value of @single_value / @div_mul to @div_mul
-    printf("\t\t\t\tDIV %d %d %d\n\n", $1, $1, $3);   
-    add_instruction(&myInstructionTable, "DIV", $1, $3);
+    add_instruction(&myInstructionTable, "DIV", $1, $1,$3);
 
     //we free the tmp @single_value
     free_last_tmp(&mySymbolsTable);
@@ -349,8 +352,7 @@ single_value:
 
     //we assign the value to the @NB
     int address_nb = get_last_tmp(&mySymbolsTable);
-    printf("\t\t\t\tAFC %d %d\n\n", address_nb, $1); 
-    add_instruction(&myInstructionTable, "AFC", address_nb, $1);  
+    add_instruction(&myInstructionTable, "AFC", address_nb, $1,0);  
 
     //we return the @NB
     $$ = address_nb;

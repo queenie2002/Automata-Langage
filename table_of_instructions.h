@@ -7,6 +7,7 @@ struct Instruction {
     char *instruction;
     int arg1;
     int arg2;
+    int arg3;
     int index;
 };
 
@@ -18,7 +19,7 @@ struct InstructionTable {
 void initialize_instruction_table(struct InstructionTable *table);
 
 
-void add_instruction(struct InstructionTable *table, char *instruction, int arg1, int arg2);
+void add_instruction(struct InstructionTable *table, char *instruction, int arg1, int arg2, int arg3);
 struct Instruction read_instruction(struct InstructionTable *table, int index);
 
 void patch_instruction_arg2(struct InstructionTable *table,int index,int arg2);
