@@ -6,9 +6,6 @@
 #include "parser.tab.h"
 %}
 
-%left tOR
-%left tAND
-
 /* Regular Definitions */
 
 

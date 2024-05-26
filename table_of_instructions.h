@@ -28,4 +28,8 @@ int get_index_actuel_instructions(struct InstructionTable *table);
 
 void print_instruction_table(struct InstructionTable *table);
 
+void write_instructions_to_file(struct InstructionTable table);
+
+char * convert_instruction_into_hexa(struct Instruction anInstruction);
+
 #endif
