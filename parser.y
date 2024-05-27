@@ -123,8 +123,10 @@ functionCall:
   //je comprends pas ces instructions, args pas ok
   add_tmp(&mySymbolsTable);
   int tmp = get_last_tmp(&mySymbolsTable);
-  add_instruction(&myInstructionTable,"PUSH",tmp,-1,0);
-  add_instruction(&myInstructionTable,"CALL",-1,-1,0);
+  int calleeFrame = $3;
+  int calleeADDR = get_function_address(&myFunctionTable,$1);
+  add_instruction(&myInstructionTable,"PUSH",calleeFrame,0,0);
+  add_instruction(&myInstructionTable,"CALL",calleeADDR,0,0);
   add_instruction(&myInstructionTable,"POP",tmp,-1,0);
   add_instruction(&myInstructionTable,"COP",tmp,-1,0);
   add_instruction(&myInstructionTable,"COP",tmp,tmp,0);
