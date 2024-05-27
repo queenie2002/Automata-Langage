@@ -94,9 +94,9 @@ int get_last_tmp_scope(struct SymbolTable *table) {
     return table->symbols[table->ptr_tmp].scope;
 }  
 
-//WARNING return size of symb + tmp
+
 int get_symbol_table_size(struct SymbolTable* table) {
-    return table->ptr + (100-table->ptr_tmp);
+    return table->ptr;
 }
 
 void free_all_tmp(struct SymbolTable *table) {
