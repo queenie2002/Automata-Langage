@@ -9,6 +9,7 @@
 #include "table_of_functions.h"
 
 struct SymbolTable mySymbolsTable;
+struct DeletedSymbolsTable myDeletedSymbolsTable;
 struct InstructionTable myInstructionTable;
 struct FunctionTable myFunctionTable;
 %}
@@ -23,10 +24,9 @@ struct FunctionTable myFunctionTable;
 %token tADD tSUB tMUL tDIV tLT tGT tNE tEQ tGE tLE tASSIGN tAND tOR tNOT tLBRACE tRBRACE tLPAR tRPAR tSEMI tCOMMA tIF tELSE tWHILE  tPRINT tRETURN tINT tVOID tMAIN tCONST tERROR
 %token <nb> tNB
 %token <var> tID
-
 %type <nb> add_sub div_mul single_value functionCall
 %type <nb> condition equality_expression compare
-%type <nb> action-if action-while action-getIndex action-else
+%type <nb> action-if action-while action-getIndex action-else action-call1
 %left tOR
 %left tAND
 %start program
@@ -40,22 +40,16 @@ struct FunctionTable myFunctionTable;
 
 
 program:
-  %empty                                                                          { printf("program: empty\n\n"); }
+  %empty                                                                        { printf("program: empty\n\n"); }
   |main_function                                                                  
   { printf("program: main\n\n"); 
-  add_instruction(&myInstructionTable, "NOP", 0, 0,0); 
-  // we also print the symbol table and the instruction table and the function table at the end of the program
-  PrintTable(&mySymbolsTable);
-  print_instruction_table(&myInstructionTable);
-  print_function_table(&myFunctionTable);}
+  add_instruction(&myInstructionTable, "NOP", 0, 0,0); }
   |function_list main_function                                                  
   { printf("program: main and functions\n\n"); 
     add_instruction(&myInstructionTable, "NOP", 0, 0,0); 
-  // we also print the symbol table and the instruction table and the function table at the end of the program
-  PrintTable(&mySymbolsTable);
-  print_instruction_table(&myInstructionTable);
-  print_function_table(&myFunctionTable);}
+  }
 ;
+
 
 
 
@@ -67,8 +61,17 @@ function_list:
 ;
 
 function:
-  function_type tID 
-  {increment_scope(&mySymbolsTable);add_function(&myFunctionTable,$2,get_index_actuel_instructions(&myInstructionTable));} tLPAR parameter_list tRPAR tLBRACE body tRBRACE {decrement_scope(&mySymbolsTable);
+  function_type tID tLPAR parameter_list tRPAR tLBRACE
+    {//WARNING j'ai pas compris ce JMP
+    add_instruction(&myInstructionTable,"JMP",-1,0,0);
+    increment_scope(&mySymbolsTable);
+    add_function(&myFunctionTable,$2,get_index_actuel_instructions(&myInstructionTable));
+    add_symb(&mySymbolsTable,"?ADR");
+    add_symb(&mySymbolsTable,"?VAL");} 
+    body tRBRACE 
+    {decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);
+    //WARNING c'est quoi les args de RET
+    add_instruction(&myInstructionTable,"RET",0,0,0);
    printf("function: %s\n\n", $2); }
 ;
 
@@ -76,7 +79,18 @@ function:
 
 
 main_function: 
-  function_type tMAIN {add_function(&myFunctionTable,"main",get_index_actuel_instructions(&myInstructionTable));} tLPAR parameter_list tRPAR tLBRACE body tRBRACE         	{ printf("main function\n\n"); }
+  function_type tMAIN 
+  {increment_scope(&mySymbolsTable);
+  add_function(&myFunctionTable,"main",get_index_actuel_instructions(&myInstructionTable));
+  //WARNING j'ai commenté ces parties parce que le scope marche pas bien avec les fonctions et que je peux pas déclarer de variables en dehors de fonctions mais j'aimerais les garder
+  add_symb(&mySymbolsTable,"?ADR");
+  add_symb(&mySymbolsTable,"?VAL");
+  } 
+  tLPAR parameter_list tRPAR tLBRACE body tRBRACE
+  { decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);
+    //WARNING c'est quoi les args de RET
+    add_instruction(&myInstructionTable,"RET",0,0,0);
+    printf("main function\n\n"); }
 ;
        
 function_type:
@@ -101,10 +115,24 @@ parameter_type:
 ;
 
 functionCall:
-  tID tLPAR argument_list tRPAR 
+  tID tLPAR action-call1 argument_list tRPAR action-call2
   {printf("function Call\n");
   $$ = 66;}
 ;
+
+action-call1:%empty
+  {increment_scope(&mySymbolsTable);
+  add_symb(&mySymbolsTable,"!ADR");
+  add_symb(&mySymbolsTable,"!VAL");
+  $$ = get_symbol_table_size(&mySymbolsTable);
+  decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);};
+
+action-call2:%empty
+  {//not yet done, look at trace p438
+    add_instruction(&myInstructionTable,"PUSH",-1,-1,0);
+  add_instruction(&myInstructionTable,"CALL",-1,-1,0);
+  add_instruction(&myInstructionTable,"COP",-1,-1,0);}
+  ;
 
 argument_list:
 %empty
@@ -128,6 +156,19 @@ body:
     printf("body: instruction_list\n\n"); }
   
   |declaration_list instruction_list                                                { printf("body: declaration&instruction list\n\n"); }
+  |return
+;
+
+//la fonction ne renvoie qu'un parametre
+return:
+tRETURN add_sub tSEMI 
+{printf("tRETURN\n");
+  int val = get_symb(&mySymbolsTable,"?VAL");
+add_instruction(&myInstructionTable,"COP",val,$2,0);
+//WARNING pas sur de comprendre les args de RET
+add_instruction(&myInstructionTable,"RET",0,0,0);
+
+}
 ;
 
 
@@ -214,7 +255,7 @@ ifblock:
     {patch_instruction_arg1(&myInstructionTable,$5,$3);
     free_last_tmp(&mySymbolsTable); // free temp of condition
       patch_instruction_arg2(&myInstructionTable,$5,$9);
-    decrement_scope(&mySymbolsTable);
+    decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);
      } 
     { printf("if block: if\n\n"); }
 	| tIF tLPAR condition tRPAR action-if tLBRACE body tRBRACE action-getIndex tELSE action-else tLBRACE body tRBRACE action-getIndex
@@ -222,14 +263,14 @@ ifblock:
       free_last_tmp(&mySymbolsTable); // free temp of condition
       patch_instruction_arg2(&myInstructionTable,$5,$9+1);  
       patch_instruction_arg1(&myInstructionTable,$11,$15);  //patch jump    
-    decrement_scope(&mySymbolsTable);
+    decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);
      } 
     { printf("if block: if else\n\n"); }
 	| tIF tLPAR condition tRPAR action-if tLBRACE body tRBRACE action-getIndex tELSE ifblock
     {patch_instruction_arg1(&myInstructionTable,$5,$3);
     free_last_tmp(&mySymbolsTable); // free temp of condition
       patch_instruction_arg2(&myInstructionTable,$5,$9);
-    decrement_scope(&mySymbolsTable);
+    decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);
      } 
     { printf("if block: if else if\n\n"); }
 ;
@@ -259,7 +300,7 @@ whileblock:
     patch_instruction_arg1(&myInstructionTable,$5,$3);
     free_last_tmp(&mySymbolsTable); // free temp of condition
     patch_instruction_arg2(&myInstructionTable,$5,get_index_actuel_instructions(&myInstructionTable));
-    decrement_scope(&mySymbolsTable);}
+    decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);}
   { printf("while block\n\n"); }         
 ;
 
@@ -428,7 +469,12 @@ int main(void) {
   initialize_instruction_table(&myInstructionTable);
   initialize_function_table(&myFunctionTable);
   yyparse();
-  write_instructions_to_file(myInstructionTable);
-  write_instructions_to_file_VHDL(myInstructionTable);
+  PrintTable(&mySymbolsTable);
+  print_deleted_symbols_table(&myDeletedSymbolsTable);
+  print_instruction_table(&myInstructionTable);
+  print_function_table(&myFunctionTable);
+  //WARNING following lines smashes the stack when there are functions in the code to compile
+  //write_instructions_to_file(myInstructionTable);
+  //write_instructions_to_file_VHDL(myInstructionTable);
   return 0;
 }
