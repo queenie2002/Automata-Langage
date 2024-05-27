@@ -39,6 +39,8 @@ void add_tmp(struct SymbolTable *table);
 int get_symb(struct SymbolTable *table, char *id);
 int get_last_tmp(struct SymbolTable *table);
 
+int get_symbol_table_size(struct SymbolTable* table);
+
 void free_all_tmp(struct SymbolTable *table);
 void free_last_tmp(struct SymbolTable *table);
 
@@ -47,6 +49,8 @@ void increment_scope(struct SymbolTable *table);
 void decrement_scope(struct SymbolTable *table, struct DeletedSymbolsTable *deletedTable);
 int get_scope(struct SymbolTable *table, char *id);
 int get_last_tmp_scope(struct SymbolTable *table);
+
+
 
 void PrintTable(struct SymbolTable *table);
 void print_deleted_symbols_table(struct DeletedSymbolsTable *table);

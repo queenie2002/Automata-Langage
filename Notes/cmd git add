@@ -1,1 +1,1 @@
-git add Makefile parser.y table_of_symbols.c table_of_symbols.h table_of_instructions.c table_of_instructions.h table_of_functions.c table_of_functions.h tests/ 
+git add Makefile parser.y table_of_symbols.c table_of_symbols.h table_of_instructions.c table_of_instructions.h table_of_functions.c table_of_functions.h tests/ test.c interpreter.py output_files/ Notes/cmd\ git\ add 

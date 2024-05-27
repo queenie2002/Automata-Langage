@@ -90,6 +90,8 @@ main_function:
   { decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);
     //WARNING c'est quoi les args de RET
     add_instruction(&myInstructionTable,"RET",0,0,0);
+    int mainADDR = get_function_address(&myFunctionTable,"main");
+    patch_instruction_arg1(&myInstructionTable,0,mainADDR);
     printf("main function\n\n"); }
 ;
        
@@ -115,9 +117,18 @@ parameter_type:
 ;
 
 functionCall:
-  tID tLPAR action-call1 argument_list tRPAR action-call2
+  tID tLPAR action-call1 argument_list tRPAR
   {printf("function Call\n");
-  $$ = 66;}
+  //WARNING not yet done, look at trace p438
+  //je comprends pas ces instructions, args pas ok
+  add_tmp(&mySymbolsTable);
+  int tmp = get_last_tmp(&mySymbolsTable);
+  add_instruction(&myInstructionTable,"PUSH",tmp,-1,0);
+  add_instruction(&myInstructionTable,"CALL",-1,-1,0);
+  add_instruction(&myInstructionTable,"POP",tmp,-1,0);
+  add_instruction(&myInstructionTable,"COP",tmp,-1,0);
+  add_instruction(&myInstructionTable,"COP",tmp,tmp,0);
+  $$ = tmp;}
 ;
 
 action-call1:%empty
@@ -127,12 +138,6 @@ action-call1:%empty
   $$ = get_symbol_table_size(&mySymbolsTable);
   decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);};
 
-action-call2:%empty
-  {//not yet done, look at trace p438
-    add_instruction(&myInstructionTable,"PUSH",-1,-1,0);
-  add_instruction(&myInstructionTable,"CALL",-1,-1,0);
-  add_instruction(&myInstructionTable,"COP",-1,-1,0);}
-  ;
 
 argument_list:
 %empty
