@@ -1,8 +1,10 @@
-int f (int a){
-    return a + 2;
-}
+void main(void) {
+int a;
+int b,c;
+b = 6;
+c=8;
+a = b + c * 2;}
 
-void main (void){
-    int a;
-    a = f(3);
-}
+
+
+

@@ -31,6 +31,8 @@ void print_instruction_table(struct InstructionTable *table);
 
 void write_instructions_to_file(struct InstructionTable table);
 
+void write_instructions_to_file_read(struct InstructionTable table);
+
 void write_instructions_to_file_VHDL(struct InstructionTable table);
 
 char * convert_instruction_into_hexa(struct Instruction anInstruction);

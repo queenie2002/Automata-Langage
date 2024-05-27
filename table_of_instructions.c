@@ -70,7 +70,7 @@ void print_instruction_table(struct InstructionTable *table) {
 }
 
 
-// Writes the instructions in a file to be interpreted (format: ADD 01 01 01)
+// Writes the instructions in a file to be interpreted (format: 01 01 01 01)
 void write_instructions_to_file(struct InstructionTable table) {
 
     // Open file to write in
@@ -82,8 +82,33 @@ void write_instructions_to_file(struct InstructionTable table) {
     // Get and write the instructions in file
     for (int i=0; i < table.current_index; i++) {
         struct Instruction anInstruction = table.instructions[i];
-        fprintf(file, "%s %d %d %d\n",
+        fprintf(file, "%s %02x %02x %02x\n",
                convert_instruction_name_into_number(table.instructions[i].instruction),
+               table.instructions[i].arg1,
+               table.instructions[i].arg2,
+               table.instructions[i].arg3);
+    }
+
+    // Close file
+    if (fclose(file) != 0) {
+        perror("Couldn't to close file");
+    }
+}
+
+// Writes the instructions in a file to read (format: ADD 01 01 01)
+void write_instructions_to_file_read(struct InstructionTable table) {
+
+    // Open file to write in
+    FILE *file = fopen("output_files/instructions_to_read.txt", "w");
+    if (file == NULL) {
+        perror("Couldn't open file");
+    }
+
+    // Get and write the instructions in file
+    for (int i=0; i < table.current_index; i++) {
+        struct Instruction anInstruction = table.instructions[i];
+        fprintf(file, "%s %d %d %d\n",
+               table.instructions[i].instruction,
                table.instructions[i].arg1,
                table.instructions[i].arg2,
                table.instructions[i].arg3);

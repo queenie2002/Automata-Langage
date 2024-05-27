@@ -479,7 +479,8 @@ int main(void) {
   print_instruction_table(&myInstructionTable);
   print_function_table(&myFunctionTable);
   //WARNING following lines smashes the stack when there are functions in the code to compile
-  //write_instructions_to_file(myInstructionTable);
-  //write_instructions_to_file_VHDL(myInstructionTable);
+  write_instructions_to_file(myInstructionTable);
+  write_instructions_to_file_read(myInstructionTable);
+  write_instructions_to_file_VHDL(myInstructionTable);
   return 0;
 }
