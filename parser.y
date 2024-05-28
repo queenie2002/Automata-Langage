@@ -38,15 +38,18 @@ program:
   %empty                                                                        
   { printf("program: empty\n\n"); }
 
-  |main_function                                                                  
+  | action-start main_function                                                                  
   { printf("program: main\n\n"); 
   add_instruction(&myInstructionTable, "NOP", 0, 0,0); }
 
-  |function_list main_function                       
+  |action-start function_list main_function                       
   { printf("program: main and functions\n\n"); 
     add_instruction(&myInstructionTable, "NOP", 0, 0,0); 
   }
 ;
+
+action-start:%empty
+{add_instruction(&myInstructionTable,"JMP",-1,0,0);}
 
 
 
@@ -61,8 +64,8 @@ function_list:
 
 function:
   function_type tID tLPAR parameter_list tRPAR tLBRACE
-    {//WARNING j'ai pas compris ce JMP
-    add_instruction(&myInstructionTable,"JMP",-1,0,0);
+    {
+
     increment_scope(&mySymbolsTable);
     add_function(&myFunctionTable,$2,get_index_actuel_instructions(&myInstructionTable));
     add_symb(&mySymbolsTable,"?ADR");
@@ -92,10 +95,10 @@ main_function:
   tLPAR parameter_list tRPAR tLBRACE body tRBRACE
   { decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);
 
-    //WARNING c'est quoi les args de RET
+
     add_instruction(&myInstructionTable,"RET",0,0,0);
-    //int mainADDR = get_function_address(&myFunctionTable,"main");
-    //patch_instruction_arg1(&myInstructionTable,0,mainADDR);
+    int mainADDR = get_function_address(&myFunctionTable,"main");
+    patch_instruction_arg1(&myInstructionTable,0,mainADDR);
     printf("main function\n\n"); }
 ;
        
@@ -131,8 +134,9 @@ functionCall:
   add_tmp(&mySymbolsTable);
   int tmp = get_last_tmp(&mySymbolsTable);
   int calleeFrame = $3;
+  int callerFrame = -1;
   int calleeADDR = get_function_address(&myFunctionTable,$1);
-  add_instruction(&myInstructionTable,"PUSH",calleeFrame,0,0);
+  add_instruction(&myInstructionTable,"PUSH",callerFrame,0,0);
   /*CALL:
   The CALL instruction is used to call the callee function. This instruction automatically:
     Pushes the return address (the address of the instruction immediately following the CALL instruction) onto the stack.
@@ -156,7 +160,7 @@ action-call1:%empty
 
 argument_list:
 %empty
-|argument
+|argument 
 |argument_list argument;
 
 argument:
