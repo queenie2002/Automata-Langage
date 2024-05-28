@@ -72,10 +72,6 @@ function:
     add_symb(&mySymbolsTable,"?VAL");} 
     body tRBRACE 
     {decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);
-    //WARNING c'est quoi les args de RET
-    /*RET:
-    Pop the Return Address: When a function is called, the return address (where the caller should resume execution) is pushed onto the stack. The RET instruction pops this return address off the stack and jumps to it.
-    Clean Up the Stack: Some calling conventions require the RET instruction to also clean up the stack by removing the function's arguments from the stack. This is usually specified by an operand to the RET instruction, although in your case, it appears to be fixed as 0 0 0.*/
     add_instruction(&myInstructionTable,"RET",0,0,0);
    printf("function: %s\n\n", $2); }
 ;
@@ -135,11 +131,8 @@ functionCall:
   int calleeFrame = $4;
   int callerFrame = $3;
   int calleeADDR = get_function_address(&myFunctionTable,$1);
-  //PUSH 
   add_instruction(&myInstructionTable,"PUSH",callerFrame+1,0,0);
-  //CALL OK
   add_instruction(&myInstructionTable,"CALL",calleeADDR,0,0);
-  // POP OK
   add_instruction(&myInstructionTable,"POP",callerFrame+1,0,0);
   add_tmp(&mySymbolsTable);
   int temp = get_last_tmp(&mySymbolsTable);
@@ -193,7 +186,6 @@ tRETURN add_sub tSEMI
 {printf("tRETURN\n");
   int val = get_symb(&mySymbolsTable,"?VAL");
 add_instruction(&myInstructionTable,"COP",val,$2,0);
-//WARNING pas sur de comprendre les args de RET
 add_instruction(&myInstructionTable,"RET",0,0,0);
 
 }
