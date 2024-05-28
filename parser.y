@@ -70,6 +70,9 @@ function:
     body tRBRACE 
     {decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);
     //WARNING c'est quoi les args de RET
+    /*RET:
+    Pop the Return Address: When a function is called, the return address (where the caller should resume execution) is pushed onto the stack. The RET instruction pops this return address off the stack and jumps to it.
+    Clean Up the Stack: Some calling conventions require the RET instruction to also clean up the stack by removing the function's arguments from the stack. This is usually specified by an operand to the RET instruction, although in your case, it appears to be fixed as 0 0 0.*/
     add_instruction(&myInstructionTable,"RET",0,0,0);
    printf("function: %s\n\n", $2); }
 ;
@@ -130,8 +133,14 @@ functionCall:
   int calleeFrame = $3;
   int calleeADDR = get_function_address(&myFunctionTable,$1);
   add_instruction(&myInstructionTable,"PUSH",calleeFrame,0,0);
+  /*CALL:
+  The CALL instruction is used to call the callee function. This instruction automatically:
+    Pushes the return address (the address of the instruction immediately following the CALL instruction) onto the stack.
+    Jumps to the callee function's address.
+    */
   add_instruction(&myInstructionTable,"CALL",calleeADDR,0,0);
-  add_instruction(&myInstructionTable,"POP",tmp,-1,0);
+  // POP : restore the frame for the callee function
+  add_instruction(&myInstructionTable,"POP",calleeFrame,-1,0);
   add_instruction(&myInstructionTable,"COP",tmp,-1,0);
   add_instruction(&myInstructionTable,"COP",tmp,tmp,0);
   $$ = tmp;}
@@ -404,8 +413,8 @@ compare:
 
 
 add_sub:
-    functionCall {printf("reducing functionCall to add_sub\n");}
-   |div_mul                                                                       
+
+   div_mul                                                                       
      {$$ = $1;}
 
 	| add_sub tADD div_mul                                                          
@@ -455,7 +464,8 @@ div_mul:
 
 
 single_value:
-    tID                                                                           
+    functionCall {printf("reducing functionCall to add_sub\n");}
+    |tID                                                                           
   { //we return the @ID
     add_tmp(&mySymbolsTable);
     int temp = get_last_tmp(&mySymbolsTable);
