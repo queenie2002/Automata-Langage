@@ -135,18 +135,17 @@ functionCall:
   int calleeFrame = $4;
   int callerFrame = $3;
   int calleeADDR = get_function_address(&myFunctionTable,$1);
-  add_instruction(&myInstructionTable,"PUSH",callerFrame,0,0);
-  /*CALL:
-  The CALL instruction is used to call the callee function. This instruction automatically:
-    Pushes the return address (the address of the instruction immediately following the CALL instruction) onto the stack.
-    Jumps to the callee function's address.
-    */
+  //PUSH 
+  add_instruction(&myInstructionTable,"PUSH",callerFrame+1,0,0);
+  //CALL OK
   add_instruction(&myInstructionTable,"CALL",calleeADDR,0,0);
-  // POP : restore the frame for the callee function
-  add_instruction(&myInstructionTable,"POP",calleeFrame,-1,0);
-  add_instruction(&myInstructionTable,"COP",-1,-1,0);
-  add_instruction(&myInstructionTable,"COP",-1,-1,0);
-  $$ = -1;}
+  // POP OK
+  add_instruction(&myInstructionTable,"POP",callerFrame+1,0,0);
+  add_tmp(&mySymbolsTable);
+  int temp = get_last_tmp(&mySymbolsTable);
+  //copy return value !VAL of callee into temp
+  add_instruction(&myInstructionTable,"COP",temp,callerFrame+2,0);;
+  $$ = temp;}
 ;
 
 
@@ -158,6 +157,7 @@ action-call1:%empty
   {increment_scope(&mySymbolsTable);
   add_symb(&mySymbolsTable,"!ADR");
   add_symb(&mySymbolsTable,"!VAL");
+  add_tmp(&mySymbolsTable);
   $$ = get_symbol_table_size(&mySymbolsTable);
   decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);};
 
@@ -472,7 +472,12 @@ div_mul:
 
 
 single_value:
-    functionCall {printf("reducing functionCall to add_sub\n");}
+    functionCall 
+    {printf("reducing functionCall to add_sub\n");
+    add_tmp(&mySymbolsTable);
+    int temp = get_last_tmp(&mySymbolsTable);
+    $$ = temp;
+    add_instruction(&myInstructionTable, "COP", temp, $1,0); }
     |tID                                                                           
   { //we return the @ID
     add_tmp(&mySymbolsTable);
