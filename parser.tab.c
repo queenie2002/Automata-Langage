@@ -2060,7 +2060,7 @@ int main(void) {
   initialize_instruction_table(&myInstructionTable);
   initialize_function_table(&myFunctionTable);
   yyparse();
-  PrintTable(&mySymbolsTable);
+  print_table(&mySymbolsTable);
   print_deleted_symbols_table(&myDeletedSymbolsTable);
   print_instruction_table(&myInstructionTable);
   print_function_table(&myFunctionTable);

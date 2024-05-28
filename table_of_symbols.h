@@ -52,7 +52,7 @@ int get_last_tmp_scope(struct SymbolTable *table);
 
 
 
-void PrintTable(struct SymbolTable *table);
+void print_table(struct SymbolTable *table);
 void print_deleted_symbols_table(struct DeletedSymbolsTable *table);
 
 #endif

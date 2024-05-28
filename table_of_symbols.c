@@ -109,7 +109,7 @@ void free_last_tmp(struct SymbolTable *table) {
     printf("free last temp - Number of temporary variables: %d\n", MAX_SYMBOLS - table->ptr_tmp);
 }
 
-void PrintTable(struct SymbolTable *table) {
+void print_table(struct SymbolTable *table) {
     printf("\n--------SYMBOL TABLE------\n");
     printf("--------SYMBOLS------\n");
     printf("WARNING scope not ok\n");

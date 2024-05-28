@@ -1,11 +1,6 @@
-#!/usr/bin/env python3
-
 asm = open("output_files/instructions.txt", "r").readlines()
 asm = [l.strip().split(" ") for l in asm]
 asm = [[int(a, 16) for a in l] for l in asm]
-
-for instruction in asm: 
-    print(instruction)
 
 ip = 0 
 
@@ -30,8 +25,12 @@ ERR = 255 #problem couldn't recognize instruction
 
 
 while (ip < len(asm)) :
-    #print(asm[ip][0])
-    if asm[ip][0] == ADD:
+    # print(asm[ip][0])
+    
+    if asm[ip][0] == NOP:
+        pass
+    
+    elif asm[ip][0] == ADD:
         mem[asm[ip][1]] = mem[asm[ip][2]] + mem[asm[ip][3]]
         
     elif asm[ip][0] == MUL: 
@@ -82,6 +81,6 @@ while (ip < len(asm)) :
         print(mem[asm[ip][1]])
 
     else : 
-        print("error couldn't recognize instruction")
+        print("error couldn't recognize instruction " + str(asm[ip][0]))
     
     ip+=1
