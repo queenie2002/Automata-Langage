@@ -30,6 +30,7 @@ ERR = 255 #problem couldn't recognize instruction
 
 
 while (ip < len(asm)) :
+    #print(asm[ip][0])
     if asm[ip][0] == ADD:
         mem[asm[ip][1]] = mem[asm[ip][2]] + mem[asm[ip][3]]
         
@@ -49,18 +50,21 @@ while (ip < len(asm)) :
         mem[asm[ip][1]] = asm[ip][2]
     
     elif asm[ip][0] == JMP: 
-        ip = asm[ip][2] - 1  #we decrease so that after ip+1, we get to the right instruction
+        ip = asm[ip][1] - 1  #we decrease so that after ip+1, we get to the right instruction
         
     elif asm[ip][0] == JMF: 
         if mem[asm[ip][1]] == 0 : #false, we jump to else
-            ip = mem[asm[ip][2]] - 1 
+            ip = asm[ip][2] - 1 
         #if it's 1: it's true and we continue normally, we're not dealing with error here            
         
     elif asm[ip][0] == INF: 
         if mem[asm[ip][2]] < mem[asm[ip][3]] : #if it's true
             mem[asm[ip][1]] = 1 
+            print("true")
         else:
             mem[asm[ip][1]] = 0
+            print("false")
+            
     
     elif asm[ip][0] == SUP: 
         if mem[asm[ip][2]] > mem[asm[ip][3]] : #if it's true
@@ -77,7 +81,7 @@ while (ip < len(asm)) :
     elif asm[ip][0] == PRI: 
         print(mem[asm[ip][1]])
 
-    elif asm[ip][0] == ERR: 
+    else : 
         print("error couldn't recognize instruction")
     
     ip+=1

@@ -1,10 +1,13 @@
 void main(void) {
-int a;
-int b,c;
-b = 6;
-c=8;
-a = b + c * 2;}
-
-
-
-
+    int a = 2;
+    if (a == 0) {
+        a = 6;
+    }
+    else if (a==1) {
+        a = 2;
+    }
+    else {
+        a = 5;
+    }
+    print(a);
+}

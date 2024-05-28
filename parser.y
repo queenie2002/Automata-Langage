@@ -303,7 +303,7 @@ action-getIndex:%empty
 
 whileblock:
 	tWHILE tLPAR condition tRPAR action-while tLBRACE body tRBRACE 
-  {add_instruction(&myInstructionTable,"JMP",$5,0,0); //backward jump
+  {add_instruction(&myInstructionTable,"JMP",$5-2,0,0); //backward jump
     patch_instruction_arg1(&myInstructionTable,$5,$3);
     free_last_tmp(&mySymbolsTable); // free temp of condition
     patch_instruction_arg2(&myInstructionTable,$5,get_index_actuel_instructions(&myInstructionTable));
@@ -321,7 +321,11 @@ increment_scope(&mySymbolsTable);
 
 
 printblock:
-	tPRINT tLPAR tID tRPAR tSEMI	                                                 { printf("print block: '%s'\n\n", $3); }      
+	tPRINT tLPAR single_value tRPAR tSEMI	                                                 
+  { printf("print block: '%d'\n\n", $3);      
+  add_instruction(&myInstructionTable,"PRI",$3,0,0);
+  //$$ = get_index_actuel_instructions(&myInstructionTable)-1;
+  } 
 ;
 
 

@@ -106,7 +106,7 @@ Grammar
 
    58 action-while: ε
 
-   59 printblock: tPRINT tLPAR tID tRPAR tSEMI
+   59 printblock: tPRINT tLPAR single_value tRPAR tSEMI
 
    60 condition: tID
    61          | equality_expression
@@ -172,7 +172,7 @@ Terminals, with rules where they appear
     tCONST (286)
     tERROR (287)
     tNB <nb> (288) 81
-    tID <var> (289) 7 16 17 19 37 38 39 40 45 46 59 60 80
+    tID <var> (289) 7 16 17 19 37 38 39 40 45 46 60 80
 
 
 Nonterminals, with rules where they appear
@@ -298,7 +298,7 @@ Nonterminals, with rules where they appear
         on right: 74 75 76 78 79
     single_value <nb> (75)
         on left: 80 81
-        on right: 77 78 79
+        on right: 59 77 78 79
 
 
 State 0
@@ -711,7 +711,7 @@ State 40
 
 State 41
 
-   59 printblock: tPRINT • tLPAR tID tRPAR tSEMI
+   59 printblock: tPRINT • tLPAR single_value tRPAR tSEMI
 
     tLPAR  shift, and go to state 70
 
@@ -1028,9 +1028,12 @@ State 69
 
 State 70
 
-   59 printblock: tPRINT tLPAR • tID tRPAR tSEMI
+   59 printblock: tPRINT tLPAR • single_value tRPAR tSEMI
 
-    tID  shift, and go to state 97
+    tNB  shift, and go to state 31
+    tID  shift, and go to state 87
+
+    single_value  go to state 97
 
 
 State 71
@@ -1341,7 +1344,7 @@ State 96
 
 State 97
 
-   59 printblock: tPRINT tLPAR tID • tRPAR tSEMI
+   59 printblock: tPRINT tLPAR single_value • tRPAR tSEMI
 
     tRPAR  shift, and go to state 111
 
@@ -1499,7 +1502,7 @@ State 110
 
 State 111
 
-   59 printblock: tPRINT tLPAR tID tRPAR • tSEMI
+   59 printblock: tPRINT tLPAR single_value tRPAR • tSEMI
 
     tSEMI  shift, and go to state 122
 
@@ -1594,7 +1597,7 @@ State 121
 
 State 122
 
-   59 printblock: tPRINT tLPAR tID tRPAR tSEMI •
+   59 printblock: tPRINT tLPAR single_value tRPAR tSEMI •
 
     $default  reduce using rule 59 (printblock)
 

@@ -1,5 +1,5 @@
 void main(void) {
-    int a = 0;
+    int a = 1;
     if (a) {
         a = 6;
     }
