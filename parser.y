@@ -24,11 +24,9 @@ struct FunctionTable myFunctionTable;
 %token tADD tSUB tMUL tDIV tLT tGT tNE tEQ tGE tLE tASSIGN tAND tOR tNOT tLBRACE tRBRACE tLPAR tRPAR tSEMI tCOMMA tIF tELSE tWHILE  tPRINT tRETURN tINT tVOID tMAIN tCONST tERROR
 %token <nb> tNB
 %token <var> tID
-%type <nb> add_sub div_mul single_value functionCall
-%type <nb> condition equality_expression compare
-%type <nb> action-if action-while action-getIndex action-else action-call1
-%left tOR
-%left tAND
+
+%type <nb> add_sub div_mul single_value functionCall condition equality_expression compare action-if action-while action-getIndex action-else action-call1 action-condition
+%left tOR tAND
 %start program
 %%
 
@@ -36,15 +34,15 @@ struct FunctionTable myFunctionTable;
 
 
 
-
-
-
 program:
-  %empty                                                                        { printf("program: empty\n\n"); }
+  %empty                                                                        
+  { printf("program: empty\n\n"); }
+
   |main_function                                                                  
   { printf("program: main\n\n"); 
   add_instruction(&myInstructionTable, "NOP", 0, 0,0); }
-  |function_list main_function                                                  
+
+  |function_list main_function                       
   { printf("program: main and functions\n\n"); 
     add_instruction(&myInstructionTable, "NOP", 0, 0,0); 
   }
@@ -52,11 +50,12 @@ program:
 
 
 
-
-
 function_list:
-  function                                                                        { printf("function_list: a function\n\n"); }
-  |function_list function                                                         { printf("function_list: functions\n\n"); }
+  function                                                                        
+  { printf("function_list: a function\n\n"); }
+
+  |function_list function                                                         
+  { printf("function_list: functions\n\n"); }
 
 ;
 
@@ -86,18 +85,23 @@ main_function:
   add_symb(&mySymbolsTable,"?ADR");
   add_symb(&mySymbolsTable,"?VAL");
   } 
+
   tLPAR parameter_list tRPAR tLBRACE body tRBRACE
   { decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);
+
     //WARNING c'est quoi les args de RET
     add_instruction(&myInstructionTable,"RET",0,0,0);
-    int mainADDR = get_function_address(&myFunctionTable,"main");
-    patch_instruction_arg1(&myInstructionTable,0,mainADDR);
+    //int mainADDR = get_function_address(&myFunctionTable,"main");
+    //patch_instruction_arg1(&myInstructionTable,0,mainADDR);
     printf("main function\n\n"); }
 ;
        
 function_type:
-  tVOID                                                                           { printf("function type: void\n\n"); }
-  |tINT                                                                           { printf("function type: int\n\n"); }
+  tVOID                                                                           
+  { printf("function type: void\n\n"); }
+
+  |tINT                                                                           
+  { printf("function type: int\n\n"); }
 ;
 
 parameter_list:
@@ -302,18 +306,26 @@ action-getIndex:%empty
 
 
 whileblock:
-	tWHILE tLPAR condition tRPAR action-while tLBRACE body tRBRACE 
-  {add_instruction(&myInstructionTable,"JMP",$5-2,0,0); //backward jump
-    patch_instruction_arg1(&myInstructionTable,$5,$3);
+	tWHILE tLPAR action-condition condition tRPAR action-while tLBRACE body tRBRACE 
+  {
+    add_instruction(&myInstructionTable,"JMP",$3,0,0); //backward jump
+    patch_instruction_arg1(&myInstructionTable,$6,$4);
     free_last_tmp(&mySymbolsTable); // free temp of condition
-    patch_instruction_arg2(&myInstructionTable,$5,get_index_actuel_instructions(&myInstructionTable));
+    patch_instruction_arg2(&myInstructionTable,$6,get_index_actuel_instructions(&myInstructionTable));
     decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);}
   { printf("while block\n\n"); }         
 ;
 
+action-condition:%empty
+{
+$$ = get_index_actuel_instructions(&myInstructionTable);
+} 
+;
+
+
 action-while:%empty
 {add_instruction(&myInstructionTable,"JMF",-1,-1,0);    //arg1 ?
-$$ = get_index_actuel_instructions(&myInstructionTable)-1;
+$$ = get_index_actuel_instructions(&myInstructionTable) - 1;
 increment_scope(&mySymbolsTable);
 } 
 ;
@@ -476,14 +488,21 @@ void yyerror(const char *msg) {
 }
 
 int main(void) {
+  //Initialize Tables
   initialize_symbol_table(&mySymbolsTable);
   initialize_instruction_table(&myInstructionTable);
   initialize_function_table(&myFunctionTable);
+
+  //Parse
   yyparse();
+
+  //Print final tables in terminal
   print_table(&mySymbolsTable);
   print_deleted_symbols_table(&myDeletedSymbolsTable);
   print_instruction_table(&myInstructionTable);
   print_function_table(&myFunctionTable);
+
+  //Creates and writes into the files
   //WARNING following lines smashes the stack when there are functions in the code to compile
   write_instructions_to_file(myInstructionTable);
   write_instructions_to_file_read(myInstructionTable);

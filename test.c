@@ -1,13 +1,12 @@
 void main(void) {
-    int a = 2;
+    int a = 0;
     if (a == 0) {
-        a = 6;
+        int b=0;
+        if(b == 0){
+            int c=3;
+            print(a);
+            print(b);
+            print(c);
+        } 
     }
-    else if (a==1) {
-        a = 2;
-    }
-    else {
-        a = 5;
-    }
-    print(a);
 }

@@ -15,41 +15,44 @@ void add_instruction(struct InstructionTable *table, char *instruction, int arg1
         table->instructions[table->current_index].arg3 = arg3;
         table->instructions[table->current_index].index = table->current_index;
 
-        printf("\t\t\t%d - %s   %d  %d  %d\n",
+        printf("\t\t\t%d - %s  %d  %d  %d\n",
         table->instructions[table->current_index].index,
         table->instructions[table->current_index].instruction,
         table->instructions[table->current_index].arg1,
         table->instructions[table->current_index].arg2,
         table->instructions[table->current_index].arg3);
 
-
         table->current_index++;
 
-
-        
     } else {
-        printf("Instruction table is full, cannot add more instructions.\n");
+        perror("Instruction table is full, cannot add more instructions.\n");
     }
 }
 
 struct Instruction read_instruction(struct InstructionTable *table, int index) {
     if (index < 0 || index >= table->current_index){
-        printf( "Invalid index: %d\n", index);
+        perror( "Invalid index\n");
     }
-        return table->instructions[index];
-    
+    return table->instructions[index];
 }
 
-
 void patch_instruction_arg1(struct InstructionTable *table,int index,int arg1){
-    table->instructions[index].arg1 = arg1;
-    printf("Patch instruction at index %d\n",index);
+    if (table->current_index>=index) {
+        table->instructions[index].arg1 = arg1;
+        printf("Patch instruction at index %d\n",index);
+    } else {
+        perror( "Invalid index\n");
+    }
 } 
 
-
 void patch_instruction_arg2(struct InstructionTable *table,int index,int arg2){
-    table->instructions[index].arg2 = arg2;
-    printf("Patch instruction at index %d\n",index);
+    if (table->current_index>=index) {
+        table->instructions[index].arg2 = arg2;
+        printf("Patch instruction at index %d\n",index);
+    }
+    else {
+        perror( "Invalid index\n");
+    }
 } 
 
 int get_index_actuel_instructions(struct InstructionTable *table){
@@ -68,81 +71,6 @@ void print_instruction_table(struct InstructionTable *table) {
     }
     printf("-----------------------------\n\n\n");
 }
-
-
-// Writes the instructions in a file to be interpreted (format: 01 01 01 01)
-void write_instructions_to_file(struct InstructionTable table) {
-
-    // Open file to write in
-    FILE *file = fopen("output_files/instructions.txt", "w");
-    if (file == NULL) {
-        perror("Couldn't open file");
-    }
-
-    // Get and write the instructions in file
-    for (int i=0; i < table.current_index; i++) {
-        struct Instruction anInstruction = table.instructions[i];
-        fprintf(file, "%s %02x %02x %02x\n",
-               convert_instruction_name_into_number(table.instructions[i].instruction),
-               table.instructions[i].arg1,
-               table.instructions[i].arg2,
-               table.instructions[i].arg3);
-    }
-
-    // Close file
-    if (fclose(file) != 0) {
-        perror("Couldn't to close file");
-    }
-}
-
-// Writes the instructions in a file to read (format: ADD 01 01 01)
-void write_instructions_to_file_read(struct InstructionTable table) {
-
-    // Open file to write in
-    FILE *file = fopen("output_files/instructions_to_read.txt", "w");
-    if (file == NULL) {
-        perror("Couldn't open file");
-    }
-
-    // Get and write the instructions in file
-    for (int i=0; i < table.current_index; i++) {
-        struct Instruction anInstruction = table.instructions[i];
-        fprintf(file, "%s %d %d %d\n",
-               table.instructions[i].instruction,
-               table.instructions[i].arg1,
-               table.instructions[i].arg2,
-               table.instructions[i].arg3);
-    }
-
-    // Close file
-    if (fclose(file) != 0) {
-        perror("Couldn't to close file");
-    }
-}
-
-// Writes the instructions in a file for VHDL (format: 0a0a2a03)
-void write_instructions_to_file_VHDL(struct InstructionTable table) {
-
-    // Open file to write in
-    FILE *file = fopen("output_files/instructions_VHDL.txt", "w");
-    if (file == NULL) {
-        perror("Couldn't open file");
-    }
-
-    // Get and write the instructions in file
-    for (int i=0; i < table.current_index; i++) {
-        struct Instruction anInstruction = table.instructions[i];
-        
-        fprintf(file, "%s\n",convert_instruction_into_hexa(anInstruction));
-       
-    }
-
-    // Close file
-    if (fclose(file) != 0) {
-        perror("Couldn't to close file");
-    }
-}
-
 
 // Convert instruction name into hexadecimal number
 char * convert_instruction_name_into_number(char * instructionName) {
@@ -175,12 +103,13 @@ char * convert_instruction_name_into_number(char * instructionName) {
         return "0b"; 
     } else if (strcmp(instructionName, "PRI") == 0) {
         return "0c"; 
+    } else if (strcmp(instructionName, "RET") == 0) {
+        return "0d";      //----------------------------------------------------------A CHANGER 
     } else {
         return "ff"; 
         printf("Didn't recognize a proper instruction: %s\n ", instructionName);
     }
 }
-
 
 // Convert instruction into hexa instruction (format: eeffaabbcc)
 char * convert_instruction_into_hexa(struct Instruction anInstruction) {
@@ -209,4 +138,75 @@ char * convert_instruction_into_hexa(struct Instruction anInstruction) {
    return hexFinalInstruction;
 }
 
+// Writes the instructions in a file to be interpreted (format: ff ff ff ff)
+void write_instructions_to_file(struct InstructionTable table) {
+
+    // Open file to write in
+    FILE *file = fopen("output_files/instructions.txt", "w");
+    if (file == NULL) {
+        perror("Couldn't open file");
+    }
+
+    // Get and write the instructions in file
+    for (int i=0; i < table.current_index; i++) {
+        struct Instruction anInstruction = table.instructions[i];
+        fprintf(file, "%s %02x %02x %02x\n",
+               convert_instruction_name_into_number(table.instructions[i].instruction),
+               table.instructions[i].arg1,
+               table.instructions[i].arg2,
+               table.instructions[i].arg3);
+    }
+
+    // Close file
+    if (fclose(file) != 0) {
+        perror("Couldn't close file");
+    }
+}
+
+// Writes the instructions in a file to read (format: ADD 01 01 01)
+void write_instructions_to_file_read(struct InstructionTable table) {
+
+    // Open file to write in
+    FILE *file = fopen("output_files/instructions_to_read.txt", "w");
+    if (file == NULL) {
+        perror("Couldn't open file");
+    }
+
+    // Get and write the instructions in file
+    for (int i=0; i < table.current_index; i++) {
+        struct Instruction anInstruction = table.instructions[i];
+        fprintf(file, "%s %d %d %d\n",
+               table.instructions[i].instruction,
+               table.instructions[i].arg1,
+               table.instructions[i].arg2,
+               table.instructions[i].arg3);
+    }
+
+    // Close file
+    if (fclose(file) != 0) {
+        perror("Couldn't close file");
+    }
+}
+
+// Writes the instructions in a file for VHDL (format: fafafafa)
+void write_instructions_to_file_VHDL(struct InstructionTable table) {
+
+    // Open file to write in
+    FILE *file = fopen("output_files/instructions_VHDL.txt", "w");
+    if (file == NULL) {
+        perror("Couldn't open file");
+    }
+
+    // Get and write the instructions in file
+    for (int i=0; i < table.current_index; i++) {
+        struct Instruction anInstruction = table.instructions[i];
+        fprintf(file, "%s\n",convert_instruction_into_hexa(anInstruction));
+       
+    }
+
+    // Close file
+    if (fclose(file) != 0) {
+        perror("Couldn't close file");
+    }
+}
 
