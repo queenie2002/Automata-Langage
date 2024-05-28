@@ -21,6 +21,7 @@ SUP = 10
 EQU = 11
 PRI = 12
 RET = 13 #to determine  ----------------------------------------????????????
+NEQ = 14 #no equal to
 ERR = 255 #problem couldn't recognize instruction
 
 
@@ -83,6 +84,12 @@ while (ip < len(asm)) :
     elif asm[ip][0] == RET: 
         pass
         #TODO #a changer dans table des instructions aussi
+        
+    elif asm[ip][0] == NEQ: 
+        if mem[asm[ip][2]] != mem[asm[ip][3]] : #if it's true
+            mem[asm[ip][1]] = 1 
+        else:
+            mem[asm[ip][1]] = 0
     
     else : 
         print("error couldn't recognize instruction " + str(asm[ip][0]))

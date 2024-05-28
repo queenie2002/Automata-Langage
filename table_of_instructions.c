@@ -105,6 +105,8 @@ char * convert_instruction_name_into_number(char * instructionName) {
         return "0c"; 
     } else if (strcmp(instructionName, "RET") == 0) {
         return "0d";      //----------------------------------------------------------A CHANGER 
+    } else if (strcmp(instructionName, "NEQ") == 0) {
+        return "0e";
     } else {
         return "ff"; 
         printf("Didn't recognize a proper instruction: %s\n ", instructionName);
@@ -200,7 +202,7 @@ void write_instructions_to_file_VHDL(struct InstructionTable table) {
     // Get and write the instructions in file
     for (int i=0; i < table.current_index; i++) {
         struct Instruction anInstruction = table.instructions[i];
-        fprintf(file, "%s\n",convert_instruction_into_hexa(anInstruction));
+        fprintf(file, "x\"%s\",\n",convert_instruction_into_hexa(anInstruction));
        
     }
 
@@ -209,4 +211,3 @@ void write_instructions_to_file_VHDL(struct InstructionTable table) {
         perror("Couldn't close file");
     }
 }
-

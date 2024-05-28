@@ -1,8 +1,7 @@
-int f (int a){
-    return a + 2;
-}
-
-void main (void){
-    int a;
-    a = f(3);
+void main(void) {
+    int a = 0;
+    while (a!=5) {
+        a = a + 1;
+    }
+    print(a);
 }

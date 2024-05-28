@@ -383,15 +383,20 @@ condition:
 
 equality_expression : 
   compare  {$$ = $1;    
-  printf("equality_expression: compare\n\n"); }   
+  printf("equality_expression: compare\n\n"); } 
+
   | equality_expression tEQ compare   
   {add_instruction(&myInstructionTable,"EQU",$1,$1,$3);
   free_last_tmp(&mySymbolsTable);
   $$ = $1;
-  printf("equality_expression: equal\n\n"); }   
+  printf("equality_expression: equal\n\n"); }  
+
   | equality_expression tNE compare
-  { printf("equality_expression: not equal\n\n"); 
-  printf("WARNING This is not implemented");}   
+  {add_instruction(&myInstructionTable,"NEQ",$1,$1,$3);
+  free_last_tmp(&mySymbolsTable);
+  $$ = $1;
+  printf("equality_expression: equal\n\n");
+  printf("equality_expression: not equal\n\n");}   
 ;
 
 
