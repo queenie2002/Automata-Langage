@@ -64,9 +64,9 @@ void increment_scope(struct SymbolTable *table){
 void decrement_scope(struct SymbolTable *table, struct DeletedSymbolsTable *deletedTable){
         table->scope_general--;
 
-/*  WARNING les scopes font n'importe quoi avec les fonctions, donc pour l'instant je désactive la suppression*/
-  /*      //on enleve les variable avec un scope trop grand
-        for (int i = 0; i <= table->ptr; i++) {
+        //on enleve les variable avec un scope trop grand
+        int table_size = table->ptr;
+        for (int i = 0; i <= table_size; i++) {
 
 
 
@@ -82,7 +82,7 @@ void decrement_scope(struct SymbolTable *table, struct DeletedSymbolsTable *dele
         printf("Remove symbol %s with scope %d\n", table->symbols[i].id, table->symbols[i].scope);
         table->ptr--;
         }
-    }*/
+    }
 } 
 
 int get_last_tmp(struct SymbolTable *table) {
@@ -112,7 +112,6 @@ void free_last_tmp(struct SymbolTable *table) {
 void print_table(struct SymbolTable *table) {
     printf("\n--------SYMBOL TABLE------\n");
     printf("--------SYMBOLS------\n");
-    printf("WARNING scope not ok\n");
     for (int i = 0; i <= table->ptr; i++) {
         printf("address: %d   id: %s    scope: %d\n", table->symbols[i].address, table->symbols[i].id, table->symbols[i].scope);
     }
