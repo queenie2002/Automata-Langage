@@ -25,7 +25,7 @@ struct FunctionTable myFunctionTable;
 %token <nb> tNB
 %token <var> tID
 
-%type <nb> add_sub div_mul single_value functionCall condition equality_expression compare action-if action-while action-getIndex action-else action-call1 action-condition
+%type <nb> add_sub div_mul single_value functionCall condition equality_expression compare action-if action-while action-getIndex action-else action-call1 action-condition action-call0
 %left tOR tAND
 %start program
 %%
@@ -127,14 +127,13 @@ parameter_type:
 ;
 
 functionCall:
-  tID tLPAR action-call1 argument_list tRPAR
+  tID tLPAR action-call0 action-call1 argument_list tRPAR
   {printf("function Call\n");
-  //WARNING not yet done, look at trace p438
-  //je comprends pas ces instructions, args pas ok
-  add_tmp(&mySymbolsTable);
-  int tmp = get_last_tmp(&mySymbolsTable);
-  int calleeFrame = $3;
-  int callerFrame = -1;
+
+  int line = get_index_actuel_instructions(&myInstructionTable);
+  char* caller = get_current_function(&myFunctionTable,line);
+  int calleeFrame = $4;
+  int callerFrame = $3;
   int calleeADDR = get_function_address(&myFunctionTable,$1);
   add_instruction(&myInstructionTable,"PUSH",callerFrame,0,0);
   /*CALL:
@@ -145,10 +144,15 @@ functionCall:
   add_instruction(&myInstructionTable,"CALL",calleeADDR,0,0);
   // POP : restore the frame for the callee function
   add_instruction(&myInstructionTable,"POP",calleeFrame,-1,0);
-  add_instruction(&myInstructionTable,"COP",tmp,-1,0);
-  add_instruction(&myInstructionTable,"COP",tmp,tmp,0);
-  $$ = tmp;}
+  add_instruction(&myInstructionTable,"COP",-1,-1,0);
+  add_instruction(&myInstructionTable,"COP",-1,-1,0);
+  $$ = -1;}
 ;
+
+
+action-call0:%empty
+  {  $$ = get_symbol_table_size(&mySymbolsTable);};
+
 
 action-call1:%empty
   {increment_scope(&mySymbolsTable);

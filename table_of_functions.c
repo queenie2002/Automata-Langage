@@ -29,6 +29,21 @@ int get_function_address(struct FunctionTable* table, const char* id) {
     return -1; // Return -1 if the function is not found
 }
 
+// Get the current function based on the instruction line
+char* get_current_function(struct FunctionTable* table, int currentLine) {
+    const char* currentFunction = NULL;
+    for (int i = 0; i < table->size; i++) {
+        if (currentLine >= table->functions[i].startADDR) {
+            if (i == table->size - 1 || currentLine < table->functions[i + 1].startADDR) {
+                currentFunction = table->functions[i].id;
+                break;
+            }
+        }
+    }
+    return currentFunction;
+}
+
+
 // Print the contents of the function table
 void print_function_table(struct FunctionTable* table) {
     printf("---------FUNCTION TABLE-----------");
