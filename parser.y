@@ -25,7 +25,7 @@ struct FunctionTable myFunctionTable;
 %token <nb> tNB
 %token <var> tID
 
-%type <nb> add_sub div_mul single_value functionCall condition equality_expression compare action-if action-while action-getIndex action-else action-call1 action-call0
+%type <nb> add_sub div_mul single_value condition equality_expression compare functionCall action-if action-while action-getIndex action-else action-call1 action-call0
 %left tOR tAND
 %start program
 %%
@@ -88,7 +88,7 @@ action-start:
 ;
 
 
-//--------------------------TO USE FOR FUNCTIONS----------------------------------------------------
+//--------------------------STRUCTURE FUNCTIONS----------------------------------------------------
 
 
 function_type:
@@ -123,7 +123,7 @@ parameter_list:
   { 
     printf("\t\t\t\tparameter_list: a parameter\n\n"); 
   }
-  |parameter_list tCOMMA parameter                                                
+  |tCOMMA parameter tCOMMA parameter_list                                            
   { 
     printf("\t\t\t\tparameter_list: several parameters\n\n"); 
   }
@@ -132,6 +132,7 @@ parameter_list:
 parameter:
   variable_type tID                                                               
   { 
+    add_symb(&mySymbolsTable, $2); 
     printf("\t\t\t\tparameter\n\n"); 
   }
 ;
@@ -158,7 +159,6 @@ body:
   }
 ;
 
-
 declaration_list:
   declaration                                                                      
   { 
@@ -170,14 +170,12 @@ declaration_list:
   }
 ;
 
-
 declaration:
   variable_type identifiers_list tSEMI                                           
   { 
     printf("\t\t\t\tdeclaration\n\n"); 
   }
 ;
-
 
 identifiers_list:
   tID                                                                             
@@ -209,7 +207,6 @@ identifiers_list:
   }
 ;
 
-
 instruction_list:
   instruction                                                                       
   { 
@@ -220,7 +217,6 @@ instruction_list:
     printf("\t\t\t\tseveral instructions\n\n"); 
   }
 ;
-
 
 instruction:
   assignment_list                                                                
@@ -245,8 +241,15 @@ instruction:
   }
 ;
 
-
 //--------------------------FUNCTIONS A FAIRE----------------------------------------------------
+
+action-fun:
+  %empty
+  { //add symbols to frame to return address and value
+    add_symb(&mySymbolsTable,"?ADR");
+    add_symb(&mySymbolsTable,"?VAL");
+  }
+;
 
 
 function_list:
@@ -263,14 +266,11 @@ function_list:
 
 
 function:
-  function_type tID action-inc action-getIndex
-  {
-    add_function(&myFunctionTable,$2,$4);
-    add_symb(&mySymbolsTable,"?ADR");
-    add_symb(&mySymbolsTable,"?VAL");
+  function_type tID action-inc action-fun action-getIndex
+  { //add function to functions table
+    add_function(&myFunctionTable,$2,$5);
   } 
-
-  tLPAR parameter_list tRPAR tLBRACE body tRBRACE action-dec
+  tLPAR parameter_list tRPAR tLBRACE action-inc body tRBRACE action-dec
   {
     add_instruction(&myInstructionTable,"RET",0,0,0);
     printf("\t\t\t\tfunction: %s\n\n", $2); 
@@ -336,12 +336,9 @@ argument_list:
 
 
 main_function: 
-  function_type tMAIN action-inc action-getIndex
-  { //adds function to table + creates var ?ADR et VAL
-    add_function(&myFunctionTable,"main",$4);
-    //WARNING j'ai commenté ces parties parce que le scope marche pas bien avec les fonctions  
-    add_symb(&mySymbolsTable,"?ADR");
-    add_symb(&mySymbolsTable,"?VAL");
+  function_type tMAIN action-inc action-fun action-getIndex
+  { //adds function to table
+    add_function(&myFunctionTable,"main",$5);
   } 
   tLPAR parameter_list tRPAR tLBRACE body tRBRACE action-dec
   { //RET + updates JMP with @main
@@ -380,21 +377,23 @@ ifblock:
   { //if
     printf("\t\t\t\tif block: if\n\n"); 
   }
+  action-dec
 
-	|tIF tLPAR condition tRPAR action-if action-inc tLBRACE body tRBRACE tELSE action-else action-getIndex tLBRACE body tRBRACE action-getIndex
+	|tIF tLPAR condition tRPAR action-if action-inc tLBRACE body tRBRACE action-dec tELSE action-else action-getIndex action-inc tLBRACE body tRBRACE action-getIndex
   { //if else
     patch_instruction_arg1(&myInstructionTable,$5,$3); //patch jump of if
     free_last_tmp(&mySymbolsTable); // free temp of condition
-    patch_instruction_arg2(&myInstructionTable,$5,$12); //to jump after the jump of else
-    patch_instruction_arg1(&myInstructionTable,$11,$16);  //patch jump of else   
+    patch_instruction_arg2(&myInstructionTable,$5,$13); //to jump after the jump of else
+    patch_instruction_arg1(&myInstructionTable,$12,$18);  //patch jump of else   
     printf("\t\t\t\tif block: if else\n\n"); 
   }
   action-dec
 
-  |ifpart tELSE ifblock
+  |ifpart tELSE ifblock action-getIndex
   { //if else if
     printf("\t\t\t\tif block: if else if\n\n"); 
   }
+  action-dec
 ;
 
 ifpart: 
@@ -406,7 +405,6 @@ ifpart:
     patch_instruction_arg2(&myInstructionTable,$5,$10); //updates jmf with which instruction to jump to 
     printf("\t\t\t\tif\n\n"); 
   }
-  action-dec
 ;
 
 action-if:
