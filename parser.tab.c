@@ -174,7 +174,7 @@ enum yysymbol_kind_t
   YYSYMBOL_63_action_else = 63,            /* action-else  */
   YYSYMBOL_64_action_getIndex = 64,        /* action-getIndex  */
   YYSYMBOL_whileblock = 65,                /* whileblock  */
-  YYSYMBOL_66_action_condition = 66,       /* action-condition  */
+  YYSYMBOL_66_action_condition_while = 66, /* action-condition-while  */
   YYSYMBOL_67_action_while = 67,           /* action-while  */
   YYSYMBOL_printblock = 68,                /* printblock  */
   YYSYMBOL_condition = 69,                 /* condition  */
@@ -510,7 +510,7 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  3
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   132
+#define YYLAST   131
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  35
@@ -519,7 +519,7 @@ union yyalloc
 /* YYNRULES -- Number of rules.  */
 #define YYNRULES  79
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  141
+#define YYNSTATES  142
 
 /* YYMAXUTOK -- Last valid token kind.  */
 #define YYMAXUTOK   289
@@ -571,14 +571,14 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,    38,    38,    41,    45,    51,    58,    61,    68,    67,
-      79,    83,    89,    88,   103,   106,   111,   112,   113,   114,
-     118,   125,   129,   148,   152,   162,   163,   167,   176,   181,
-     186,   191,   195,   203,   214,   215,   220,   221,   226,   231,
-     235,   244,   248,   262,   263,   264,   265,   270,   278,   291,
-     300,   310,   321,   330,   338,   346,   358,   366,   375,   384,
-     387,   393,   399,   408,   412,   419,   429,   432,   438,   444,
-     450,   461,   465,   475,   488,   492,   502,   515,   522,   535
+       0,    38,    38,    43,    49,    57,    67,    72,    80,    79,
+      96,   103,   111,   110,   126,   131,   138,   142,   146,   150,
+     157,   167,   174,   196,   204,   217,   221,   225,   234,   239,
+     244,   249,   253,   261,   272,   276,   284,   288,   296,   304,
+     309,   319,   324,   337,   341,   345,   349,   357,   365,   379,
+     388,   398,   409,   417,   425,   433,   445,   453,   463,   472,
+     475,   481,   487,   496,   500,   507,   517,   520,   526,   532,
+     538,   549,   553,   563,   576,   580,   590,   603,   610,   623
 };
 #endif
 
@@ -605,9 +605,9 @@ static const char *const yytname[] =
   "argument_list", "body", "return", "instruction_list",
   "declaration_list", "declaration", "identifiers_list", "instruction",
   "assignment_list", "ifblock", "action-if", "action-else",
-  "action-getIndex", "whileblock", "action-condition", "action-while",
-  "printblock", "condition", "equality_expression", "compare", "add_sub",
-  "div_mul", "single_value", YY_NULLPTR
+  "action-getIndex", "whileblock", "action-condition-while",
+  "action-while", "printblock", "condition", "equality_expression",
+  "compare", "add_sub", "div_mul", "single_value", YY_NULLPTR
 };
 
 static const char *
@@ -617,7 +617,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-63)
+#define YYPACT_NINF (-51)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -631,21 +631,21 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      12,    14,    44,   -63,   -63,   -63,    44,   -63,   -63,    29,
-     -63,   -63,   -63,   -63,   -63,   -63,     6,     8,    46,    46,
-     -63,   -63,    30,   -63,     1,    48,    27,    28,    74,    79,
-      80,     5,   -63,    43,    66,     5,    84,    85,    86,    43,
-      93,     1,    89,   -63,   -10,    15,   -63,   -63,   -63,   -63,
-     -63,   -63,   -63,    90,   -63,    69,    50,    77,    78,   -63,
-      95,    92,   -12,   -63,   -12,    -1,    43,    64,   -63,   -63,
-     -10,   -63,   -63,    43,    43,    43,    43,    43,    43,    43,
-      43,    43,    43,    43,   -63,   -12,    22,    69,   -12,    33,
-     -63,    -4,   -63,   -63,   -63,    50,    50,    77,    77,    77,
-      77,    78,    78,   -63,   -63,    69,    75,   -12,   -12,   -63,
-      40,    91,   -63,    81,    43,   -63,   -63,    94,   -63,   -63,
-     -63,    49,    69,     5,    96,   -63,    43,    98,     5,    69,
-     -63,    99,    97,   -63,   100,   -63,   101,     5,   102,   -63,
-     -63
+      48,    57,    10,   -51,   -51,   -51,    10,   -51,   -51,    -3,
+     -51,   -51,   -51,   -51,   -51,   -51,    -7,    58,    33,    33,
+     -51,   -51,   -15,   -51,     6,    49,    81,    71,   -51,    83,
+       7,   -51,     7,    66,    82,    84,    40,    91,    74,    87,
+     -51,    -8,    21,   -51,   -51,   -51,   -51,   -51,   -51,    89,
+     -10,   -51,   -10,   -51,    90,   -51,     4,    52,    72,    73,
+     -51,    40,    97,    59,   -51,   -51,    -8,   -51,   -51,   -10,
+      -4,    78,   -10,    36,   -51,    40,    40,   -51,    40,    40,
+      40,    40,    40,    40,    40,    40,    -1,    40,   -51,    77,
+     -51,    68,   -10,   -10,   -51,    38,    92,   -51,    52,    52,
+      72,    72,    72,    72,    73,    73,   -51,   -51,   -51,    80,
+      78,    99,   -51,   -51,   -51,   -51,   -51,    40,   -51,    40,
+      98,   100,    50,    78,    78,     7,     7,   -51,    40,   101,
+     102,    78,   -51,   -51,    94,    93,   -51,   104,     7,   105,
+     -51,   -51
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -655,37 +655,37 @@ static const yytype_int8 yydefact[] =
 {
        5,     0,     0,     1,    15,    14,     0,     6,     3,     0,
        7,     4,    10,    10,    12,     8,     0,     0,    16,    16,
-      21,    17,     0,    18,     0,     0,     0,     0,    39,    20,
-       0,    28,    19,     0,     0,    28,     0,     0,     0,     0,
-       0,     0,     0,    32,    30,    29,    36,    34,    43,    44,
-      45,    46,    79,    78,    77,    40,    63,    66,    71,    74,
-      41,     0,     0,    56,     0,     0,     0,     0,    11,    35,
-      31,    37,    23,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     9,     0,     0,    59,     0,     0,
-      33,     0,    38,    13,    24,    65,    64,    67,    68,    70,
-      69,    72,    73,    75,    76,    42,    62,     0,     0,    52,
-       0,     0,    47,     0,    25,    60,    61,     0,    57,    58,
-      48,     0,    27,    28,     0,    22,     0,     0,    28,    26,
-      54,     0,    49,    55,    53,    51,     0,    28,     0,    54,
-      50
+      21,    17,     0,    18,     0,     0,     0,     0,    20,     0,
+      28,    19,    28,     0,     0,     0,     0,     0,     0,     0,
+      32,    30,    29,    36,    34,    43,    44,    45,    46,     0,
+       0,    56,     0,    79,    78,    77,     0,    63,    66,    71,
+      74,     0,    39,     0,    11,    35,    31,    37,     9,     0,
+       0,    59,     0,     0,    23,     0,     0,    33,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,    38,     0,
+      13,    62,     0,     0,    52,     0,     0,    24,    65,    64,
+      67,    68,    70,    69,    72,    73,    75,    76,    47,     0,
+      40,    41,    60,    61,    10,    57,    58,    25,    48,     0,
+       0,     0,     0,    27,    42,    28,    28,    22,     0,     0,
+       0,    26,    54,    55,    49,    53,    51,     0,    28,     0,
+      54,    50
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -63,   -63,   -63,   -63,   108,   -63,   106,   -63,   116,   -63,
-     -63,   105,   103,    -8,   -63,   -63,   -63,   -63,   -35,   -63,
-      82,   -63,    83,    88,   -41,    13,    -9,   -63,   -63,    -7,
-     -63,   -63,   -63,   -63,   -62,   -32,    18,   -11,    16,    17
+     -51,   -51,   -51,   -51,   116,   -51,   -12,   -51,   118,   -51,
+     -51,   106,   103,    18,   -51,   -51,   -51,   -51,   -32,   -51,
+      85,   -51,    86,   -51,   -37,    17,    -6,   -51,   -51,    -9,
+     -51,   -51,   -51,   -51,   -50,   -33,    14,   -13,     9,    12
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_uint8 yydefgoto[] =
 {
-       0,     1,     2,     6,     7,    17,    14,    93,     8,    16,
-       9,    22,    23,    41,    54,    94,   114,   121,    42,    43,
-      44,    45,    46,    29,    47,    48,    49,   117,   136,   132,
-      50,    88,   124,    51,    86,    87,    56,    57,    58,    59
+       0,     1,     2,     6,     7,    17,    14,    90,     8,    16,
+       9,    22,    23,    38,    55,    97,   117,   122,    39,    40,
+      41,    42,    43,    63,    44,    45,    46,   114,   137,   134,
+      47,    72,   121,    48,    70,    71,    57,    58,    59,    60
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -693,38 +693,38 @@ static const yytype_uint8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int16 yytable[] =
 {
-      61,    55,    89,    69,    85,    73,    74,    65,    73,    74,
-      24,    24,    -2,    36,     3,    37,    38,   112,   113,    24,
-      90,    52,    53,   106,    40,    18,   110,    19,    36,    69,
-      37,    38,    39,    20,    91,    28,   107,   108,    36,    40,
-      37,    38,   109,    20,    31,   115,   116,   107,   108,    40,
-      26,   105,    27,   111,   107,   108,    20,    75,    76,    12,
-     118,    77,    78,    13,    97,    98,    99,   100,    30,   125,
-      27,   126,     4,     5,    20,    21,    52,    53,    73,    74,
-      79,    80,   122,    81,    82,    92,    34,    33,   127,   107,
-     108,    95,    96,   131,   129,   101,   102,    35,   103,   104,
-      60,    34,   138,    62,    63,    64,    66,    68,    83,    72,
-      84,   123,   119,   128,    10,    40,   130,   133,   137,    15,
-     139,   134,    11,    36,    25,   135,   120,    70,    71,    67,
-      32,     0,   140
+      49,    15,    73,    56,    65,    26,    69,    27,    75,    76,
+      92,    93,    18,    75,    76,    33,    94,    34,    35,    91,
+     108,   109,    95,    53,    54,    77,    37,    12,    86,    65,
+      33,    13,    34,    35,    36,    20,    24,    24,     4,     5,
+      28,    37,   112,   113,    33,    24,    34,    35,    -2,    20,
+      92,    93,    92,    93,   110,    37,    96,     3,   115,    78,
+      79,    20,    21,    80,    81,   100,   101,   102,   103,    29,
+     127,    27,   128,    53,    54,    82,    83,    19,    84,    85,
+      88,    89,    92,    93,   123,    50,   124,    75,    76,    98,
+      99,   104,   105,   129,   130,   131,   106,   107,    30,    20,
+      32,    51,   120,    52,    61,    64,   139,    68,    62,    74,
+      87,   111,   119,   116,    37,   125,    33,   126,   135,   132,
+     133,   138,    10,   140,    11,    25,   118,    66,    67,   136,
+      31,   141
 };
 
-static const yytype_int16 yycheck[] =
+static const yytype_uint8 yycheck[] =
 {
-      35,    33,    64,    44,    16,     9,    10,    39,     9,    10,
-      18,    19,     0,    23,     0,    25,    26,    21,    22,    27,
-      21,    33,    34,    85,    34,    19,    88,    19,    23,    70,
-      25,    26,    27,    28,    66,    34,    14,    15,    23,    34,
-      25,    26,    20,    28,    17,   107,   108,    14,    15,    34,
-      20,    83,    22,    20,    14,    15,    28,     7,     8,    30,
-      20,    11,    12,    34,    75,    76,    77,    78,    20,    20,
-      22,    22,    28,    29,    28,    29,    33,    34,     9,    10,
-       3,     4,   114,     5,     6,    21,    22,    13,   123,    14,
-      15,    73,    74,   128,   126,    79,    80,    17,    81,    82,
-      34,    22,   137,    19,    19,    19,    13,    18,    13,    19,
-      18,    17,    21,    17,     6,    34,    18,    18,    17,    13,
-      18,    24,     6,    23,    19,   134,   113,    45,    45,    41,
-      27,    -1,   139
+      32,    13,    52,    36,    41,    20,    16,    22,     9,    10,
+      14,    15,    19,     9,    10,    23,    20,    25,    26,    69,
+      21,    22,    72,    33,    34,    21,    34,    30,    61,    66,
+      23,    34,    25,    26,    27,    28,    18,    19,    28,    29,
+      34,    34,    92,    93,    23,    27,    25,    26,     0,    28,
+      14,    15,    14,    15,    87,    34,    20,     0,    20,     7,
+       8,    28,    29,    11,    12,    78,    79,    80,    81,    20,
+      20,    22,    22,    33,    34,     3,     4,    19,     5,     6,
+      21,    22,    14,    15,   117,    19,   119,     9,    10,    75,
+      76,    82,    83,   125,   126,   128,    84,    85,    17,    28,
+      17,    19,   114,    19,    13,    18,   138,    18,    34,    19,
+      13,    34,    13,    21,    34,    17,    23,    17,    24,    18,
+      18,    17,     6,    18,     6,    19,   109,    42,    42,   135,
+      27,   140
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
@@ -733,19 +733,19 @@ static const yytype_int8 yystos[] =
 {
        0,    36,    37,     0,    28,    29,    38,    39,    43,    45,
       39,    43,    30,    34,    41,    41,    44,    40,    19,    19,
-      28,    29,    46,    47,    48,    46,    20,    22,    34,    58,
-      20,    17,    47,    13,    22,    17,    23,    25,    26,    27,
-      34,    48,    53,    54,    55,    56,    57,    59,    60,    61,
-      65,    68,    33,    34,    49,    70,    71,    72,    73,    74,
-      34,    53,    19,    19,    19,    70,    13,    58,    18,    59,
-      55,    57,    19,     9,    10,     7,     8,    11,    12,     3,
-       4,     5,     6,    13,    18,    16,    69,    70,    66,    69,
-      21,    70,    21,    42,    50,    71,    71,    72,    72,    72,
-      72,    73,    73,    74,    74,    70,    69,    14,    15,    20,
-      69,    20,    21,    22,    51,    69,    69,    62,    20,    21,
-      60,    52,    70,    17,    67,    20,    22,    53,    17,    70,
-      18,    53,    64,    18,    24,    61,    63,    17,    53,    18,
-      64
+      28,    29,    46,    47,    48,    46,    20,    22,    34,    20,
+      17,    47,    17,    23,    25,    26,    27,    34,    48,    53,
+      54,    55,    56,    57,    59,    60,    61,    65,    68,    53,
+      19,    19,    19,    33,    34,    49,    70,    71,    72,    73,
+      74,    13,    34,    58,    18,    59,    55,    57,    18,    16,
+      69,    70,    66,    69,    19,     9,    10,    21,     7,     8,
+      11,    12,     3,     4,     5,     6,    70,    13,    21,    22,
+      42,    69,    14,    15,    20,    69,    20,    50,    71,    71,
+      72,    72,    72,    72,    73,    73,    74,    74,    21,    22,
+      70,    34,    69,    69,    62,    20,    21,    51,    60,    13,
+      41,    67,    52,    70,    70,    17,    17,    20,    22,    53,
+      53,    70,    18,    18,    64,    24,    61,    63,    17,    53,
+      18,    64
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
@@ -768,8 +768,8 @@ static const yytype_int8 yyr2[] =
        0,     0,     0,    11,     1,     1,     0,     1,     1,     3,
        2,     1,     6,     0,     0,     0,     3,     1,     0,     1,
        1,     2,     1,     3,     1,     2,     1,     2,     3,     1,
-       3,     3,     5,     1,     1,     1,     1,     4,     5,     9,
-      15,    11,     0,     0,     0,     9,     0,     0,     5,     1,
+       3,     3,     5,     1,     1,     1,     1,     4,     5,    10,
+      16,    12,     0,     0,     0,     9,     0,     0,     5,     1,
        3,     3,     2,     1,     3,     3,     1,     3,     3,     3,
        3,     1,     3,     3,     1,     3,     3,     1,     1,     1
 };
@@ -1236,425 +1236,495 @@ yyreduce:
     {
   case 2: /* program: %empty  */
 #line 39 "parser.y"
-  { printf("\t\t\t\tprogram: empty\n\n"); }
-#line 1241 "parser.tab.c"
+  { 
+    printf("\t\t\t\tprogram: empty\n\n"); 
+  }
+#line 1243 "parser.tab.c"
     break;
 
   case 3: /* program: action-start main_function  */
-#line 42 "parser.y"
-  { printf("\t\t\t\tprogram: main\n\n"); 
-  add_instruction(&myInstructionTable, "NOP", 0, 0,0); }
-#line 1248 "parser.tab.c"
+#line 44 "parser.y"
+  { 
+    printf("\t\t\t\tprogram: main\n\n"); 
+    add_instruction(&myInstructionTable, "NOP", 0, 0,0); 
+  }
+#line 1252 "parser.tab.c"
     break;
 
   case 4: /* program: action-start function_list main_function  */
-#line 46 "parser.y"
-  { printf("\t\t\t\tprogram: main + functions\n\n"); 
+#line 50 "parser.y"
+  { 
+    printf("\t\t\t\tprogram: main + functions\n\n"); 
     add_instruction(&myInstructionTable, "NOP", 0, 0,0); 
   }
-#line 1256 "parser.tab.c"
+#line 1261 "parser.tab.c"
     break;
 
   case 5: /* action-start: %empty  */
-#line 52 "parser.y"
-{ printf("\t\t\t\taction-start\n\n"); 
-  add_instruction(&myInstructionTable,"JMP",-1,0,0);}
-#line 1263 "parser.tab.c"
+#line 58 "parser.y"
+  { 
+    printf("\t\t\t\taction-start\n\n"); 
+    add_instruction(&myInstructionTable,"JMP",-1,0,0);
+  }
+#line 1270 "parser.tab.c"
     break;
 
   case 6: /* function_list: function  */
-#line 59 "parser.y"
-  { printf("\t\t\t\t\t\t\t\tfunction_list: a function\n\n"); }
-#line 1269 "parser.tab.c"
+#line 68 "parser.y"
+  { 
+    printf("\t\t\t\t\t\t\t\tfunction_list: a function\n\n"); 
+  }
+#line 1278 "parser.tab.c"
     break;
 
   case 7: /* function_list: function_list function  */
-#line 62 "parser.y"
-  { printf("\t\t\t\tfunction_list: functions\n\n"); }
-#line 1275 "parser.tab.c"
+#line 73 "parser.y"
+  { 
+    printf("\t\t\t\tfunction_list: functions\n\n"); 
+  }
+#line 1286 "parser.tab.c"
     break;
 
   case 8: /* $@1: %empty  */
-#line 68 "parser.y"
-  {add_function(&myFunctionTable,(yyvsp[-1].var),get_index_actuel_instructions(&myInstructionTable));
-  add_symb(&mySymbolsTable,"?ADR");
-  add_symb(&mySymbolsTable,"?VAL");}
-#line 1283 "parser.tab.c"
+#line 80 "parser.y"
+  {
+    add_function(&myFunctionTable,(yyvsp[-1].var),get_index_actuel_instructions(&myInstructionTable));
+    add_symb(&mySymbolsTable,"?ADR");
+    add_symb(&mySymbolsTable,"?VAL");
+  }
+#line 1296 "parser.tab.c"
     break;
 
   case 9: /* function: function_type tID action-inc $@1 tLPAR parameter_list tRPAR tLBRACE body tRBRACE  */
-#line 73 "parser.y"
-  {decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);
-   add_instruction(&myInstructionTable,"RET",0,0,0);
-   printf("\t\t\t\tfunction: %s\n\n", (yyvsp[-8].var)); }
-#line 1291 "parser.tab.c"
+#line 87 "parser.y"
+  {
+    decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);
+    add_instruction(&myInstructionTable,"RET",0,0,0);
+    printf("\t\t\t\tfunction: %s\n\n", (yyvsp[-8].var)); 
+   }
+#line 1306 "parser.tab.c"
     break;
 
   case 10: /* action-inc: %empty  */
-#line 80 "parser.y"
-  {increment_scope(&mySymbolsTable);
-  printf("\t\t\t\tincrement scope: \n\n"); }
-#line 1298 "parser.tab.c"
-    break;
-
-  case 11: /* action-dec: %empty  */
-#line 84 "parser.y"
-  {decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);
-  printf("\t\t\t\tdecrement scope: \n\n"); }
-#line 1305 "parser.tab.c"
-    break;
-
-  case 12: /* $@2: %empty  */
-#line 89 "parser.y"
-  {add_function(&myFunctionTable,"main",get_index_actuel_instructions(&myInstructionTable));
-  //WARNING j'ai commenté ces parties parce que le scope marche pas bien avec les fonctions  
-  add_symb(&mySymbolsTable,"?ADR");
-  add_symb(&mySymbolsTable,"?VAL");
+#line 97 "parser.y"
+  {
+    increment_scope(&mySymbolsTable);
+    printf("\t\t\t\tincrement scope: \n\n"); 
   }
 #line 1315 "parser.tab.c"
     break;
 
-  case 13: /* main_function: function_type tMAIN action-inc $@2 tLPAR parameter_list tRPAR tLBRACE body tRBRACE action-dec  */
-#line 96 "parser.y"
-  { add_instruction(&myInstructionTable,"RET",0,0,0);
-    int mainADDR = get_function_address(&myFunctionTable,"main");
-    patch_instruction_arg1(&myInstructionTable,0,mainADDR);
-    printf("\t\t\t\tmain function\n\n"); }
+  case 11: /* action-dec: %empty  */
+#line 104 "parser.y"
+  {
+    decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);
+    printf("\t\t\t\tdecrement scope: \n\n"); 
+  }
 #line 1324 "parser.tab.c"
     break;
 
+  case 12: /* $@2: %empty  */
+#line 111 "parser.y"
+  {
+    add_function(&myFunctionTable,"main",get_index_actuel_instructions(&myInstructionTable));
+    //WARNING j'ai commenté ces parties parce que le scope marche pas bien avec les fonctions  
+    add_symb(&mySymbolsTable,"?ADR");
+    add_symb(&mySymbolsTable,"?VAL");
+  }
+#line 1335 "parser.tab.c"
+    break;
+
+  case 13: /* main_function: function_type tMAIN action-inc $@2 tLPAR parameter_list tRPAR tLBRACE body tRBRACE action-dec  */
+#line 118 "parser.y"
+  { add_instruction(&myInstructionTable,"RET",0,0,0);
+    int mainADDR = get_function_address(&myFunctionTable,"main");
+    patch_instruction_arg1(&myInstructionTable,0,mainADDR);
+    printf("\t\t\t\tmain function\n\n"); 
+  }
+#line 1345 "parser.tab.c"
+    break;
+
   case 14: /* function_type: tVOID  */
-#line 104 "parser.y"
-  { printf("\t\t\t\tfunction type: void\n\n"); }
-#line 1330 "parser.tab.c"
+#line 127 "parser.y"
+  { 
+    printf("\t\t\t\tfunction type: void\n\n"); 
+  }
+#line 1353 "parser.tab.c"
     break;
 
   case 15: /* function_type: tINT  */
-#line 107 "parser.y"
-  { printf("\t\t\t\tfunction type: int\n\n"); }
-#line 1336 "parser.tab.c"
+#line 132 "parser.y"
+  { 
+    printf("\t\t\t\tfunction type: int\n\n"); 
+  }
+#line 1361 "parser.tab.c"
     break;
 
   case 16: /* parameter_list: %empty  */
-#line 111 "parser.y"
-                                                                                  { printf("\t\t\t\tparameter_list: empty\n\n"); }
-#line 1342 "parser.tab.c"
+#line 139 "parser.y"
+  { 
+    printf("\t\t\t\tparameter_list: empty\n\n"); 
+  }
+#line 1369 "parser.tab.c"
     break;
 
   case 17: /* parameter_list: tVOID  */
-#line 112 "parser.y"
-                                                                                  { printf("\t\t\t\tparameter_list: void\n\n"); }
-#line 1348 "parser.tab.c"
+#line 143 "parser.y"
+  { 
+    printf("\t\t\t\tparameter_list: void\n\n"); 
+  }
+#line 1377 "parser.tab.c"
     break;
 
   case 18: /* parameter_list: parameter  */
-#line 113 "parser.y"
-                                                                                  { printf("\t\t\t\tparameter_list: with a parameter\n\n"); }
-#line 1354 "parser.tab.c"
+#line 147 "parser.y"
+  { 
+    printf("\t\t\t\tparameter_list: a parameter\n\n"); 
+  }
+#line 1385 "parser.tab.c"
     break;
 
   case 19: /* parameter_list: parameter_list tCOMMA parameter  */
-#line 114 "parser.y"
-                                                                                  { printf("\t\t\t\tparameter_list: with several parameters\n\n"); }
-#line 1360 "parser.tab.c"
+#line 151 "parser.y"
+  { 
+    printf("\t\t\t\tparameter_list: several parameters\n\n"); 
+  }
+#line 1393 "parser.tab.c"
     break;
 
-  case 20: /* parameter: variable_type identifiers_list  */
-#line 119 "parser.y"
-  { printf("\t\t\t\tparameters: \n\n"); }
-#line 1366 "parser.tab.c"
+  case 20: /* parameter: variable_type tID  */
+#line 158 "parser.y"
+  { 
+    printf("\t\t\t\tparameter\n\n"); 
+  }
+#line 1401 "parser.tab.c"
     break;
 
   case 21: /* variable_type: tINT  */
-#line 125 "parser.y"
-                                                                                   { printf("\t\t\t\tvariable_type: int\n\n"); }
-#line 1372 "parser.tab.c"
-    break;
-
-  case 22: /* functionCall: tID tLPAR action-call0 action-call1 argument_list tRPAR  */
-#line 130 "parser.y"
-  {printf("\t\t\t\tfunction Call\n");
-
-  int line = get_index_actuel_instructions(&myInstructionTable);
-  char* caller = get_current_function(&myFunctionTable,line);
-  int calleeFrame = (yyvsp[-2].nb);
-  int callerFrame = (yyvsp[-3].nb);
-  int calleeADDR = get_function_address(&myFunctionTable,(yyvsp[-5].var));
-  add_instruction(&myInstructionTable,"PUSH",callerFrame+1,0,0);
-  add_instruction(&myInstructionTable,"CALL",calleeADDR,0,0);
-  add_instruction(&myInstructionTable,"POP",callerFrame+1,0,0);
-  add_tmp(&mySymbolsTable);
-  int temp = get_last_tmp(&mySymbolsTable);
-  //copy return value !VAL of callee into temp
-  add_instruction(&myInstructionTable,"COP",temp,callerFrame+2,0);;
-  (yyval.nb) = temp;}
-#line 1392 "parser.tab.c"
-    break;
-
-  case 23: /* action-call0: %empty  */
-#line 149 "parser.y"
-  {  (yyval.nb) = get_symbol_table_size(&mySymbolsTable);}
-#line 1398 "parser.tab.c"
-    break;
-
-  case 24: /* action-call1: %empty  */
-#line 153 "parser.y"
-  {increment_scope(&mySymbolsTable);
-  add_symb(&mySymbolsTable,"!ADR");
-  add_symb(&mySymbolsTable,"!VAL");
-  add_tmp(&mySymbolsTable);
-  (yyval.nb) = get_symbol_table_size(&mySymbolsTable);
-  decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);}
+#line 168 "parser.y"
+  { 
+    printf("\t\t\t\tvariable_type: int\n\n"); 
+  }
 #line 1409 "parser.tab.c"
     break;
 
+  case 22: /* functionCall: tID tLPAR action-call0 action-call1 argument_list tRPAR  */
+#line 175 "parser.y"
+  {
+    printf("\t\t\t\tfunction Call\n");
+
+    int line = get_index_actuel_instructions(&myInstructionTable);
+    char* caller = get_current_function(&myFunctionTable,line);
+    int calleeFrame = (yyvsp[-2].nb);
+    int callerFrame = (yyvsp[-3].nb);
+    int calleeADDR = get_function_address(&myFunctionTable,(yyvsp[-5].var));
+    add_instruction(&myInstructionTable,"PUSH",callerFrame+1,0,0);
+    add_instruction(&myInstructionTable,"CALL",calleeADDR,0,0);
+    add_instruction(&myInstructionTable,"POP",callerFrame+1,0,0);
+    add_tmp(&mySymbolsTable);
+    int temp = get_last_tmp(&mySymbolsTable);
+    //copy return value !VAL of callee into temp
+    add_instruction(&myInstructionTable,"COP",temp,callerFrame+2,0);;
+    (yyval.nb) = temp;
+  }
+#line 1431 "parser.tab.c"
+    break;
+
+  case 23: /* action-call0: %empty  */
+#line 197 "parser.y"
+  {  
+    (yyval.nb) = get_symbol_table_size(&mySymbolsTable);
+  }
+#line 1439 "parser.tab.c"
+    break;
+
+  case 24: /* action-call1: %empty  */
+#line 205 "parser.y"
+  {
+    increment_scope(&mySymbolsTable);
+    add_symb(&mySymbolsTable,"!ADR");
+    add_symb(&mySymbolsTable,"!VAL");
+    add_tmp(&mySymbolsTable);
+    (yyval.nb) = get_symbol_table_size(&mySymbolsTable);
+    decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);
+  }
+#line 1452 "parser.tab.c"
+    break;
+
+  case 25: /* argument_list: %empty  */
+#line 218 "parser.y"
+  { 
+    printf("\t\t\t\targumentlist: no argument\n\n");
+  }
+#line 1460 "parser.tab.c"
+    break;
+
   case 26: /* argument_list: argument_list tCOMMA equality_expression  */
-#line 164 "parser.y"
+#line 222 "parser.y"
   { 
     printf("\t\t\t\targumentlist\n\n");
   }
-#line 1417 "parser.tab.c"
+#line 1468 "parser.tab.c"
     break;
 
   case 27: /* argument_list: equality_expression  */
-#line 168 "parser.y"
+#line 226 "parser.y"
   { 
     printf("\t\t\t\targument\n\n");
   }
-#line 1425 "parser.tab.c"
+#line 1476 "parser.tab.c"
     break;
 
   case 28: /* body: %empty  */
-#line 177 "parser.y"
+#line 235 "parser.y"
   { 
     printf("\t\t\t\tbody: empty\n\n");
   }
-#line 1433 "parser.tab.c"
+#line 1484 "parser.tab.c"
     break;
 
   case 29: /* body: declaration_list  */
-#line 182 "parser.y"
+#line 240 "parser.y"
   { 
     printf("\t\t\t\tbody: declaration_list\n\n"); 
   }
-#line 1441 "parser.tab.c"
+#line 1492 "parser.tab.c"
     break;
 
   case 30: /* body: instruction_list  */
-#line 187 "parser.y"
+#line 245 "parser.y"
   { 
     printf("\t\t\t\tbody: instruction_list\n\n"); 
   }
-#line 1449 "parser.tab.c"
+#line 1500 "parser.tab.c"
     break;
 
   case 31: /* body: declaration_list instruction_list  */
-#line 192 "parser.y"
+#line 250 "parser.y"
   { 
     printf("\t\t\t\tbody: declaration&instruction list\n\n"); 
   }
-#line 1457 "parser.tab.c"
+#line 1508 "parser.tab.c"
     break;
 
   case 32: /* body: return  */
-#line 196 "parser.y"
+#line 254 "parser.y"
   { 
     printf("\t\t\t\tbody: return\n\n"); 
   }
-#line 1465 "parser.tab.c"
+#line 1516 "parser.tab.c"
     break;
 
   case 33: /* return: tRETURN equality_expression tSEMI  */
-#line 204 "parser.y"
+#line 262 "parser.y"
   {
     printf("\t\t\t\ttRETURN\n");
     int val = get_symb(&mySymbolsTable,"?VAL");
     add_instruction(&myInstructionTable,"COP",val,(yyvsp[-1].nb),0);
     add_instruction(&myInstructionTable,"RET",0,0,0);
   }
-#line 1476 "parser.tab.c"
+#line 1527 "parser.tab.c"
     break;
 
   case 34: /* instruction_list: instruction  */
-#line 214 "parser.y"
-                                                                                    { printf("\t\t\t\tan instruction\n\n"); }
-#line 1482 "parser.tab.c"
+#line 273 "parser.y"
+  { 
+    printf("\t\t\t\tan instruction\n\n"); 
+  }
+#line 1535 "parser.tab.c"
     break;
 
   case 35: /* instruction_list: instruction_list instruction  */
-#line 215 "parser.y"
-                                                                                    { printf("\t\t\t\tseveral instructions\n\n"); }
-#line 1488 "parser.tab.c"
+#line 277 "parser.y"
+  { 
+    printf("\t\t\t\tseveral instructions\n\n"); 
+  }
+#line 1543 "parser.tab.c"
     break;
 
   case 36: /* declaration_list: declaration  */
-#line 220 "parser.y"
-                                                                                   { printf("\t\t\t\ta declaration\n\n"); }
-#line 1494 "parser.tab.c"
+#line 285 "parser.y"
+  { 
+    printf("\t\t\t\ta declaration\n\n"); 
+  }
+#line 1551 "parser.tab.c"
     break;
 
   case 37: /* declaration_list: declaration_list declaration  */
-#line 221 "parser.y"
-                                                                                   { printf("\t\t\t\tseveral declarations\n\n"); }
-#line 1500 "parser.tab.c"
+#line 289 "parser.y"
+  { 
+    printf("\t\t\t\tseveral declarations\n\n"); 
+  }
+#line 1559 "parser.tab.c"
     break;
 
   case 38: /* declaration: variable_type identifiers_list tSEMI  */
-#line 226 "parser.y"
-                                                                                 { printf("\t\t\t\tdeclaration\n\n"); }
-#line 1506 "parser.tab.c"
+#line 297 "parser.y"
+  { 
+    printf("\t\t\t\tdeclaration\n\n"); 
+  }
+#line 1567 "parser.tab.c"
     break;
 
   case 39: /* identifiers_list: tID  */
-#line 232 "parser.y"
+#line 305 "parser.y"
   { add_symb(&mySymbolsTable, (yyvsp[0].var)); 
-    printf("\t\t\t\tidentifier: '%s'\n\n", (yyvsp[0].var)); }
-#line 1513 "parser.tab.c"
+    printf("\t\t\t\tidentifier: '%s'\n\n", (yyvsp[0].var)); 
+  }
+#line 1575 "parser.tab.c"
     break;
 
   case 40: /* identifiers_list: tID tASSIGN equality_expression  */
-#line 236 "parser.y"
+#line 310 "parser.y"
   { add_symb(&mySymbolsTable, (yyvsp[-2].var)); 
 
     int address_nb = get_symb(&mySymbolsTable,(yyvsp[-2].var));
     add_instruction(&myInstructionTable, "COP", address_nb, (yyvsp[0].nb),0);   
     free_last_tmp(&mySymbolsTable);
-    printf("\t\t\t\tdeclaration and initialization: '%s'\n\n", (yyvsp[-2].var)); }
-#line 1524 "parser.tab.c"
+    printf("\t\t\t\tdeclaration and initialization: '%s'\n\n", (yyvsp[-2].var)); 
+  }
+#line 1587 "parser.tab.c"
     break;
 
   case 41: /* identifiers_list: identifiers_list tCOMMA tID  */
-#line 245 "parser.y"
+#line 320 "parser.y"
   { add_symb(&mySymbolsTable, (yyvsp[0].var)); 
-    printf("\t\t\t\tseveral identifiers: '%s'\n\n", (yyvsp[0].var)); }
-#line 1531 "parser.tab.c"
+    printf("\t\t\t\tseveral identifiers: '%s'\n\n", (yyvsp[0].var)); 
+  }
+#line 1595 "parser.tab.c"
     break;
 
   case 42: /* identifiers_list: identifiers_list tCOMMA tID tASSIGN equality_expression  */
-#line 249 "parser.y"
+#line 325 "parser.y"
   { add_symb(&mySymbolsTable, (yyvsp[-2].var)); 
-
     int address_nb = get_symb(&mySymbolsTable,(yyvsp[-2].var));
     add_instruction(&myInstructionTable, "COP", address_nb, (yyvsp[0].nb),0);
     free_last_tmp(&mySymbolsTable);
     printf("\t\t\t\tseveral identifiers: '%s'\n\n", (yyvsp[-2].var)); 
   }
-#line 1543 "parser.tab.c"
+#line 1606 "parser.tab.c"
     break;
 
   case 43: /* instruction: assignment_list  */
-#line 262 "parser.y"
-                                                                                  { printf("\t\t\t\tinstruction: assignment\n\n"); }
-#line 1549 "parser.tab.c"
+#line 338 "parser.y"
+  { 
+    printf("\t\t\t\tinstruction: assignment\n\n"); 
+  }
+#line 1614 "parser.tab.c"
     break;
 
   case 44: /* instruction: ifblock  */
-#line 263 "parser.y"
-                                                                                  { printf("\t\t\t\tinstruction: if block\n\n"); }
-#line 1555 "parser.tab.c"
+#line 342 "parser.y"
+  { 
+    printf("\t\t\t\tinstruction: if block\n\n"); 
+  }
+#line 1622 "parser.tab.c"
     break;
 
   case 45: /* instruction: whileblock  */
-#line 264 "parser.y"
-                                                                                  { printf("\t\t\t\tinstruction: while block\n\n"); }
-#line 1561 "parser.tab.c"
+#line 346 "parser.y"
+  { 
+    printf("\t\t\t\tinstruction: while block\n\n"); 
+  }
+#line 1630 "parser.tab.c"
     break;
 
   case 46: /* instruction: printblock  */
-#line 265 "parser.y"
-                                                                                  { printf("\t\t\t\tinstruction: print block\n\n"); }
-#line 1567 "parser.tab.c"
+#line 350 "parser.y"
+  { 
+    printf("\t\t\t\tinstruction: print block\n\n"); 
+  }
+#line 1638 "parser.tab.c"
     break;
 
   case 47: /* assignment_list: tID tASSIGN equality_expression tSEMI  */
-#line 271 "parser.y"
+#line 358 "parser.y"
   { 
     int address_nb = get_symb(&mySymbolsTable,(yyvsp[-3].var));
     add_instruction(&myInstructionTable, "COP", address_nb, (yyvsp[-1].nb),0);
     free_last_tmp(&mySymbolsTable);
     printf("\t\t\t\tassignment: '%s'\n\n", (yyvsp[-3].var)); 
   }
-#line 1578 "parser.tab.c"
+#line 1649 "parser.tab.c"
     break;
 
   case 48: /* assignment_list: tID tASSIGN equality_expression tCOMMA assignment_list  */
-#line 279 "parser.y"
-    { 
-      get_symb(&mySymbolsTable,(yyvsp[-4].var));
-      int address_nb = get_symb(&mySymbolsTable,(yyvsp[-4].var));
-      add_instruction(&myInstructionTable, "COP", address_nb, (yyvsp[-2].nb),0);  
-      free_last_tmp(&mySymbolsTable);
-      printf("\t\t\t\tassignment: '%s'\n\n", (yyvsp[-4].var)); 
-    }
-#line 1590 "parser.tab.c"
+#line 366 "parser.y"
+  { 
+    get_symb(&mySymbolsTable,(yyvsp[-4].var));
+    int address_nb = get_symb(&mySymbolsTable,(yyvsp[-4].var));
+    add_instruction(&myInstructionTable, "COP", address_nb, (yyvsp[-2].nb),0);  
+    free_last_tmp(&mySymbolsTable);
+    printf("\t\t\t\tassignment: '%s'\n\n", (yyvsp[-4].var)); 
+  }
+#line 1661 "parser.tab.c"
     break;
 
-  case 49: /* ifblock: tIF tLPAR condition tRPAR action-if tLBRACE body tRBRACE action-getIndex  */
-#line 292 "parser.y"
-    {
-      patch_instruction_arg1(&myInstructionTable,(yyvsp[-4].nb),(yyvsp[-6].nb));
-      free_last_tmp(&mySymbolsTable); // free temp of condition
-      patch_instruction_arg2(&myInstructionTable,(yyvsp[-4].nb),(yyvsp[0].nb));
-      decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);
-      printf("\t\t\t\tif block: if\n\n"); 
-    }
-#line 1602 "parser.tab.c"
+  case 49: /* ifblock: tIF tLPAR condition tRPAR action-if action-inc tLBRACE body tRBRACE action-getIndex  */
+#line 380 "parser.y"
+  {
+    patch_instruction_arg1(&myInstructionTable,(yyvsp[-5].nb),(yyvsp[-7].nb));
+    free_last_tmp(&mySymbolsTable); // free temp of condition
+    patch_instruction_arg2(&myInstructionTable,(yyvsp[-5].nb),(yyvsp[0].nb));
+    decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);
+    printf("\t\t\t\tif block: if\n\n"); 
+  }
+#line 1673 "parser.tab.c"
     break;
 
-  case 50: /* ifblock: tIF tLPAR condition tRPAR action-if tLBRACE body tRBRACE action-getIndex tELSE action-else tLBRACE body tRBRACE action-getIndex  */
-#line 301 "parser.y"
-    {
-      patch_instruction_arg1(&myInstructionTable,(yyvsp[-10].nb),(yyvsp[-12].nb)); //patch jump of if
-      free_last_tmp(&mySymbolsTable); // free temp of condition
-      patch_instruction_arg2(&myInstructionTable,(yyvsp[-10].nb),(yyvsp[-6].nb)+1);  
-      patch_instruction_arg1(&myInstructionTable,(yyvsp[-4].nb),(yyvsp[0].nb));  //patch jump    
-      decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);
-      printf("\t\t\t\tif block: if else\n\n"); 
-    }
-#line 1615 "parser.tab.c"
+  case 50: /* ifblock: tIF tLPAR condition tRPAR action-if action-inc tLBRACE body tRBRACE action-getIndex tELSE action-else tLBRACE body tRBRACE action-getIndex  */
+#line 389 "parser.y"
+  {
+    patch_instruction_arg1(&myInstructionTable,(yyvsp[-11].nb),(yyvsp[-13].nb)); //patch jump of if
+    free_last_tmp(&mySymbolsTable); // free temp of condition
+    patch_instruction_arg2(&myInstructionTable,(yyvsp[-11].nb),(yyvsp[-6].nb)+1);  
+    patch_instruction_arg1(&myInstructionTable,(yyvsp[-4].nb),(yyvsp[0].nb));  //patch jump    
+    decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);
+    printf("\t\t\t\tif block: if else\n\n"); 
+  }
+#line 1686 "parser.tab.c"
     break;
 
-  case 51: /* ifblock: tIF tLPAR condition tRPAR action-if tLBRACE body tRBRACE action-getIndex tELSE ifblock  */
-#line 311 "parser.y"
-    {
-      patch_instruction_arg1(&myInstructionTable,(yyvsp[-6].nb),(yyvsp[-8].nb));
-      free_last_tmp(&mySymbolsTable); // free temp of condition
-      patch_instruction_arg2(&myInstructionTable,(yyvsp[-6].nb),(yyvsp[-2].nb));
-      decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);
-      printf("\t\t\t\tif block: if else if\n\n"); 
-    }
-#line 1627 "parser.tab.c"
+  case 51: /* ifblock: tIF tLPAR condition tRPAR action-if action-inc tLBRACE body tRBRACE action-getIndex tELSE ifblock  */
+#line 399 "parser.y"
+  {
+    patch_instruction_arg1(&myInstructionTable,(yyvsp[-7].nb),(yyvsp[-9].nb));
+    free_last_tmp(&mySymbolsTable); // free temp of condition
+    patch_instruction_arg2(&myInstructionTable,(yyvsp[-7].nb),(yyvsp[-2].nb));
+    decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);
+    printf("\t\t\t\tif block: if else if\n\n"); 
+  }
+#line 1698 "parser.tab.c"
     break;
 
   case 52: /* action-if: %empty  */
-#line 322 "parser.y"
+#line 410 "parser.y"
   { 
     add_instruction(&myInstructionTable,"JMF",-1,-1,0);  
     (yyval.nb) = get_index_actuel_instructions(&myInstructionTable)-1;
-    increment_scope(&mySymbolsTable);
   }
-#line 1637 "parser.tab.c"
+#line 1707 "parser.tab.c"
     break;
 
   case 53: /* action-else: %empty  */
-#line 331 "parser.y"
+#line 418 "parser.y"
   {
     add_instruction(&myInstructionTable,"JMP",-1,0,0);    
     (yyval.nb) = get_index_actuel_instructions(&myInstructionTable)-1;
   }
-#line 1646 "parser.tab.c"
+#line 1716 "parser.tab.c"
     break;
 
   case 54: /* action-getIndex: %empty  */
-#line 339 "parser.y"
+#line 426 "parser.y"
   { 
     (yyval.nb) = get_index_actuel_instructions(&myInstructionTable);
   }
-#line 1654 "parser.tab.c"
+#line 1724 "parser.tab.c"
     break;
 
-  case 55: /* whileblock: tWHILE tLPAR action-condition condition tRPAR action-while tLBRACE body tRBRACE  */
-#line 347 "parser.y"
+  case 55: /* whileblock: tWHILE tLPAR action-condition-while condition tRPAR action-while tLBRACE body tRBRACE  */
+#line 434 "parser.y"
   {
     add_instruction(&myInstructionTable,"JMP",(yyvsp[-6].nb),0,0); //backward jump
     patch_instruction_arg1(&myInstructionTable,(yyvsp[-3].nb),(yyvsp[-5].nb));
@@ -1663,154 +1733,154 @@ yyreduce:
     decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);
     printf("\t\t\t\twhile block\n\n"); 
   }
-#line 1667 "parser.tab.c"
+#line 1737 "parser.tab.c"
     break;
 
-  case 56: /* action-condition: %empty  */
-#line 359 "parser.y"
+  case 56: /* action-condition-while: %empty  */
+#line 446 "parser.y"
   {
     (yyval.nb) = get_index_actuel_instructions(&myInstructionTable);
   }
-#line 1675 "parser.tab.c"
+#line 1745 "parser.tab.c"
     break;
 
   case 57: /* action-while: %empty  */
-#line 367 "parser.y"
+#line 454 "parser.y"
   { add_instruction(&myInstructionTable,"JMF",-1,-1,0);    //arg1 ?
     (yyval.nb) = get_index_actuel_instructions(&myInstructionTable) - 1;
     increment_scope(&mySymbolsTable);
   }
-#line 1684 "parser.tab.c"
+#line 1754 "parser.tab.c"
     break;
 
   case 58: /* printblock: tPRINT tLPAR condition tRPAR tSEMI  */
-#line 376 "parser.y"
+#line 464 "parser.y"
   { //prints value   
     add_instruction(&myInstructionTable,"PRI",(yyvsp[-2].nb),0,0);
     printf("\t\t\t\tprint block\n\n");
   }
-#line 1693 "parser.tab.c"
+#line 1763 "parser.tab.c"
     break;
 
   case 59: /* condition: equality_expression  */
-#line 385 "parser.y"
+#line 473 "parser.y"
   { //we push forward the value of compare
     (yyval.nb) = (yyvsp[0].nb);}
-#line 1700 "parser.tab.c"
+#line 1770 "parser.tab.c"
     break;
 
   case 60: /* condition: condition tAND condition  */
-#line 388 "parser.y"
+#line 476 "parser.y"
   { //we return the @condition and condition
     add_instruction(&myInstructionTable,"AND",(yyvsp[-2].nb),(yyvsp[-2].nb),(yyvsp[0].nb));
     free_last_tmp(&mySymbolsTable);
     (yyval.nb) = (yyvsp[-2].nb);
     printf("\t\t\t\tcondition: and\n\n");}
-#line 1710 "parser.tab.c"
+#line 1780 "parser.tab.c"
     break;
 
   case 61: /* condition: condition tOR condition  */
-#line 394 "parser.y"
+#line 482 "parser.y"
   { //we return the @condition and condition
     add_instruction(&myInstructionTable,"ORR",(yyvsp[-2].nb),(yyvsp[-2].nb),(yyvsp[0].nb));
     free_last_tmp(&mySymbolsTable);
     (yyval.nb) = (yyvsp[-2].nb);
     printf("\t\t\t\tcondition: or\n\n"); }
-#line 1720 "parser.tab.c"
+#line 1790 "parser.tab.c"
     break;
 
   case 62: /* condition: tNOT condition  */
-#line 400 "parser.y"
+#line 488 "parser.y"
   { //we return the @condition and condition
     add_instruction(&myInstructionTable,"NOT",(yyvsp[0].nb),(yyvsp[0].nb),0);
     (yyval.nb) = (yyvsp[0].nb);
     printf("\t\t\t\tcondition: not\n\n");}
-#line 1729 "parser.tab.c"
+#line 1799 "parser.tab.c"
     break;
 
   case 63: /* equality_expression: compare  */
-#line 409 "parser.y"
+#line 497 "parser.y"
   { //we push forward the value of compare
     (yyval.nb) = (yyvsp[0].nb);}
-#line 1736 "parser.tab.c"
+#line 1806 "parser.tab.c"
     break;
 
   case 64: /* equality_expression: equality_expression tEQ compare  */
-#line 413 "parser.y"
+#line 501 "parser.y"
   { //we return the @equality_expression == equality_expression
     add_instruction(&myInstructionTable,"EQU",(yyvsp[-2].nb),(yyvsp[-2].nb),(yyvsp[0].nb));
     free_last_tmp(&mySymbolsTable);
     (yyval.nb) = (yyvsp[-2].nb);
     printf("\t\t\t\tequality_expression: equal\n\n"); }
-#line 1746 "parser.tab.c"
+#line 1816 "parser.tab.c"
     break;
 
   case 65: /* equality_expression: equality_expression tNE compare  */
-#line 420 "parser.y"
+#line 508 "parser.y"
   { //we return the @equality_expression != equality_expression
     add_instruction(&myInstructionTable,"NEQ",(yyvsp[-2].nb),(yyvsp[-2].nb),(yyvsp[0].nb));
     free_last_tmp(&mySymbolsTable);
     (yyval.nb) = (yyvsp[-2].nb);
     printf("\t\t\t\tequality_expression: not equal\n\n");}
-#line 1756 "parser.tab.c"
+#line 1826 "parser.tab.c"
     break;
 
   case 66: /* compare: add_sub  */
-#line 430 "parser.y"
+#line 518 "parser.y"
   { //we push forward the value of add_sub
     (yyval.nb) = (yyvsp[0].nb);}
-#line 1763 "parser.tab.c"
+#line 1833 "parser.tab.c"
     break;
 
   case 67: /* compare: compare tLT add_sub  */
-#line 433 "parser.y"
+#line 521 "parser.y"
   { //we return the @compare<add_sub
     add_instruction(&myInstructionTable,"INF",(yyvsp[-2].nb),(yyvsp[-2].nb),(yyvsp[0].nb));
     free_last_tmp(&mySymbolsTable);
     (yyval.nb) = (yyvsp[-2].nb);
     printf("\t\t\t\tcompare: less than\n\n"); }
-#line 1773 "parser.tab.c"
+#line 1843 "parser.tab.c"
     break;
 
   case 68: /* compare: compare tGT add_sub  */
-#line 439 "parser.y"
+#line 527 "parser.y"
   { //we return the @compare>add_sub
     add_instruction(&myInstructionTable,"SUP",(yyvsp[-2].nb),(yyvsp[-2].nb),(yyvsp[0].nb));
     free_last_tmp(&mySymbolsTable);
     (yyval.nb) = (yyvsp[-2].nb);
     printf("\t\t\t\tcompare: greater than\n\n"); }
-#line 1783 "parser.tab.c"
+#line 1853 "parser.tab.c"
     break;
 
   case 69: /* compare: compare tLE add_sub  */
-#line 445 "parser.y"
+#line 533 "parser.y"
   { //we return the @compare<=add_sub
     add_instruction(&myInstructionTable,"LEQ",(yyvsp[-2].nb),(yyvsp[-2].nb),(yyvsp[0].nb));
     free_last_tmp(&mySymbolsTable);
     (yyval.nb) = (yyvsp[-2].nb);
     printf("\t\t\t\tcompare: less or equal\n\n");}
-#line 1793 "parser.tab.c"
+#line 1863 "parser.tab.c"
     break;
 
   case 70: /* compare: compare tGE add_sub  */
-#line 451 "parser.y"
+#line 539 "parser.y"
   { //we return the @compare>=add_sub
     add_instruction(&myInstructionTable,"GEQ",(yyvsp[-2].nb),(yyvsp[-2].nb),(yyvsp[0].nb));
     free_last_tmp(&mySymbolsTable);
     (yyval.nb) = (yyvsp[-2].nb);
     printf("\t\t\t\tcompare: greater or equal\n\n");}
-#line 1803 "parser.tab.c"
+#line 1873 "parser.tab.c"
     break;
 
   case 71: /* add_sub: div_mul  */
-#line 462 "parser.y"
+#line 550 "parser.y"
   { //we push forward the value of div_mul
       (yyval.nb) = (yyvsp[0].nb);}
-#line 1810 "parser.tab.c"
+#line 1880 "parser.tab.c"
     break;
 
   case 72: /* add_sub: add_sub tADD div_mul  */
-#line 466 "parser.y"
+#line 554 "parser.y"
   { //we return the @add_sub+div_mul
     //we assign the value of @div_mul + @add_sub to @add_sub
     add_instruction(&myInstructionTable, "ADD", (yyvsp[-2].nb),(yyvsp[-2].nb), (yyvsp[0].nb));
@@ -1819,11 +1889,11 @@ yyreduce:
     free_last_tmp(&mySymbolsTable);
     (yyval.nb) = (yyvsp[-2].nb);
     printf("\t\t\t\tadd_sub: addition\n\n"); }
-#line 1823 "parser.tab.c"
+#line 1893 "parser.tab.c"
     break;
 
   case 73: /* add_sub: add_sub tSUB div_mul  */
-#line 476 "parser.y"
+#line 564 "parser.y"
   { //we return the @add_sub-div_mul
     //we assign the value of @div_mul - @add_sub to @add_sub
     add_instruction(&myInstructionTable, "SUB", (yyvsp[-2].nb),(yyvsp[-2].nb), (yyvsp[0].nb)); 
@@ -1832,18 +1902,18 @@ yyreduce:
     free_last_tmp(&mySymbolsTable);
     (yyval.nb) = (yyvsp[-2].nb);
     printf("\t\t\t\tadd_sub: substraction\n\n"); }
-#line 1836 "parser.tab.c"
+#line 1906 "parser.tab.c"
     break;
 
   case 74: /* div_mul: single_value  */
-#line 489 "parser.y"
+#line 577 "parser.y"
   { //we push forward the value of single_value
     (yyval.nb) = (yyvsp[0].nb);}
-#line 1843 "parser.tab.c"
+#line 1913 "parser.tab.c"
     break;
 
   case 75: /* div_mul: div_mul tMUL single_value  */
-#line 493 "parser.y"
+#line 581 "parser.y"
   { //we return the @divmul*single_value
     //we assign the value of @single_value * @div_mul to @div_mul
     add_instruction(&myInstructionTable, "MUL", (yyvsp[-2].nb),(yyvsp[-2].nb), (yyvsp[0].nb));
@@ -1852,11 +1922,11 @@ yyreduce:
     free_last_tmp(&mySymbolsTable);
     (yyval.nb) = (yyvsp[-2].nb);
     printf("\t\t\t\tdiv_mul: multiplication\n\n"); }
-#line 1856 "parser.tab.c"
+#line 1926 "parser.tab.c"
     break;
 
   case 76: /* div_mul: div_mul tDIV single_value  */
-#line 503 "parser.y"
+#line 591 "parser.y"
   { //we return the @divmul/single_value
     //we assign the value of @single_value / @div_mul to @div_mul
     add_instruction(&myInstructionTable, "DIV", (yyvsp[-2].nb), (yyvsp[-2].nb),(yyvsp[0].nb));
@@ -1865,21 +1935,21 @@ yyreduce:
     free_last_tmp(&mySymbolsTable);
     (yyval.nb) = (yyvsp[-2].nb);
     printf("\t\t\t\tdiv_mul: division\n\n"); }
-#line 1869 "parser.tab.c"
+#line 1939 "parser.tab.c"
     break;
 
   case 77: /* single_value: functionCall  */
-#line 516 "parser.y"
+#line 604 "parser.y"
   { add_tmp(&mySymbolsTable);
     int temp = get_last_tmp(&mySymbolsTable);
     (yyval.nb) = temp;
     add_instruction(&myInstructionTable, "COP", temp, (yyvsp[0].nb),0); 
     printf("\t\t\t\treducing functionCall to single value\n");}
-#line 1879 "parser.tab.c"
+#line 1949 "parser.tab.c"
     break;
 
   case 78: /* single_value: tID  */
-#line 523 "parser.y"
+#line 611 "parser.y"
   { //we return the @tmp that holds the value of tID
     //we create a variable to put the value of tID in
     //we get the address of ID and adress of the tmp we created
@@ -1890,11 +1960,11 @@ yyreduce:
     (yyval.nb) = temp;
     add_instruction(&myInstructionTable, "COP", temp, addr,0); 
     printf("\t\t\t\tsingle_value: identifier '%s'\n\n", (yyvsp[0].var)); }
-#line 1894 "parser.tab.c"
+#line 1964 "parser.tab.c"
     break;
 
   case 79: /* single_value: tNB  */
-#line 536 "parser.y"
+#line 624 "parser.y"
   { //we return the @tmp that holds the value tNB
     //we create a tmp to ST
     //we assign the value of tNB to tmp
@@ -1905,11 +1975,11 @@ yyreduce:
 
     (yyval.nb) = address_nb;
     printf("\t\t\t\tsingle_value: number '%d'\n\n", (yyvsp[0].nb)); }
-#line 1909 "parser.tab.c"
+#line 1979 "parser.tab.c"
     break;
 
 
-#line 1913 "parser.tab.c"
+#line 1983 "parser.tab.c"
 
       default: break;
     }
@@ -2102,7 +2172,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 551 "parser.y"
+#line 636 "parser.y"
 
 
 void yyerror(const char *msg) {
