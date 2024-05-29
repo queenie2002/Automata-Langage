@@ -7,21 +7,26 @@ ip = 0
 # Memory of size 1024
 mem = [0] * 1024    
 
-NOP = 0
-ADD = 1
-MUL = 2
-SUB = 3
-DIV = 4
-COP = 5
-AFC = 6
-JMP = 7
-JMF = 8
-INF = 9
-SUP = 10
-EQU = 11
-PRI = 12
-RET = 13 #to determine  ----------------------------------------????????????
-NEQ = 14 #no equal to
+NOP = 0   #skips
+ADD = 1   #adds
+MUL = 2   #multiplies
+SUB = 3   #subtracts
+DIV = 4   #divides
+COP = 5   #copies
+AFC = 6   #affects
+JMP = 7   #jumps
+JMF = 8   #jumps if
+INF = 9   #inferior to
+SUP = 10  #superior to
+EQU = 11  #equal to
+PRI = 12  #print
+RET = 13  #return
+NEQ = 14  #different
+LEQ = 15  #less or equal to
+GEQ = 16  #greater or equal to
+AND = 17  #and
+ORR = 18  #or
+NOT = 19  #not
 ERR = 255 #problem couldn't recognize instruction
 
 
@@ -83,10 +88,40 @@ while (ip < len(asm)) :
 
     elif asm[ip][0] == RET: 
         pass
-        #TODO #a changer dans table des instructions aussi
+        #TODO #a faire ---------------------------------------------------------------------
         
     elif asm[ip][0] == NEQ: 
         if mem[asm[ip][2]] != mem[asm[ip][3]] : #if it's true
+            mem[asm[ip][1]] = 1 
+        else:
+            mem[asm[ip][1]] = 0
+    
+    elif asm[ip][0] == LEQ: 
+        if mem[asm[ip][2]] <= mem[asm[ip][3]] : #if it's true
+            mem[asm[ip][1]] = 1 
+        else:
+            mem[asm[ip][1]] = 0
+    
+    elif asm[ip][0] == GEQ: 
+        if mem[asm[ip][2]] >= mem[asm[ip][3]] : #if it's true
+            mem[asm[ip][1]] = 1 
+        else:
+            mem[asm[ip][1]] = 0
+            
+    elif asm[ip][0] == AND: 
+        if ((mem[asm[ip][2]]==1) and (mem[asm[ip][3]]==1)) : #if both are true, true
+            mem[asm[ip][1]] = 1 
+        else:
+            mem[asm[ip][1]] = 0
+            
+    elif asm[ip][0] == ORR: 
+        if mem[asm[ip][2]] or mem[asm[ip][3]] : #if one of the two is true, true
+            mem[asm[ip][1]] = 1 
+        else:
+            mem[asm[ip][1]] = 0
+            
+    elif asm[ip][0] == NOT: 
+        if mem[asm[ip][2]] != 1 : #if it's not true, true
             mem[asm[ip][1]] = 1 
         else:
             mem[asm[ip][1]] = 0

@@ -1,4 +1,3 @@
-//ne devrait pas imprimer si pas initialisé
 void main(void) {
 int a;
 int f = 2;

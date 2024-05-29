@@ -104,9 +104,19 @@ char * convert_instruction_name_into_number(char * instructionName) {
     } else if (strcmp(instructionName, "PRI") == 0) {
         return "0c"; 
     } else if (strcmp(instructionName, "RET") == 0) {
-        return "0d";      //----------------------------------------------------------A CHANGER 
+        return "0d";    
     } else if (strcmp(instructionName, "NEQ") == 0) {
         return "0e";
+    } else if (strcmp(instructionName, "LEQ") == 0) {
+        return "0f";
+    } else if (strcmp(instructionName, "GEQ") == 0) {
+        return "10";
+    } else if (strcmp(instructionName, "AND") == 0) {
+        return "11";
+    } else if (strcmp(instructionName, "ORR") == 0) {
+        return "12";
+    } else if (strcmp(instructionName, "NOT") == 0) {
+        return "13";
     } else {
         return "ff"; 
         printf("Didn't recognize a proper instruction: %s\n ", instructionName);

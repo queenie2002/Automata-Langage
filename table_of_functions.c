@@ -31,7 +31,7 @@ int get_function_address(struct FunctionTable* table, const char* id) {
 
 // Get the current function based on the instruction line
 char* get_current_function(struct FunctionTable* table, int currentLine) {
-    const char* currentFunction = NULL;
+    char* currentFunction = NULL;
     for (int i = 0; i < table->size; i++) {
         if (currentLine >= table->functions[i].startADDR) {
             if (i == table->size - 1 || currentLine < table->functions[i + 1].startADDR) {
