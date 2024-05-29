@@ -62,18 +62,18 @@ action-getIndex:
 
 program:
   %empty                                                                        
-  { 
+  { //empty program
     printf("\t\t\t\tprogram: empty\n\n"); 
   }
 
   |action-start main_function                                                                  
-  { 
+  { //only a main
     printf("\t\t\t\tprogram: main\n\n"); 
     add_instruction(&myInstructionTable, "NOP", 0, 0,0); 
   }
 
   |action-start function_list main_function                       
-  { 
+  { //functions and a main 
     printf("\t\t\t\tprogram: main + functions\n\n"); 
     add_instruction(&myInstructionTable, "NOP", 0, 0,0); 
   }
@@ -81,70 +81,32 @@ program:
 
 action-start:
   %empty
-  { 
+  { //adds a jump at start to begin compiling from main
     printf("\t\t\t\taction-start\n\n"); 
     add_instruction(&myInstructionTable,"JMP",-1,0,0);
   }
 ;
 
-//--------------------------FUNCTIONS A FAIRE----------------------------------------------------
+
+//--------------------------TO USE FOR FUNCTIONS----------------------------------------------------
 
 
-function_list:
-  function                                                                        
-  { 
-    printf("\t\t\t\t\t\t\t\tfunction_list: a function\n\n"); 
-  }
-
-  |function_list function                                                         
-  { 
-    printf("\t\t\t\tfunction_list: functions\n\n"); 
-  }
-;
-
-function:
-  function_type tID action-inc action-getIndex
-  {
-    add_function(&myFunctionTable,$2,$4);
-    add_symb(&mySymbolsTable,"?ADR");
-    add_symb(&mySymbolsTable,"?VAL");
-  } 
-
-  tLPAR parameter_list tRPAR tLBRACE body tRBRACE action-dec
-  {
-    add_instruction(&myInstructionTable,"RET",0,0,0);
-    printf("\t\t\t\tfunction: %s\n\n", $2); 
-  }
-;
-
-
-
-
-main_function: 
-  function_type tMAIN action-inc action-getIndex
-  {
-    add_function(&myFunctionTable,"main",$4);
-    //WARNING j'ai commenté ces parties parce que le scope marche pas bien avec les fonctions  
-    add_symb(&mySymbolsTable,"?ADR");
-    add_symb(&mySymbolsTable,"?VAL");
-  } 
-  tLPAR parameter_list tRPAR tLBRACE body tRBRACE action-dec
-  { add_instruction(&myInstructionTable,"RET",0,0,0);
-    int mainADDR = get_function_address(&myFunctionTable,"main");
-    patch_instruction_arg1(&myInstructionTable,0,mainADDR);
-    printf("\t\t\t\tmain function\n\n"); 
-  }
-;
-       
 function_type:
   tVOID                                                                           
-  { 
+  { //there should not be a return
     printf("\t\t\t\tfunction type: void\n\n"); 
   }
 
   |tINT                                                                           
-  { 
+  { //there should be a return somewhere
     printf("\t\t\t\tfunction type: int\n\n"); 
+  }
+;
+
+variable_type:
+  tINT                                                                             
+  { 
+    printf("\t\t\t\tvariable_type: int\n\n"); 
   }
 ;
 
@@ -174,15 +136,147 @@ parameter:
   }
 ;
 
+body:
+  %empty                                                                            
+  { //empty body
+    printf("\t\t\t\tbody: empty\n\n");
+  }
 
-
-
-variable_type:
-  tINT                                                                             
-  { 
-    printf("\t\t\t\tvariable_type: int\n\n"); 
+  |declaration_list                                                                 
+  { //declarations
+    printf("\t\t\t\tbody: declaration_list\n\n"); 
+  }
+  
+  |instruction_list                                                                 
+  { //instructions
+    printf("\t\t\t\tbody: instruction_list\n\n"); 
+  }
+  
+  |declaration_list instruction_list                                                
+  { //declarations and instructions
+    printf("\t\t\t\tbody: declaration&instruction list\n\n"); 
   }
 ;
+
+
+declaration_list:
+  declaration                                                                      
+  { 
+    printf("\t\t\t\ta declaration\n\n"); 
+  }
+  |declaration_list declaration                                                    
+  { 
+    printf("\t\t\t\tseveral declarations\n\n"); 
+  }
+;
+
+
+declaration:
+  variable_type identifiers_list tSEMI                                           
+  { 
+    printf("\t\t\t\tdeclaration\n\n"); 
+  }
+;
+
+
+identifiers_list:
+  tID                                                                             
+  { //adds tID to symbols table
+    add_symb(&mySymbolsTable, $1); 
+    printf("\t\t\t\tidentifier: '%s'\n\n", $1); 
+  }
+  |tID tASSIGN equality_expression                                               
+  { //adds tID to symbols table and assigns value
+    add_symb(&mySymbolsTable, $1); 
+
+    int address_nb = get_symb(&mySymbolsTable,$1);
+    add_instruction(&myInstructionTable, "COP", address_nb, $3,0);   
+    free_last_tmp(&mySymbolsTable);
+    printf("\t\t\t\tdeclaration and initialization: '%s'\n\n", $1); 
+  }
+  |identifiers_list tCOMMA tID                                                   
+  { //adds tID to symbols table
+    add_symb(&mySymbolsTable, $3); 
+    printf("\t\t\t\tseveral identifiers: '%s'\n\n", $3); 
+  }  
+  |identifiers_list tCOMMA tID tASSIGN equality_expression                    
+  { //adds tID to symbols table and assigns value
+    add_symb(&mySymbolsTable, $3); 
+    int address_nb = get_symb(&mySymbolsTable,$3);
+    add_instruction(&myInstructionTable, "COP", address_nb, $5,0);
+    free_last_tmp(&mySymbolsTable);
+    printf("\t\t\t\tseveral identifiers: '%s'\n\n", $3); 
+  }
+;
+
+
+instruction_list:
+  instruction                                                                       
+  { 
+    printf("\t\t\t\tan instruction\n\n"); 
+  }
+  |instruction_list instruction                                                     
+  { 
+    printf("\t\t\t\tseveral instructions\n\n"); 
+  }
+;
+
+
+instruction:
+  assignment_list                                                                
+  { 
+    printf("\t\t\t\tinstruction: assignment\n\n"); 
+  }
+  |ifblock                                                                        
+  { 
+    printf("\t\t\t\tinstruction: if block\n\n"); 
+  }
+  |whileblock                                                                     
+  { 
+    printf("\t\t\t\tinstruction: while block\n\n"); 
+  }
+  |printblock                                                                     
+  { 
+    printf("\t\t\t\tinstruction: print block\n\n"); 
+  }
+  |returnblock
+  {
+    printf("\t\t\t\tbody: retur blockn\n\n"); 
+  }
+;
+
+
+//--------------------------FUNCTIONS A FAIRE----------------------------------------------------
+
+
+function_list:
+  function                                                                        
+  { 
+    printf("\t\t\t\t\t\t\t\tfunction_list: a function\n\n"); 
+  }
+
+  |function_list function                                                         
+  { 
+    printf("\t\t\t\tfunction_list: functions\n\n"); 
+  }
+;
+
+
+function:
+  function_type tID action-inc action-getIndex
+  {
+    add_function(&myFunctionTable,$2,$4);
+    add_symb(&mySymbolsTable,"?ADR");
+    add_symb(&mySymbolsTable,"?VAL");
+  } 
+
+  tLPAR parameter_list tRPAR tLBRACE body tRBRACE action-dec
+  {
+    add_instruction(&myInstructionTable,"RET",0,0,0);
+    printf("\t\t\t\tfunction: %s\n\n", $2); 
+  }
+;
+
 
 functionCall:
   tID tLPAR action-call0 action-inc action-call1 action-dec argument_list tRPAR action-getIndex
@@ -238,130 +332,27 @@ argument_list:
   }
 ;
 
+//--------------------------MAIN----------------------------------------------------
 
 
-body:
-  %empty                                                                            
-  { 
-    printf("\t\t\t\tbody: empty\n\n");
-  }
-
-  |declaration_list                                                                 
-  { 
-    printf("\t\t\t\tbody: declaration_list\n\n"); 
-  }
-  
-  |instruction_list                                                                 
-  { 
-    printf("\t\t\t\tbody: instruction_list\n\n"); 
-  }
-  
-  |declaration_list instruction_list                                                
-  { 
-    printf("\t\t\t\tbody: declaration&instruction list\n\n"); 
-  }
-  |return
-  { 
-    printf("\t\t\t\tbody: return\n\n"); 
-  }
-;
-
-//la fonction ne renvoie qu'un parametre
-return:
-  tRETURN equality_expression tSEMI 
-  {
-    printf("\t\t\t\ttRETURN\n");
-    int val = get_symb(&mySymbolsTable,"?VAL");
-    add_instruction(&myInstructionTable,"COP",val,$2,0);
+main_function: 
+  function_type tMAIN action-inc action-getIndex
+  { //adds function to table + creates var ?ADR et VAL
+    add_function(&myFunctionTable,"main",$4);
+    //WARNING j'ai commenté ces parties parce que le scope marche pas bien avec les fonctions  
+    add_symb(&mySymbolsTable,"?ADR");
+    add_symb(&mySymbolsTable,"?VAL");
+  } 
+  tLPAR parameter_list tRPAR tLBRACE body tRBRACE action-dec
+  { //RET + updates JMP with @main
     add_instruction(&myInstructionTable,"RET",0,0,0);
+    int mainADDR = get_function_address(&myFunctionTable,"main");
+    patch_instruction_arg1(&myInstructionTable,0,mainADDR);
+    printf("\t\t\t\tmain function\n\n"); 
   }
 ;
 
-
-instruction_list:
-  instruction                                                                       
-  { 
-    printf("\t\t\t\tan instruction\n\n"); 
-  }
-  |instruction_list instruction                                                     
-  { 
-    printf("\t\t\t\tseveral instructions\n\n"); 
-  }
-;
-
-
-declaration_list:
-  declaration                                                                      
-  { 
-    printf("\t\t\t\ta declaration\n\n"); 
-  }
-  |declaration_list declaration                                                    
-  { 
-    printf("\t\t\t\tseveral declarations\n\n"); 
-  }
-;
-
-
-declaration:
-  variable_type identifiers_list tSEMI                                           
-  { 
-    printf("\t\t\t\tdeclaration\n\n"); 
-  }
-;
-
-identifiers_list:
-
-  tID                                                                             
-  { add_symb(&mySymbolsTable, $1); 
-    printf("\t\t\t\tidentifier: '%s'\n\n", $1); 
-  }
-
-  |tID tASSIGN equality_expression                                               
-  { add_symb(&mySymbolsTable, $1); 
-
-    int address_nb = get_symb(&mySymbolsTable,$1);
-    add_instruction(&myInstructionTable, "COP", address_nb, $3,0);   
-    free_last_tmp(&mySymbolsTable);
-    printf("\t\t\t\tdeclaration and initialization: '%s'\n\n", $1); 
-  }
-
-
-  |identifiers_list tCOMMA tID                                                   
-  { add_symb(&mySymbolsTable, $3); 
-    printf("\t\t\t\tseveral identifiers: '%s'\n\n", $3); 
-  }
-    
-  |identifiers_list tCOMMA tID tASSIGN equality_expression                    
-  { add_symb(&mySymbolsTable, $3); 
-    int address_nb = get_symb(&mySymbolsTable,$3);
-    add_instruction(&myInstructionTable, "COP", address_nb, $5,0);
-    free_last_tmp(&mySymbolsTable);
-    printf("\t\t\t\tseveral identifiers: '%s'\n\n", $3); 
-  }
-;
-
-
-
-
-instruction:
-  assignment_list                                                                
-  { 
-    printf("\t\t\t\tinstruction: assignment\n\n"); 
-  }
-  |ifblock                                                                        
-  { 
-    printf("\t\t\t\tinstruction: if block\n\n"); 
-  }
-  |whileblock                                                                     
-  { 
-    printf("\t\t\t\tinstruction: while block\n\n"); 
-  }
-  |printblock                                                                     
-  { 
-    printf("\t\t\t\tinstruction: print block\n\n"); 
-  }
-;
-
+//--------------------------IF BLOCK----------------------------------------------------
 
 assignment_list:
   tID tASSIGN equality_expression tSEMI                                           
@@ -381,7 +372,6 @@ assignment_list:
     printf("\t\t\t\tassignment: '%s'\n\n", $1); 
   }
 ;
-
 
 //--------------------------IF BLOCK----------------------------------------------------
 
@@ -445,8 +435,7 @@ action-else:
 
 whileblock:
 	tWHILE tLPAR action-getIndex condition tRPAR action-while action-inc tLBRACE body tRBRACE 
-  { 
-    //loops in block while cond
+  { //loops in block while cond
     //a backward jump to stay in loop, goes to before the condition to update it
     add_instruction(&myInstructionTable,"JMP",$3,0,0); //backward jump
 
@@ -476,6 +465,18 @@ printblock:
     add_instruction(&myInstructionTable,"PRI",$3,0,0);
     printf("\t\t\t\tprint block\n\n");
   } 
+;
+
+//--------------------------RETURN BLOCK----------------------------------------------------
+
+returnblock:
+  tRETURN equality_expression tSEMI 
+  { //returns one parameter
+    int val = get_symb(&mySymbolsTable,"?VAL");
+    add_instruction(&myInstructionTable,"COP",val,$2,0);
+    add_instruction(&myInstructionTable,"RET",0,0,0);
+    printf("\t\t\t\ttRETURN\n");
+  }
 ;
 
 //--------------------------VALUES ----------------------------------------------------

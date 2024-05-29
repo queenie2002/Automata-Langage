@@ -40,7 +40,7 @@ void add_tmp(struct SymbolTable *table) {
 }
 
 // Return address of symbol in symbol table
-int get_symb(struct SymbolTable *table, char *id) {
+int get_symb(struct SymbolTable *table, char *id) { 
     for (int i = 0; i <= table->ptr; i++) {
         if (strcmp(table->symbols[i].id, id) == 0) {
             return table->symbols[i].address;
@@ -61,6 +61,7 @@ int get_scope(struct SymbolTable *table, char *id) {
 void increment_scope(struct SymbolTable *table){
     table->scope_general++;
 }  
+
 void decrement_scope(struct SymbolTable *table, struct DeletedSymbolsTable *deletedTable){
         table->scope_general--;
 
@@ -72,15 +73,15 @@ void decrement_scope(struct SymbolTable *table, struct DeletedSymbolsTable *dele
 
 
         if (table->symbols[i].scope == table->scope_general+1) {
-        // Save the removed symbol in DeletedSymbolsTable
-        //pour les fonctions on a un décalage de 1 entre ce qui est enlevé et ce qui est affiché comme enlevé
-        strcpy(deletedTable->symbols[deletedTable->count].id, table->symbols[i].id);
-        deletedTable->symbols[deletedTable->count].address = table->symbols[i].address;
-        deletedTable->symbols[deletedTable->count].scope = table->symbols[i].scope;
-        deletedTable->count++;
+            // Save the removed symbol in DeletedSymbolsTable
+            //pour les fonctions on a un décalage de 1 entre ce qui est enlevé et ce qui est affiché comme enlevé
+            strcpy(deletedTable->symbols[deletedTable->count].id, table->symbols[i].id);
+            deletedTable->symbols[deletedTable->count].address = table->symbols[i].address;
+            deletedTable->symbols[deletedTable->count].scope = table->symbols[i].scope;
+            deletedTable->count++;
 
-        printf("Remove symbol %s with scope %d\n", table->symbols[i].id, table->symbols[i].scope);
-        table->ptr--;
+            printf("Remove symbol %s with scope %d\n", table->symbols[i].id, table->symbols[i].scope);
+            table->ptr--;
         }
     }
 } 
