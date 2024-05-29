@@ -25,13 +25,39 @@ struct FunctionTable myFunctionTable;
 %token <nb> tNB
 %token <var> tID
 
-%type <nb> add_sub div_mul single_value functionCall condition equality_expression compare action-if action-while action-getIndex action-else action-call1 action-condition-while action-call0
+%type <nb> add_sub div_mul single_value functionCall condition equality_expression compare action-if action-while action-getIndex action-else action-call1 action-call0
 %left tOR tAND
 %start program
 %%
 
 
+//--------------------------GENERAL ACTIONS----------------------------------------------------
 
+action-inc: 
+  %empty
+  {
+    increment_scope(&mySymbolsTable);
+    printf("\t\t\t\tincrement scope: \n\n"); 
+  }
+;
+
+action-dec: 
+  %empty
+  {
+    decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);
+    printf("\t\t\t\tdecrement scope: \n\n"); 
+  }
+;
+
+action-getIndex:
+  %empty
+  { 
+    $$ = get_index_actuel_instructions(&myInstructionTable);
+    printf("\t\t\t\taction-getIndex\n\n"); 
+  }
+;
+
+//--------------------------EVERYTHING----------------------------------------------------
 
 
 program:
@@ -61,6 +87,7 @@ action-start:
   }
 ;
 
+//--------------------------FUNCTIONS A FAIRE----------------------------------------------------
 
 
 function_list:
@@ -76,40 +103,27 @@ function_list:
 ;
 
 function:
-  function_type tID action-inc
+  function_type tID action-inc action-getIndex
   {
-    add_function(&myFunctionTable,$2,get_index_actuel_instructions(&myInstructionTable));
+    add_function(&myFunctionTable,$2,$4);
     add_symb(&mySymbolsTable,"?ADR");
     add_symb(&mySymbolsTable,"?VAL");
   } 
 
-  tLPAR parameter_list tRPAR tLBRACE body tRBRACE 
+  tLPAR parameter_list tRPAR tLBRACE body tRBRACE action-dec
   {
-    decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);
     add_instruction(&myInstructionTable,"RET",0,0,0);
     printf("\t\t\t\tfunction: %s\n\n", $2); 
-   }
+  }
 ;
 
 
-action-inc: 
-  %empty
-  {
-    increment_scope(&mySymbolsTable);
-    printf("\t\t\t\tincrement scope: \n\n"); 
-  }
 
-action-dec: 
-  %empty
-  {
-    decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);
-    printf("\t\t\t\tdecrement scope: \n\n"); 
-  }
 
 main_function: 
-  function_type tMAIN action-inc
+  function_type tMAIN action-inc action-getIndex
   {
-    add_function(&myFunctionTable,"main",get_index_actuel_instructions(&myInstructionTable));
+    add_function(&myFunctionTable,"main",$4);
     //WARNING j'ai commenté ces parties parce que le scope marche pas bien avec les fonctions  
     add_symb(&mySymbolsTable,"?ADR");
     add_symb(&mySymbolsTable,"?VAL");
@@ -171,13 +185,11 @@ variable_type:
 ;
 
 functionCall:
-  tID tLPAR action-call0 action-call1 argument_list tRPAR
+  tID tLPAR action-call0 action-inc action-call1 action-dec argument_list tRPAR action-getIndex
   {
     printf("\t\t\t\tfunction Call\n");
-
-    int line = get_index_actuel_instructions(&myInstructionTable);
-    char* caller = get_current_function(&myFunctionTable,line);
-    int calleeFrame = $4;
+    char* caller = get_current_function(&myFunctionTable,$9);
+    int calleeFrame = $5;
     int callerFrame = $3;
     int calleeADDR = get_function_address(&myFunctionTable,$1);
     add_instruction(&myInstructionTable,"PUSH",callerFrame+1,0,0);
@@ -203,12 +215,10 @@ action-call0:
 action-call1:
   %empty
   {
-    increment_scope(&mySymbolsTable);
     add_symb(&mySymbolsTable,"!ADR");
     add_symb(&mySymbolsTable,"!VAL");
     add_tmp(&mySymbolsTable);
     $$ = get_symbol_table_size(&mySymbolsTable);
-    decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);
   }
 ;
 
@@ -373,96 +383,92 @@ assignment_list:
 ;
 
 
-
+//--------------------------IF BLOCK----------------------------------------------------
 
 ifblock:
-  tIF tLPAR condition tRPAR action-if action-inc tLBRACE body tRBRACE action-getIndex
-  {
-    patch_instruction_arg1(&myInstructionTable,$5,$3);
-    free_last_tmp(&mySymbolsTable); // free temp of condition
-    patch_instruction_arg2(&myInstructionTable,$5,$10);
-    decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);
+  ifpart
+  { //if
     printf("\t\t\t\tif block: if\n\n"); 
   }
 
-	|tIF tLPAR condition tRPAR action-if action-inc tLBRACE body tRBRACE action-getIndex tELSE action-else tLBRACE body tRBRACE action-getIndex
-  {
+	|tIF tLPAR condition tRPAR action-if action-inc tLBRACE body tRBRACE tELSE action-else action-getIndex tLBRACE body tRBRACE action-getIndex
+  { //if else
     patch_instruction_arg1(&myInstructionTable,$5,$3); //patch jump of if
     free_last_tmp(&mySymbolsTable); // free temp of condition
-    patch_instruction_arg2(&myInstructionTable,$5,$10+1);  
-    patch_instruction_arg1(&myInstructionTable,$12,$16);  //patch jump    
-    decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);
+    patch_instruction_arg2(&myInstructionTable,$5,$12); //to jump after the jump of else
+    patch_instruction_arg1(&myInstructionTable,$11,$16);  //patch jump of else   
     printf("\t\t\t\tif block: if else\n\n"); 
   }
+  action-dec
 
-  |tIF tLPAR condition tRPAR action-if action-inc tLBRACE body tRBRACE action-getIndex tELSE ifblock
-  {
-    patch_instruction_arg1(&myInstructionTable,$5,$3);
-    free_last_tmp(&mySymbolsTable); // free temp of condition
-    patch_instruction_arg2(&myInstructionTable,$5,$10);
-    decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);
+  |ifpart tELSE ifblock
+  { //if else if
     printf("\t\t\t\tif block: if else if\n\n"); 
   }
+;
+
+ifpart: 
+  tIF tLPAR condition tRPAR action-if action-inc tLBRACE body tRBRACE action-getIndex
+  {
+    //update jmf with where and when to jump
+    patch_instruction_arg1(&myInstructionTable,$5,$3); //updates jmf with which reg to check whether we jump or not
+    free_last_tmp(&mySymbolsTable); // free temp of condition
+    patch_instruction_arg2(&myInstructionTable,$5,$10); //updates jmf with which instruction to jump to 
+    printf("\t\t\t\tif\n\n"); 
+  }
+  action-dec
 ;
 
 action-if:
   %empty
   { 
+    //adds a jmf to be able to jump depending on cond
+    //returns where that jump is to update it
     add_instruction(&myInstructionTable,"JMF",-1,-1,0);  
     $$ = get_index_actuel_instructions(&myInstructionTable)-1;
     printf("\t\t\t\taction-if: rajoute un jump if\n\n"); 
-
   } 
 ;
 
 action-else:
   %empty 
   {
+    //adds a jump to skip else
+    //returns where that jump is to update it
     add_instruction(&myInstructionTable,"JMP",-1,0,0);    
     $$ = get_index_actuel_instructions(&myInstructionTable)-1;
     printf("\t\t\t\taction-else: rajoute un jump if\n\n"); 
   } 
 ;
 
-action-getIndex:
-  %empty
-  { 
-    $$ = get_index_actuel_instructions(&myInstructionTable);
-    printf("\t\t\t\taction-getIndex\n\n"); 
-
-  }
-;
-
+//--------------------------WHILE BLOCK----------------------------------------------------
 
 whileblock:
-	tWHILE tLPAR action-condition-while condition tRPAR action-while tLBRACE body tRBRACE 
-  {
+	tWHILE tLPAR action-getIndex condition tRPAR action-while action-inc tLBRACE body tRBRACE 
+  { 
+    //loops in block while cond
+    //a backward jump to stay in loop, goes to before the condition to update it
     add_instruction(&myInstructionTable,"JMP",$3,0,0); //backward jump
-    patch_instruction_arg1(&myInstructionTable,$6,$4);
+
+    //update jmf to know where and when it should jump
+    patch_instruction_arg1(&myInstructionTable,$6,$4); //updates jmf to check condition to know if we should stay in loop
     free_last_tmp(&mySymbolsTable); // free temp of condition
-    patch_instruction_arg2(&myInstructionTable,$6,get_index_actuel_instructions(&myInstructionTable));
-    decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);
+    patch_instruction_arg2(&myInstructionTable,$6,get_index_actuel_instructions(&myInstructionTable)); //updates jmf to know where to jump to
     printf("\t\t\t\twhile block\n\n"); 
   }         
+  action-dec
 ;
-
-action-condition-while:
-  %empty
-  {
-    $$ = get_index_actuel_instructions(&myInstructionTable);
-  } 
-;
-
 
 action-while:
   %empty
-  { add_instruction(&myInstructionTable,"JMF",-1,-1,0);    //arg1 ?
+  { //adds JMF to know whether we should stay in loop
+    //returns where that JMF is to be able to update it after
+    add_instruction(&myInstructionTable,"JMF",-1,-1,0);    
     $$ = get_index_actuel_instructions(&myInstructionTable) - 1;
-    increment_scope(&mySymbolsTable);
   } 
 ;
 
-//----------------------------------------------------------------------------------------------------------------------------
+//--------------------------PRINT BLOCK----------------------------------------------------
 
 printblock:
 	tPRINT tLPAR condition tRPAR tSEMI	                                                 
@@ -472,6 +478,7 @@ printblock:
   } 
 ;
 
+//--------------------------VALUES ----------------------------------------------------
 
 condition:
   equality_expression

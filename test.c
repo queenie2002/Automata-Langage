@@ -1,10 +1,7 @@
 void main(void) {
     int a = 0;
-    if (a == 0) {
-        a = 6;
-    }
-    else {
-        a = 3;
+    while (a<5) {
+        a = a + 1;
     }
     print(a);
 }
