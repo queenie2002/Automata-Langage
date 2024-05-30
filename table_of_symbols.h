@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-#define MAX_SYMBOLS 256
+#define MAX_SYMBOLS 15
 
 struct Symbol {
     char id[50];
