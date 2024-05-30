@@ -2,7 +2,7 @@ int f (int a){
     return a + 2;
 }
 
-void main (void){
+int main (void){
     int a;
-    a = f(3);
+    a = f(2);
 }

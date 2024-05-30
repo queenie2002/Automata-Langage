@@ -26,7 +26,7 @@ struct FunctionTable myFunctionTable;
 %token <var> tID
 
 %type <nb> add_sub div_mul single_value condition equality_expression compare functionCall action-if action-while action-getIndex action-else action-call1 action-call0
-%left tOR tAND
+%left tOR tAND tNOT
 %start program
 %%
 
@@ -183,7 +183,7 @@ identifiers_list:
     add_symb(&mySymbolsTable, $1); 
     printf("\t\t\t\tidentifier: '%s'\n\n", $1); 
   }
-  |tID tASSIGN equality_expression                                               
+  |tID tASSIGN condition                                               
   { //adds tID to symbols table and assigns value
     add_symb(&mySymbolsTable, $1); 
 
@@ -197,7 +197,7 @@ identifiers_list:
     add_symb(&mySymbolsTable, $3); 
     printf("\t\t\t\tseveral identifiers: '%s'\n\n", $3); 
   }  
-  |identifiers_list tCOMMA tID tASSIGN equality_expression                    
+  |identifiers_list tCOMMA tID tASSIGN condition                    
   { //adds tID to symbols table and assigns value
     add_symb(&mySymbolsTable, $3); 
     int address_nb = get_symb(&mySymbolsTable,$3);
@@ -270,37 +270,46 @@ function:
   { //add function to functions table
     add_function(&myFunctionTable,$2,$5);
   } 
-  tLPAR parameter_list tRPAR tLBRACE action-inc body tRBRACE action-dec
+  tLPAR parameter_list tRPAR tLBRACE action-inc body tRBRACE action-dec 
   {
     add_instruction(&myInstructionTable,"RET",0,0,0);
     printf("\t\t\t\tfunction: %s\n\n", $2); 
   }
+  action-dec
 ;
 
 
 functionCall:
-  tID tLPAR action-call0 action-inc action-call1 action-dec argument_list tRPAR action-getIndex
+  tID tLPAR action-call0 action-call1 argument_list tRPAR action-getIndex
   {
-    printf("\t\t\t\tfunction Call\n");
-    char* caller = get_current_function(&myFunctionTable,$9);
-    int calleeFrame = $5;
+    char* caller = get_current_function(&myFunctionTable,$7);
+    int calleeFrame = $4;
+
     int callerFrame = $3;
-    int calleeADDR = get_function_address(&myFunctionTable,$1);
+
     add_instruction(&myInstructionTable,"PUSH",callerFrame+1,0,0);
+
+    //We call the function f
+    int calleeADDR = get_function_address(&myFunctionTable,$1);
     add_instruction(&myInstructionTable,"CALL",calleeADDR,0,0);
+
+    //
     add_instruction(&myInstructionTable,"POP",callerFrame+1,0,0);
     add_tmp(&mySymbolsTable);
-    int temp = get_last_tmp(&mySymbolsTable);
+
     //copy return value !VAL of callee into temp
-    add_instruction(&myInstructionTable,"COP",temp,callerFrame+2,0);;
+    int temp = get_last_tmp(&mySymbolsTable);
+    add_instruction(&myInstructionTable,"COP",temp,callerFrame+2,0);
     $$ = temp;
+    printf("\t\t\t\tfunction Call\n");
+
   }
 ;
 
 
 action-call0:
   %empty
-  {  
+  { //we save size of current frame (caller function)
     $$ = get_symbol_table_size(&mySymbolsTable);
   }
 ;
@@ -308,7 +317,7 @@ action-call0:
 
 action-call1:
   %empty
-  {
+  { //allocate space for adr and val of callee function
     add_symb(&mySymbolsTable,"!ADR");
     add_symb(&mySymbolsTable,"!VAL");
     add_tmp(&mySymbolsTable);
@@ -322,11 +331,11 @@ argument_list:
   { 
     printf("\t\t\t\targumentlist: no argument\n\n");
   }
-  |argument_list tCOMMA equality_expression
+  |argument_list tCOMMA condition
   { 
     printf("\t\t\t\targumentlist\n\n");
   }
-  |equality_expression
+  |condition
   { 
     printf("\t\t\t\targument\n\n");
   }
@@ -340,7 +349,7 @@ main_function:
   { //adds function to table
     add_function(&myFunctionTable,"main",$5);
   } 
-  tLPAR parameter_list tRPAR tLBRACE body tRBRACE action-dec
+  tLPAR parameter_list tRPAR tLBRACE action-inc body tRBRACE action-dec action-dec
   { //RET + updates JMP with @main
     add_instruction(&myInstructionTable,"RET",0,0,0);
     int mainADDR = get_function_address(&myFunctionTable,"main");
@@ -352,7 +361,7 @@ main_function:
 //--------------------------IF BLOCK----------------------------------------------------
 
 assignment_list:
-  tID tASSIGN equality_expression tSEMI                                           
+  tID tASSIGN condition tSEMI                                           
   { 
     int address_nb = get_symb(&mySymbolsTable,$1);
     add_instruction(&myInstructionTable, "COP", address_nb, $3,0);
@@ -360,7 +369,7 @@ assignment_list:
     printf("\t\t\t\tassignment: '%s'\n\n", $1); 
   }
 
-  |tID tASSIGN equality_expression tCOMMA assignment_list
+  |tID tASSIGN condition tCOMMA assignment_list
   { 
     get_symb(&mySymbolsTable,$1);
     int address_nb = get_symb(&mySymbolsTable,$1);
@@ -369,6 +378,8 @@ assignment_list:
     printf("\t\t\t\tassignment: '%s'\n\n", $1); 
   }
 ;
+
+
 
 //--------------------------IF BLOCK----------------------------------------------------
 
@@ -379,7 +390,7 @@ ifblock:
   }
   action-dec
 
-	|tIF tLPAR condition tRPAR action-if action-inc tLBRACE body tRBRACE action-dec tELSE action-else action-getIndex action-inc tLBRACE body tRBRACE action-getIndex
+	|tIF tLPAR condition tRPAR action-if action-inc tLBRACE body tRBRACE tELSE action-dec action-else action-getIndex action-inc tLBRACE body tRBRACE action-getIndex
   { //if else
     patch_instruction_arg1(&myInstructionTable,$5,$3); //patch jump of if
     free_last_tmp(&mySymbolsTable); // free temp of condition
@@ -468,10 +479,12 @@ printblock:
 //--------------------------RETURN BLOCK----------------------------------------------------
 
 returnblock:
-  tRETURN equality_expression tSEMI 
+  tRETURN condition tSEMI 
   { //returns one parameter
     int val = get_symb(&mySymbolsTable,"?VAL");
     add_instruction(&myInstructionTable,"COP",val,$2,0);
+    free_last_tmp(&mySymbolsTable);
+
     add_instruction(&myInstructionTable,"RET",0,0,0);
     printf("\t\t\t\ttRETURN\n");
   }
