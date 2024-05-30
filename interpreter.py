@@ -2,7 +2,11 @@ asm = open("output_files/instructions.txt", "r").readlines()
 asm = [l.strip().split(" ") for l in asm]
 asm = [[int(a, 16) for a in l] for l in asm]
 
+# Instruction Pointer
 ip = 0 
+
+# Stack Pointer
+sp = 0
 
 # Memory of size 1024
 mem = [0] * 1024    
@@ -27,7 +31,15 @@ GEQ = 16  #greater or equal to
 AND = 17  #and
 ORR = 18  #or
 NOT = 19  #not
+CALL = 20 #call
+PUSH = 21 #push
+POP = 22  #pop
 ERR = 255 #problem couldn't recognize instruction
+
+def get_register(ip,j):
+    return asm[ip][j] + sp
+
+
 
 
 
@@ -87,8 +99,7 @@ while (ip < len(asm)) :
         print(mem[asm[ip][1]])
 
     elif asm[ip][0] == RET: 
-        pass
-        #TODO #a faire ---------------------------------------------------------------------
+        ip = mem[sp] - 1
         
     elif asm[ip][0] == NEQ: 
         if mem[asm[ip][2]] != mem[asm[ip][3]] : #if it's true
@@ -126,7 +137,19 @@ while (ip < len(asm)) :
         else:
             mem[asm[ip][1]] = 0
     
+    elif asm[ip][0] == CALL: 
+        ip = asm[ip][1] - 1 #we jump to function
+        
+        mem[sp] = ip+1 #we memorize the next instruction in caller fct to come back to
+        
+    elif asm[ip][0] == PUSH: 
+        sp = asm[ip][1] + sp #memorizes where the frame for callee fct starts
+
+    elif asm[ip][0] == POP: 
+        sp -= asm[ip][1]
+        
     else : 
         print("error couldn't recognize instruction " + str(asm[ip][0]))
     
+    print(mem[0:15],"\n")
     ip+=1

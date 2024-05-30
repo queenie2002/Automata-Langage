@@ -1,14 +1,8 @@
-void main(void) {
-    int a = 2;
-    if (a == 0) {
-        a = 6;
-    }
-    else if (a==2){
-        a = 3;
-        if (a==3) {
-            a = 7;
-        }
+int f (int a){
+    return a + 2;
+}
 
-    }
-    print(a);
+int main (void){
+    int a;
+    a = f(2);
 }
