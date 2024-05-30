@@ -1,9 +1,9 @@
 void main(void) {
-    int a = 0;
+    int a = 2;
     if (a == 0) {
         a = 6;
     }
-    else {
+    else if (a==5){
         a = 3;
     }
     print(a);

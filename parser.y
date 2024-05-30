@@ -25,7 +25,7 @@ struct FunctionTable myFunctionTable;
 %token <nb> tNB
 %token <var> tID
 
-%type <nb> add_sub div_mul single_value condition equality_expression compare functionCall action-if action-while action-getIndex action-else action-call1 action-call0
+%type <nb> add_sub div_mul single_value condition equality_expression compare functionCall action-if action-while action-getIndex action-else action-call1 action-call0 ifpart
 %left tOR tAND tNOT
 %start program
 %%
@@ -37,7 +37,7 @@ action-inc:
   %empty
   {
     increment_scope(&mySymbolsTable);
-    printf("\t\t\t\tincrement scope: \n\n"); 
+    printf("\t\t\t\tincrement scope to %d \n\n", mySymbolsTable.scope_general); 
   }
 ;
 
@@ -45,7 +45,7 @@ action-dec:
   %empty
   {
     decrement_scope(&mySymbolsTable,&myDeletedSymbolsTable);
-    printf("\t\t\t\tdecrement scope: \n\n"); 
+    printf("\t\t\t\tdecrement scope to %d \n\n", mySymbolsTable.scope_general); 
   }
 ;
 
@@ -68,22 +68,22 @@ program:
 
   |action-start main_function                                                                  
   { //only a main
-    printf("\t\t\t\tprogram: main\n\n"); 
     add_instruction(&myInstructionTable, "NOP", 0, 0,0); 
+    printf("\t\t\t\tprogram: main\n\n"); 
   }
 
   |action-start function_list main_function                       
   { //functions and a main 
+    add_instruction(&myInstructionTable, "NOP", 0, 0,0);
     printf("\t\t\t\tprogram: main + functions\n\n"); 
-    add_instruction(&myInstructionTable, "NOP", 0, 0,0); 
   }
 ;
 
 action-start:
   %empty
   { //adds a jump at start to begin compiling from main
-    printf("\t\t\t\taction-start\n\n"); 
     add_instruction(&myInstructionTable,"JMP",-1,0,0);
+    printf("\t\t\t\taction-start\n\n"); 
   }
 ;
 
@@ -181,7 +181,7 @@ identifiers_list:
   tID                                                                             
   { //adds tID to symbols table
     add_symb(&mySymbolsTable, $1); 
-    printf("\t\t\t\tidentifier: '%s'\n\n", $1); 
+    printf("\t\t\t\tidentifier: decl of '%s'\n\n", $1); 
   }
   |tID tASSIGN condition                                               
   { //adds tID to symbols table and assigns value
@@ -190,12 +190,12 @@ identifiers_list:
     int address_nb = get_symb(&mySymbolsTable,$1);
     add_instruction(&myInstructionTable, "COP", address_nb, $3,0);   
     free_last_tmp(&mySymbolsTable);
-    printf("\t\t\t\tdeclaration and initialization: '%s'\n\n", $1); 
+    printf("\t\t\t\tidentifiers: decl + init of '%s'\n\n", $1); 
   }
   |identifiers_list tCOMMA tID                                                   
   { //adds tID to symbols table
     add_symb(&mySymbolsTable, $3); 
-    printf("\t\t\t\tseveral identifiers: '%s'\n\n", $3); 
+    printf("\t\t\t\tseveral identifiers: decl '%s'\n\n", $3); 
   }  
   |identifiers_list tCOMMA tID tASSIGN condition                    
   { //adds tID to symbols table and assigns value
@@ -203,7 +203,7 @@ identifiers_list:
     int address_nb = get_symb(&mySymbolsTable,$3);
     add_instruction(&myInstructionTable, "COP", address_nb, $5,0);
     free_last_tmp(&mySymbolsTable);
-    printf("\t\t\t\tseveral identifiers: '%s'\n\n", $3); 
+    printf("\t\t\t\tseveral identifiers: decl + init '%s'\n\n", $3); 
   }
 ;
 
@@ -248,6 +248,8 @@ action-fun:
   { //add symbols to frame to return address and value
     add_symb(&mySymbolsTable,"?ADR");
     add_symb(&mySymbolsTable,"?VAL");
+    printf("\t\t\t\taction-fun: adding ?ADR and ?VAL\n\n"); 
+
   }
 ;
 
@@ -311,6 +313,8 @@ action-call0:
   %empty
   { //we save size of current frame (caller function)
     $$ = get_symbol_table_size(&mySymbolsTable);
+    printf("\t\t\t\taction-call0: save size of current frame\n\n"); 
+
   }
 ;
 
@@ -322,6 +326,8 @@ action-call1:
     add_symb(&mySymbolsTable,"!VAL");
     add_tmp(&mySymbolsTable);
     $$ = get_symbol_table_size(&mySymbolsTable);
+    printf("\t\t\t\taction-call1: allocate space for ADR and VAL\n\n"); 
+
   }
 ;
 
@@ -361,24 +367,26 @@ main_function:
 //--------------------------IF BLOCK----------------------------------------------------
 
 assignment_list:
-  tID tASSIGN condition tSEMI                                           
+  assignment tSEMI                                           
+  { 
+    printf("\t\t\t\tassignmentlist: an assignment\n\n"); 
+  }
+
+  |assignment tCOMMA assignment_list
+  { 
+    printf("\t\t\t\tassignment_list: several assignments\n\n"); 
+  }
+;
+
+assignment:
+  tID tASSIGN condition
   { 
     int address_nb = get_symb(&mySymbolsTable,$1);
     add_instruction(&myInstructionTable, "COP", address_nb, $3,0);
     free_last_tmp(&mySymbolsTable);
     printf("\t\t\t\tassignment: '%s'\n\n", $1); 
   }
-
-  |tID tASSIGN condition tCOMMA assignment_list
-  { 
-    get_symb(&mySymbolsTable,$1);
-    int address_nb = get_symb(&mySymbolsTable,$1);
-    add_instruction(&myInstructionTable, "COP", address_nb, $3,0);  
-    free_last_tmp(&mySymbolsTable);
-    printf("\t\t\t\tassignment: '%s'\n\n", $1); 
-  }
 ;
-
 
 
 //--------------------------IF BLOCK----------------------------------------------------
@@ -388,33 +396,31 @@ ifblock:
   { //if
     printf("\t\t\t\tif block: if\n\n"); 
   }
-  action-dec
 
-	|tIF tLPAR condition tRPAR action-if action-inc tLBRACE body tRBRACE tELSE action-dec action-else action-getIndex action-inc tLBRACE body tRBRACE action-getIndex
+	|ifpart tELSE action-else action-getIndex action-inc tLBRACE body tRBRACE action-getIndex action-dec
   { //if else
-    patch_instruction_arg1(&myInstructionTable,$5,$3); //patch jump of if
-    free_last_tmp(&mySymbolsTable); // free temp of condition
-    patch_instruction_arg2(&myInstructionTable,$5,$13); //to jump after the jump of else
-    patch_instruction_arg1(&myInstructionTable,$12,$18);  //patch jump of else   
+    patch_instruction_arg2(&myInstructionTable,$1,$4); //to jump after the jump of else
+    patch_instruction_arg1(&myInstructionTable,$3,$9);  //patch jump of else   
     printf("\t\t\t\tif block: if else\n\n"); 
   }
-  action-dec
 
-  |ifpart tELSE ifblock action-getIndex
+  |ifpart tELSE action-else action-getIndex action-inc ifblock action-getIndex action-dec
   { //if else if
+    patch_instruction_arg2(&myInstructionTable,$1,$4); //to jump after the jump of else
+    patch_instruction_arg1(&myInstructionTable,$3,$7);  //patch jump of else  
     printf("\t\t\t\tif block: if else if\n\n"); 
   }
-  action-dec
 ;
 
 ifpart: 
-  tIF tLPAR condition tRPAR action-if action-inc tLBRACE body tRBRACE action-getIndex
+  tIF tLPAR condition tRPAR action-if action-inc tLBRACE body tRBRACE action-getIndex action-dec
   {
     //update jmf with where and when to jump
     patch_instruction_arg1(&myInstructionTable,$5,$3); //updates jmf with which reg to check whether we jump or not
     free_last_tmp(&mySymbolsTable); // free temp of condition
     patch_instruction_arg2(&myInstructionTable,$5,$10); //updates jmf with which instruction to jump to 
-    printf("\t\t\t\tif\n\n"); 
+    printf("\t\t\t\tifpart\n\n"); 
+    $$ = $5;
   }
 ;
 
@@ -463,6 +469,8 @@ action-while:
     //returns where that JMF is to be able to update it after
     add_instruction(&myInstructionTable,"JMF",-1,-1,0);    
     $$ = get_index_actuel_instructions(&myInstructionTable) - 1;
+    printf("\t\t\t\taction-while: rajoute un jump if\n\n"); 
+
   } 
 ;
 
@@ -486,7 +494,7 @@ returnblock:
     free_last_tmp(&mySymbolsTable);
 
     add_instruction(&myInstructionTable,"RET",0,0,0);
-    printf("\t\t\t\ttRETURN\n");
+    printf("\t\t\t\treturnblock\n");
   }
 ;
 
@@ -629,7 +637,7 @@ single_value:
     int temp = get_last_tmp(&mySymbolsTable);
     $$ = temp;
     add_instruction(&myInstructionTable, "COP", temp, $1,0); 
-    printf("\t\t\t\treducing functionCall to single value\n");}
+    printf("\t\t\t\tsingle value: function call\n");}
 
   |tID                                                                           
   { //we return the @tmp that holds the value of tID
