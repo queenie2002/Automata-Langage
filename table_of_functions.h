@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define MAX_FUNCTIONS 50
+#define MAX_FUNCTIONS 100
 
 
 struct Function{

@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-#define MAX_SYMBOLS 15
+#define MAX_SYMBOLS 256
 
 struct Symbol {
     char id[50];
@@ -35,6 +35,7 @@ void initialize_deleted_symbols_table(struct DeletedSymbolsTable *table);
 
 void add_symb(struct SymbolTable *table, char *id);
 void add_tmp(struct SymbolTable *table);
+
 
 int get_symb(struct SymbolTable *table, char *id);
 int get_last_tmp(struct SymbolTable *table);

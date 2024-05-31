@@ -1,7 +1,7 @@
 #ifndef TABLE_OF_INSTRUCTIONS_H
 #define TABLE_OF_INSTRUCTIONS_H
 
-#define MAX_INSTRUCTIONS 255
+#define MAX_INSTRUCTIONS 2000
 
 struct Instruction {
     char *instruction;

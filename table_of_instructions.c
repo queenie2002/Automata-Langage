@@ -117,6 +117,12 @@ char * convert_instruction_name_into_number(char * instructionName) {
         return "12";
     } else if (strcmp(instructionName, "NOT") == 0) {
         return "13";
+    } else if (strcmp(instructionName, "CALL") == 0) {
+        return "14";
+    } else if (strcmp(instructionName, "PUSH") == 0) {
+        return "15";
+    } else if (strcmp(instructionName, "POP") == 0) {
+        return "16";
     } else {
         return "ff"; 
         printf("Didn't recognize a proper instruction: %s\n ", instructionName);

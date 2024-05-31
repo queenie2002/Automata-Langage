@@ -43,7 +43,6 @@ char* get_current_function(struct FunctionTable* table, int currentLine) {
     return currentFunction;
 }
 
-
 // Print the contents of the function table
 void print_function_table(struct FunctionTable* table) {
     printf("---------FUNCTION TABLE-----------");
